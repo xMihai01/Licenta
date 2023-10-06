@@ -4,6 +4,7 @@ project(Application)
 
 set(SOURCES
     Model
+    Model/Detection
     View 
     Controller
 )
