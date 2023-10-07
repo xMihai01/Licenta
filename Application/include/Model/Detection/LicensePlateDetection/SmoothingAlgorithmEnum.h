@@ -1,0 +1,4 @@
+enum SmoothingAlgorithm {
+	Gaussian,
+	BilateralFilter
+};

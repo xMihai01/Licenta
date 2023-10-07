@@ -19,3 +19,9 @@ https://d1wqtxts1xzle7.cloudfront.net/47097399/D017222226-libre.pdf?1467955082=&
 https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=6a4b4f04d5ce3c3592832eb40c23cc8fc5a9131e
 
 https://d1wqtxts1xzle7.cloudfront.net/28318471/DB21659662-libre.pdf?1390873894=&response-content-disposition=inline%3B+filename%3DIJERA_www_ijera_com.pdf&Expires=1696590255&Signature=Mw9C6yvHMjv6Hrqw~fcd89HXQ7IBv9zVYjRvFcBxOwjaViB7qzNRuQIigtNkYj51rjH7ni4gl7L4EJqc~-b26JIwwGclYtSwlPgvdRyYUCRfMfqlcqUQRSCCA92X~qb6qogt5eVcCiLX29zPlIqnFKkF4VOsmvTyG9BXg5emK4btigp48l0J3~kchAoFLudmLVYmkPXxlH5oj9cxTUlxRJ5oVibQvYRuJacHrLUmGHLMdTvBReaTawZmCt19qmyRYBbbcycyMqDrrTPQIDDUtMXDvZvycyq0oKC2bQHFk4G8w39MjUzkLksRjmyv~clA3~K0jWg~J7qBw3lw06cOWQ__&Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA
+
+https://ai.nsu.ru/attachments/download/3430/03.11.2020%20ALPR_Watana%20Pongsapas.pdf
+
+https://www.section.io/engineering-education/license-plate-detection-and-recognition-using-opencv-and-pytesseract/
+
+https://www.researchgate.net/publication/338258241_AUTOMATIC_LICENSE_PLATE_RECOGNITION_USING_IMAGE_PROCESSING_AND_NEURAL_NETWORK
