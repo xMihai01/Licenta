@@ -1,4 +1,9 @@
 enum SmoothingAlgorithm {
 	Gaussian,
-	BilateralFilter
+	BilateralFilter,
+	Averaging,
+	Median,
+	Stack,
+	BoxFilter,
+	NonLocalMeans
 };

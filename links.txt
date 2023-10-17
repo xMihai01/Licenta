@@ -25,3 +25,6 @@ https://ai.nsu.ru/attachments/download/3430/03.11.2020%20ALPR_Watana%20Pongsapas
 https://www.section.io/engineering-education/license-plate-detection-and-recognition-using-opencv-and-pytesseract/
 
 https://www.researchgate.net/publication/338258241_AUTOMATIC_LICENSE_PLATE_RECOGNITION_USING_IMAGE_PROCESSING_AND_NEURAL_NETWORK
+
+
+https://www.mecs-press.org/ijisa/ijisa-v8-n3/IJISA-V8-N3-2.pdf

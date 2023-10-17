@@ -1,50 +1,92 @@
 #include "Model/Detection/LicensePlateDetection/Preprocess.h"
 
-LicensePlateDetection::Preprocess::Preprocess(const cv::Mat& image)
-	: m_originalImage(image)
+LicensePlateDetection::Preprocess::Preprocess()
 {
-	m_preProcessedImage = image.clone();
+
 }
 
-void LicensePlateDetection::Preprocess::ResizeImage(const int width, const int height)
+
+void LicensePlateDetection::Preprocess::ResizeImage(const cv::Mat& inputImage, cv::Mat& outputImage, const int width, const int height)
 {
-	cv::resize(m_preProcessedImage, m_preProcessedImage, cv::Size(width, height));
+	cv::resize(inputImage, outputImage, cv::Size(width, height));
 }
 
-void LicensePlateDetection::Preprocess::ConvertImageToGray()
+void LicensePlateDetection::Preprocess::ConvertImageToGray(const cv::Mat& inputImage, cv::Mat& outputImage)
 {
-	cv::cvtColor(m_preProcessedImage, m_preProcessedImage, cv::COLOR_BGR2GRAY);
+
+	if (!inputImage.data) {
+		throw std::runtime_error("Invalid input image.");
+	}
+
+	cv::Mat grayImage = cv::Mat::zeros(inputImage.rows, inputImage.cols, CV_8UC1);
+
+	for (int i = 0; i < inputImage.rows; i++) {
+		const cv::Vec3b* InImage = inputImage.ptr<cv::Vec3b>(i);
+		uchar* OutImage = grayImage.ptr<uchar>(i);
+
+		for (int j = 0; j < inputImage.cols; j++)
+		{
+			uchar blue = InImage[j][0];
+			uchar green = InImage[j][1];
+			uchar red = InImage[j][2];
+
+			uchar grayPixel = (0.11 * blue + 0.59 * green + 0.3 * red);
+			OutImage[j] = grayPixel;
+		}
+	}
+	outputImage = grayImage;
 }
 
-void LicensePlateDetection::Preprocess::ConvertImageToGray(const SmoothingAlgorithm smoothingAlgorithm)
+void LicensePlateDetection::Preprocess::NoiseReduction(const cv::Mat& inputImage, cv::Mat& outputImage, const SmoothingAlgorithm smoothingAlgorithm)
 {
-	ConvertImageToGray();
-	cv::Mat tempMat;
+	cv::Mat tempImage;
 	switch (smoothingAlgorithm)
 	{
 	case SmoothingAlgorithm::BilateralFilter:
-		cv::bilateralFilter(m_preProcessedImage, tempMat, 5, 17, 17);
-		m_preProcessedImage = tempMat;
+		cv::bilateralFilter(inputImage, tempImage, DIAMETER, SIGMA_FOR_BILATERAL_FILTER, SIGMA_FOR_BILATERAL_FILTER);
+		outputImage = tempImage;
 		break;
 	case SmoothingAlgorithm::Gaussian:
-		cv::GaussianBlur(m_preProcessedImage, m_preProcessedImage, cv::Size(5, 5), 0);
+		cv::GaussianBlur(inputImage, outputImage, BLUR_KERNEL_SIZE, 0);
+		break;
+	case SmoothingAlgorithm::Averaging:
+		cv::blur(inputImage, outputImage, BLUR_KERNEL_SIZE);
+		break;
+	case SmoothingAlgorithm::Median:
+		cv::medianBlur(inputImage, outputImage, INTEGER_KERNEL_SIZE);
+		break;
+	case SmoothingAlgorithm::Stack:
+		cv::stackBlur(inputImage, outputImage, BLUR_KERNEL_SIZE);
+		break;
+	case SmoothingAlgorithm::BoxFilter:
+		cv::boxFilter(inputImage, outputImage, -1, cv::Size(5,5));
+		break;
+	case SmoothingAlgorithm::NonLocalMeans:
+		cv::fastNlMeansDenoising(inputImage, outputImage); // too slow
 		break;
 	default:
 		break;
 	}
-} // https://docs.opencv.org/4.x/d4/d13/tutorial_py_filtering.html
-
-void LicensePlateDetection::Preprocess::DetectEdges(const double minValue, const double maxValue)
+}
+void LicensePlateDetection::Preprocess::AdaptiveHistogramEqualization(const cv::Mat& inputImage, cv::Mat& outputImage)
 {
-	cv::Canny(m_preProcessedImage, m_preProcessedImage, minValue, maxValue);
+	cv::Ptr<cv::CLAHE> adaptiveHE = cv::createCLAHE(2, cv::Size(40, 40));
+	adaptiveHE->apply(inputImage, outputImage);
+
+	//cv::equalizeHist(inputImage, outputImage);
+	
 }
 
-cv::Mat LicensePlateDetection::Preprocess::GetOriginalImage() const
+
+void LicensePlateDetection::Preprocess::DetectEdges(const cv::Mat& inputImage, cv::Mat& outputImage, const double minValue, const double maxValue)
 {
-	return m_originalImage;
+	cv::Canny(inputImage, outputImage, minValue, maxValue);
 }
 
-cv::Mat LicensePlateDetection::Preprocess::GetPreprocessedImage() const
+void LicensePlateDetection::Preprocess::GetVerticalEdges(cv::Mat& inputOutputImage)
 {
-	return m_preProcessedImage;
+	cv::Sobel(inputOutputImage, inputOutputImage, CV_8U, 1, 0, 3);
+	cv::threshold(inputOutputImage, inputOutputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
+	cv::Mat elementStructure = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7));
+	cv::morphologyEx(inputOutputImage, inputOutputImage, cv::MORPH_CLOSE, elementStructure);
 }
