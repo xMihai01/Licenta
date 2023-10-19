@@ -1,0 +1,1 @@
+configure_file(test_images.txt test_images.txt COPYONLY)

@@ -5,11 +5,11 @@ LicensePlateDetection::Preprocess::Preprocess()
 
 }
 
-
+// TODO: (DONE) Keep aspect ratio
 void LicensePlateDetection::Preprocess::ResizeImage(const cv::Mat& inputImage, cv::Mat& outputImage, const int width, const int height)
 {
-	cv::resize(inputImage, outputImage, cv::Size(width, height));
-}
+	cv::resize(inputImage, outputImage, cv::Size(width, height), 0.0, 0.0, cv::INTER_AREA);
+} 
 
 void LicensePlateDetection::Preprocess::ConvertImageToGray(const cv::Mat& inputImage, cv::Mat& outputImage)
 {
@@ -70,7 +70,7 @@ void LicensePlateDetection::Preprocess::NoiseReduction(const cv::Mat& inputImage
 }
 void LicensePlateDetection::Preprocess::AdaptiveHistogramEqualization(const cv::Mat& inputImage, cv::Mat& outputImage)
 {
-	cv::Ptr<cv::CLAHE> adaptiveHE = cv::createCLAHE(2, cv::Size(40, 40));
+	cv::Ptr<cv::CLAHE> adaptiveHE = cv::createCLAHE();
 	adaptiveHE->apply(inputImage, outputImage);
 
 	//cv::equalizeHist(inputImage, outputImage);

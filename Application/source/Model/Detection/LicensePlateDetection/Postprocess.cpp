@@ -20,10 +20,20 @@ void LicensePlateDetection::Postprocess::NumberPlateExtraction(const cv::Mat& pr
 
 	cv::subtract(preProcessedImage, postProcessedImage, postProcessedImage);
 
-	cv::threshold(postProcessedImage, postProcessedImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
+	// TODO: Histrogram for postProcessedImage
+	// TODO: (DONE) Learn about normal Histogram and cumulative Histogram
+
+	/*
+	For t5.jpg, the logo was no longer detected using GaussianBlur
+	For c4.jpeg, the plate couldn't be detected anymore using GaussianBlur*/
+	//cv::GaussianBlur(postProcessedImage, postProcessedImage, cv::Size(5, 5), 0);
+
+	// TODO: Learn about THRESH_TRIANGLE
+	cv::threshold(postProcessedImage, postProcessedImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_TRIANGLE);
 
 
 	std::vector<std::vector<cv::Point>> contours;
+	// TODO: Replace findContours with connected components and find the highest connected component
 	cv::findContours(postProcessedImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 	//cv::drawContours(m_originalImage, contours, -1, cv::Scalar(0, 255, 0), 2);
 	int contourNumber = 0;
@@ -57,7 +67,7 @@ void LicensePlateDetection::Postprocess::CheckPlate(const cv::Mat& originalImage
 		double height = contourRectangle.height;
 		cv::Mat afterValidationImage = originalImage(cv::Rect(x, y, width, height));
 		if (CleanPlate(afterValidationImage)) {
-			cv::imwrite(std::to_string(contourNumber) + ".jpg", afterValidationImage);
+			//cv::imwrite(std::to_string(contourNumber) + ".jpg", afterValidationImage);
 			cv::drawContours(outputImage, std::vector<std::vector<cv::Point>>{contour}, -1, cv::Scalar(0, 255, 0), 2);
 		}
 	}
@@ -109,7 +119,7 @@ bool LicensePlateDetection::Postprocess::RatioCheck(const double area, const dou
 {
 
 	double min = 1000;
-	double max = 10000;
+	double max = 50000;
 
 	double ratio = width/height;
 
