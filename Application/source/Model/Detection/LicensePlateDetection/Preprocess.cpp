@@ -77,6 +77,21 @@ void LicensePlateDetection::Preprocess::AdaptiveHistogramEqualization(const cv::
 	
 }
 
+void LicensePlateDetection::Preprocess::PreProcessForHaarCascade(const cv::Mat& inputImage, cv::Mat& outputImage)
+{
+	ConvertImageToGray(inputImage, outputImage);
+	NoiseReduction(outputImage, outputImage, SmoothingAlgorithm::Gaussian);
+
+
+	cv::Mat dilateKernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+
+	cv::dilate(outputImage, outputImage, dilateKernel);
+
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(2, 2));
+	cv::morphologyEx(outputImage, outputImage, cv::MORPH_OPEN, kernel);
+
+}
+
 
 void LicensePlateDetection::Preprocess::DetectEdges(const cv::Mat& inputImage, cv::Mat& outputImage, const double minValue, const double maxValue)
 {

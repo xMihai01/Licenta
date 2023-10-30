@@ -20,3 +20,6 @@ tcar1.jpg
 tcar2.jpg
 testImage.jpg
 testImage2.jpg
+BV20WXP_night1.jpeg
+BV20WXP_night2.jpeg
+BV65DCV_night1.jpeg

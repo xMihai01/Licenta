@@ -48,7 +48,7 @@ void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingHaarCascade(c
 {
 	cv::Mat outImage = originalImage.clone();
 	std::vector<cv::Rect> detections;
-	licensePlateModel.detectMultiScale(preProcessedImage, detections);
+	licensePlateModel.detectMultiScale(preProcessedImage, detections, 1.1, 1);
 	for (auto detection : detections) {
 		cv::rectangle(outImage, detection, cv::Scalar(0, 255, 0));
 	}
