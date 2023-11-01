@@ -4,6 +4,8 @@ project(Application)
 
 set(SOURCES
     Model
+    Model/Detection
+    Model/Detection/LicensePlateDetection
     View 
     Controller
 )
