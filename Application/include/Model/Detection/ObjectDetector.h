@@ -6,17 +6,15 @@
 class ObjectDetector {
 
 	// Detection model types.
-
 	enum class DetectionModelType {
-		ONNX,
+		ONNX, 
 		PYTORCH,
-		TFLITE,
-		DARKNET
+		TFLITE
 	};
 
-	const std::unordered_map<std::string, DetectionModelType> EXTENSION_TO_MODEL_TYPE_MAP 
+	const std::unordered_map<std::string, DetectionModelType> EXTENSION_TO_MODEL_TYPE_MAP
 		= { std::make_pair("onnx", DetectionModelType::ONNX), std::make_pair("pt", DetectionModelType::PYTORCH),
-			std::make_pair("tflite", DetectionModelType::TFLITE), std::make_pair("cfg", DetectionModelType::DARKNET)};
+			std::make_pair("tflite", DetectionModelType::TFLITE) };
 
 	// Constants.
 	float INPUT_WIDTH = 224.0;
@@ -30,7 +28,7 @@ class ObjectDetector {
 	// Text parameters.
 	const float FONT_SCALE = 0.5;
 	const int FONT_FACE = cv::FONT_HERSHEY_SIMPLEX;
-	const int THICKNESS = 2;
+	const int THICKNESS = 0.7;
 
 	// Colors.
 	cv::Scalar BLACK = cv::Scalar(0, 0, 0);
@@ -57,7 +55,7 @@ public:
 
 	bool IsModelReady();
 
-    cv::Mat Detect(const cv::Mat& source);
+	cv::Mat Detect(const cv::Mat& source);
 	void ChangeDetectionModel(const std::string& modelName, const std::string& classListFileName, float inputWidth, float inputHeight, float confidenceThreshold);
 
 }; // https://learnopencv.com/object-detection-using-yolov5-and-opencv-dnn-in-c-and-python/

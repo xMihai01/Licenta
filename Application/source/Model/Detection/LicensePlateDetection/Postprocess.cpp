@@ -11,7 +11,7 @@ bool compareContourAreas(std::vector<cv::Point>& contour1, std::vector<cv::Point
 	return (i < j);
 }
 
-void LicensePlateDetection::Postprocess::NumberPlateExtraction(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& postProcessedImage, cv::Mat& outputImage)
+void LicensePlateDetection::Postprocess::NumberPlateExtraction(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& outputImage, cv::Mat& postProcessedImage)
 {
 	cv::Mat outImage = originalImage.clone();
 
@@ -29,7 +29,7 @@ void LicensePlateDetection::Postprocess::NumberPlateExtraction(const cv::Mat& pr
 	//cv::GaussianBlur(postProcessedImage, postProcessedImage, cv::Size(5, 5), 0);
 
 	// TODO: Learn about THRESH_TRIANGLE
-	cv::threshold(postProcessedImage, postProcessedImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_TRIANGLE);
+	cv::threshold(postProcessedImage, postProcessedImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
 
 
 	std::vector<std::vector<cv::Point>> contours;
@@ -119,7 +119,7 @@ bool LicensePlateDetection::Postprocess::RatioCheck(const double area, const dou
 {
 
 	double min = 1000;
-	double max = 50000;
+	double max = 5000;
 
 	double ratio = width/height;
 

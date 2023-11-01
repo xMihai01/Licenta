@@ -1,5 +1,6 @@
 #include "Model/Detection/ObjectDetector.h"
 
+
 void ObjectDetector::DrawLabel(cv::Mat& inputImage, std::string& label, int left, int top)
 {
     int baseLine;
@@ -16,15 +17,26 @@ void ObjectDetector::DrawLabel(cv::Mat& inputImage, std::string& label, int left
 std::vector<cv::Mat> ObjectDetector::PreProcess(cv::Mat& inputImage)
 {
 
+    // put the image in a square big enough
+    int col = inputImage.cols;
+    int row = inputImage.rows;
+    int _max = MAX(col, row);
+    cv::Mat resized = cv::Mat::zeros(_max, _max, CV_8UC3);
+    inputImage.copyTo(resized(cv::Rect(0, 0, col, row)));
+
+    // resize to 640x640, normalize to [0,1[ and swap Red and Blue channels
     cv::Mat blob;
     cv::dnn::blobFromImage(inputImage, blob, 1. / 255., cv::Size(INPUT_WIDTH, INPUT_HEIGHT), cv::Scalar(), true, false);
 
     m_net.setInput(blob);
-    std::vector<cv::String> outNames = m_net.getUnconnectedOutLayersNames();
+    //std::vector<cv::String> outNames = m_net.getUnconnectedOutLayersNames();
 
-    std::vector<cv::Mat> outputs;
-    m_net.forward(outputs);
-    return outputs;
+    //std::vector<cv::Mat> outputs;
+    std::vector<cv::Mat> predictions;
+    m_net.forward(predictions, m_net.getUnconnectedOutLayersNames());
+    const cv::Mat& output = predictions[0];
+//    m_net.forward(outputs);
+    return predictions;
 }
 
 cv::Mat ObjectDetector::PostProcess(cv::Mat& inputImage, std::vector<cv::Mat>& outputs)
@@ -37,12 +49,13 @@ cv::Mat ObjectDetector::PostProcess(cv::Mat& inputImage, std::vector<cv::Mat>& o
     float x_factor = inputImage.cols / INPUT_WIDTH;
     float y_factor = inputImage.rows / INPUT_HEIGHT;
     float* data = (float*)outputs[0].data;
-    int dimensions =m_classList.size();
+    int dimensions = m_classList.size();
     int rows = outputs[0].size[1];
+
     for (int i = 0; i < rows; ++i)
     {
         float confidence = data[4];
-        if (confidence >= CONFIDENCE_THRESHOLD && confidence <=1.00)
+        if (confidence >= CONFIDENCE_THRESHOLD && confidence <= 1.00)
         {
             float* classes_scores = data + 5;
             cv::Mat scores(1, m_classList.size(), CV_32FC1, classes_scores);
@@ -68,7 +81,7 @@ cv::Mat ObjectDetector::PostProcess(cv::Mat& inputImage, std::vector<cv::Mat>& o
             boxes.push_back(cv::Rect(left, top, width, height));
         }
         // Jump to the next row.
-        data += (5+dimensions);
+        data += (5 + dimensions);
     }
     // Perform Non-Maximum Suppression and draw predictions.
     std::vector<int> indices;
@@ -81,24 +94,10 @@ cv::Mat ObjectDetector::PostProcess(cv::Mat& inputImage, std::vector<cv::Mat>& o
         int top = box.y;
         int width = box.width;
         int height = box.height;
-        //if (left < 0)
-        //    continue;
-        //if (top < 0)
-        //    continue;
-        //if (width > INPUT_WIDTH)
-        //    continue;
-        //if (height > INPUT_HEIGHT)
-        //    continue;
-
-        //if (left + width > INPUT_WIDTH)
-        //    continue;
-        //if (top + height > INPUT_HEIGHT)
-        //    continue;
-        //cv::Mat afterValidationImage = inputImage(cv::Rect(left, top, width, height));
-        //return afterValidationImage;
         // Draw bounding box.
+        //return inputImage(cv::Rect(left, top, width, height));
         rectangle(inputImage, cv::Point(left, top), cv::Point(left + width, top + height), BLUE, 3 * THICKNESS);
-        DrawLabel(inputImage, m_classList[class_ids[idx]] + ":" + cv::format("%.2f", confidences[idx]), left, top);
+        //DrawLabel(inputImage, m_classList[class_ids[idx]] + ":" + cv::format("%.2f", confidences[idx]), left, top);
     }
 
     return inputImage;
@@ -109,7 +108,7 @@ void ObjectDetector::ReadClassListFromTxtFile(const std::string& classListFileNa
     std::ifstream classListFileInput(RESOURCES_PATH + classListFileName);
     if (!classListFileInput.good())
         throw std::runtime_error("Class list file '" + classListFileName + "' couldn't be opened. Make sure it exists and it is in the Resources folder!");
-    
+
     std::string className;
     while (classListFileInput >> className)
         m_classList.push_back(className);
@@ -139,17 +138,19 @@ ObjectDetector::ObjectDetector()
 cv::Mat ObjectDetector::Detect(const cv::Mat& source)
 {
     try {
-        cv::Mat frame;
+        cv::Mat frame = source.clone();
         cv::resize(source, frame, cv::Size(INPUT_WIDTH, INPUT_HEIGHT), cv::INTER_LINEAR);
+
         std::vector<cv::Mat> detections = PreProcess(frame);
         cv::Mat img = PostProcess(frame, detections);
+
         // Put efficiency information.
         // The function getPerfProfile returns the overall time for     inference(t) and the timings for each of the layers(in layersTimes).
-  /*      std::vector<double> layersTimes;
+        std::vector<double> layersTimes;
         double freq = cv::getTickFrequency() / 1000;
         double t = m_net.getPerfProfile(layersTimes) / freq;
         std::string label = cv::format("Inference time : %.2f ms", t);
-        cv::putText(img, label, cv::Point(20, 40), FONT_FACE, FONT_SCALE, RED);*/
+        //cv::putText(img, label, cv::Point(20, 40), FONT_FACE, FONT_SCALE, RED);
 
         return img;
     }
@@ -157,6 +158,7 @@ cv::Mat ObjectDetector::Detect(const cv::Mat& source)
         throw std::runtime_error("Model was loaded but can't be used for detection. Check input width/height, class list or export the model using ONNX.");
     }
 }
+
 
 void ObjectDetector::ChangeDetectionModel(const std::string& modelName, const std::string& classListFileName, float inputWidth, float inputHeight, float confidenceThreshold)
 {
@@ -177,9 +179,6 @@ void ObjectDetector::ChangeDetectionModel(const std::string& modelName, const st
         case DetectionModelType::TFLITE:
             m_net = cv::dnn::readNetFromTFLite(RESOURCES_PATH + modelName);
             break;
-        case DetectionModelType::DARKNET:
-            m_net = cv::dnn::readNetFromDarknet(RESOURCES_PATH + modelName, RESOURCES_PATH + "lapi.weights");
-            break;
         default:
             m_net = cv::dnn::readNet(RESOURCES_PATH + modelName);
             break;
@@ -187,7 +186,8 @@ void ObjectDetector::ChangeDetectionModel(const std::string& modelName, const st
         ReadClassListFromTxtFile(classListFileName);
         Detect(cv::Mat::zeros(inputWidth, inputHeight, CV_8UC3));
         m_isModelAvailable = true;
-    } catch (const std::exception& exception) {
+    }
+    catch (const std::exception& exception) {
         throw exception;
     }
 }

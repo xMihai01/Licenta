@@ -11,7 +11,7 @@ namespace LicensePlateDetection {
 		const std::uint8_t DIAMETER = 5;
 		const std::uint16_t SIGMA_FOR_BILATERAL_FILTER = 70;
 
-		const int INTEGER_KERNEL_SIZE = 5;
+		const int INTEGER_KERNEL_SIZE = 7;
 		const cv::Size BLUR_KERNEL_SIZE = cv::Size(9, 9);
 		
 	public:
