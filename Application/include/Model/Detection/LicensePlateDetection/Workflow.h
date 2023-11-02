@@ -23,6 +23,10 @@ namespace LicensePlateDetection {
 
 	private:
 
+		void SkewCorrection(cv::Mat& inputImage, cv::Mat& outputImage);
+
+	private:
+
 		LicensePlateDetection::Postprocess m_postprocessing;
 		LicensePlateDetection::Preprocess m_preprocessing;
 
