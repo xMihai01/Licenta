@@ -43,12 +43,12 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 	
 		m_detector.IsModelReady() ? outputImage = m_detector.Detect(inputImage) : outputImage = originalInputImage;
 		//m_preprocessing.NoiseReduction(outputImage, outputImage, Gaussian);
-		m_detector.IsModelReady() ? m_preprocessing.SkewCorrection(outputImage, originalInputImage) : outputImage = originalInputImage;
-		outputImage = originalInputImage;
+		//m_detector.IsModelReady() ? m_preprocessing.SkewCorrection(outputImage, originalInputImage) : outputImage = originalInputImage;
+		//outputImage = originalInputImage;
 		//m_detector.IsModelReady() ? RLSA(outputImage, originalInputImage, 10, 10) : outputImage = originalInputImage;
 		//outputImage = originalInputImage;
-		m_detector.IsModelReady() ? m_postprocessing.LetterDetection(outputImage, originalInputImage) : outputImage = originalInputImage;
-		outputImage = originalInputImage;
+		//m_detector.IsModelReady() ? m_postprocessing.LetterDetection(outputImage, originalInputImage) : outputImage = originalInputImage;
+		//outputImage = originalInputImage;
 		break;
 	default:
 		break;
