@@ -3,6 +3,8 @@
 #include <Model/Detection/ObjectDetector.h>
 #include <Model/Utils.h>
 
+#include <map>
+
 namespace LicensePlateDetection {
 
 	enum class DetectionType {
@@ -20,10 +22,6 @@ namespace LicensePlateDetection {
 		void Detect(cv::Mat& inputImage, cv::Mat& outputImage, std::string& outputText, const LicensePlateDetection::DetectionType detectionType);
 		// for testing
 		void DetectMultiple(const LicensePlateDetection::DetectionType detectionType, const std::string& fileName);
-
-	private:
-
-		void SkewCorrection(cv::Mat& inputImage, cv::Mat& outputImage);
 
 	private:
 

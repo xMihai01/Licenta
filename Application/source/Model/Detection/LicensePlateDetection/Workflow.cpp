@@ -1,5 +1,16 @@
 #include "Model/Detection/LicensePlateDetection/Workflow.h"
 
+bool letterLocationComparator(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b) {
+	return a.second.x < b.second.x;
+}
+
+bool letterLocationComparatorByY(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b) {
+	return a.second.y < b.second.y;
+}
+bool letterLocationComparatorByHeight(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b) {
+	return a.second.height < b.second.height;
+}
+
 LicensePlateDetection::Workflow::Workflow()
 {
 	m_detector.ChangeDetectionModel("license_weights_480trained.onnx", "license_classList.txt", 480.0, 480.0, 0.4);
@@ -29,8 +40,14 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 
 		break;
 	case DetectionType::DNN:
+	
 		m_detector.IsModelReady() ? outputImage = m_detector.Detect(inputImage) : outputImage = originalInputImage;
-		m_detector.IsModelReady() ? SkewCorrection(outputImage, originalInputImage) : outputImage = originalInputImage;
+		//m_preprocessing.NoiseReduction(outputImage, outputImage, Gaussian);
+		m_detector.IsModelReady() ? m_preprocessing.SkewCorrection(outputImage, originalInputImage) : outputImage = originalInputImage;
+		outputImage = originalInputImage;
+		//m_detector.IsModelReady() ? RLSA(outputImage, originalInputImage, 10, 10) : outputImage = originalInputImage;
+		//outputImage = originalInputImage;
+		m_detector.IsModelReady() ? m_postprocessing.LetterDetection(outputImage, originalInputImage) : outputImage = originalInputImage;
 		outputImage = originalInputImage;
 		break;
 	default:
@@ -52,50 +69,7 @@ void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection
 		cv::Mat outputImage;
 		licenseWorkflow.Detect(testImage, outputImage, std::string(), detectionType);
 
-		cv::imwrite(std::to_string(i) + "_" + imageName + ".jpg", outputImage);
+		cv::imwrite(std::to_string(i) + imageName, outputImage);
 	}
 }
 
-void LicensePlateDetection::Workflow::SkewCorrection(cv::Mat& inputImage, cv::Mat& outputImage)
-{
-	m_preprocessing.ConvertImageToGray(inputImage, outputImage);
-
-	cv::threshold(outputImage, outputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
-
-	std::vector<std::vector<cv::Point>> contours;
-	cv::findContours(outputImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
-
-	std::vector<double> areas;
-	for (const auto& contour : contours) {
-		areas.push_back(cv::contourArea(contour));
-	}
-
-	int maxIndex = static_cast<int>(std::distance(areas.begin(), std::max_element(areas.begin(), areas.end())));
-	std::vector<cv::Point> max_cnt = contours[maxIndex];
-
-	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
-	double x = contourRectangle.x;
-	double y = contourRectangle.y;
-	double width = contourRectangle.width;
-	double height = contourRectangle.height;
-	outputImage = inputImage(cv::Rect(x, y, width, height));
-
-	m_preprocessing.ConvertImageToGray(outputImage, outputImage);
-
-	cv::bitwise_not(outputImage, outputImage);
-	cv::threshold(outputImage, outputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
-
-	cv::RotatedRect rotatedRect = cv::minAreaRect(max_cnt);
-	float angle = rotatedRect.angle;
-
-	if (angle > 80 && angle < 10) // image doesn't need skew correction
-		return;
-
-	int h = outputImage.rows;
-	int w = outputImage.cols;
-	cv::Point2f center(w / 2, h / 2);
-	cv::Mat M = cv::getRotationMatrix2D(center, angle < 45 ? angle : angle-90, 1.0); // bottom-left down - 90. bottom-left up + 0
-
-	cv::warpAffine(outputImage, outputImage, M, cv::Size(w, h), cv::INTER_CUBIC, cv::BORDER_REPLICATE);
-	
-}
