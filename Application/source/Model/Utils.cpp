@@ -44,6 +44,55 @@ std::pair<cv::Mat, cv::Mat> Utils::GetHistograms(const cv::Mat grayImage)
 	return std::make_pair(histogramImage, cumulativeHistogramImage);
 }
 
+void Utils::GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour, const bool crop)
+{
+	std::vector<std::vector<cv::Point>> contours;
+	cv::findContours(inputImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+
+	std::vector<double> areas;
+	for (const auto& contour : contours) {
+		areas.push_back(cv::contourArea(contour));
+	}
+
+	int maxIndex = static_cast<int>(std::distance(areas.begin(), std::max_element(areas.begin(), areas.end())));
+	std::vector<cv::Point> max_cnt = contours[maxIndex];
+
+	//cv::drawContours(originalImage, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(0, 255, 0), 1);
+
+	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
+	double x = contourRectangle.x;
+	double y = contourRectangle.y;
+	double width = contourRectangle.width;
+	double height = contourRectangle.height;
+	if (crop)
+		outputImage = inputImage(cv::Rect(x, y, width, height));
+	maxContour = max_cnt;
+}
+
+void Utils::BitwiseCharImage(const cv::Mat& src1, const cv::Mat& src2, cv::Mat& dst)
+{
+	if (src1.size != src2.size)
+		throw new std::runtime_error("Src1 and src2 images are of different sizes!");
+	dst = src1.clone();
+	for (int i = 0; i < src1.rows; i++) {
+		const uchar* ptr1 = src1.ptr<uchar>(i);
+		const uchar* ptr2 = src2.ptr<uchar>(i);
+		uchar* ptrDst = dst.ptr<uchar>(i);
+
+		for (int j = 0; j < src1.cols; j++)
+		{
+			const uchar* pixelSrc1 = ptr1 + j;
+			const uchar* pixelSrc2 = ptr2 + j;
+			uchar pixelValueSrc1 = pixelSrc1[0] <= 254 ? 0 : 255;
+			uchar pixelValueSrc2 = pixelSrc2[0] <= 254 ? 0 : 255;
+			uchar* pixelDst = ptrDst + j;
+
+			pixelValueSrc1 == pixelValueSrc2 ? pixelDst[0] = 0 : pixelDst[0] = 255;
+
+		}
+	}
+}
+
 std::vector<std::string> Utils::GetImageNamesFromFile(const std::string& path)
 {
 	std::vector<std::string> imageNames;

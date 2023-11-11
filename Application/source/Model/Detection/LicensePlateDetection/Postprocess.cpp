@@ -1,5 +1,15 @@
 ﻿#include "Model/Detection/LicensePlateDetection/Postprocess.h"
 
+bool letterLocationComparator(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b) {
+	return a.second.x < b.second.x;
+}
+
+bool letterLocationComparatorByY(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b) {
+	return a.second.y < b.second.y;
+}
+bool letterLocationComparatorByHeight(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b) {
+	return a.second.height < b.second.height;
+}
 
 LicensePlateDetection::Postprocess::Postprocess()
 {
@@ -115,22 +125,23 @@ bool LicensePlateDetection::Postprocess::CleanPlate(const cv::Mat& plateImage)
 	return false;
 }
 
-void LicensePlateDetection::Postprocess::RLSA(cv::Mat& inputImage, cv::Mat& outputImage, const int valueHorizontal, const int valueVertical)
+void LicensePlateDetection::Postprocess::RLSA(const cv::Mat& inputImage, cv::Mat& outputImage, const int valueHorizontal, const int valueVertical)
 {
 	if (valueHorizontal > 0)
-		RLSAIteration(outputImage, outputImage, valueHorizontal);
+		RLSAIteration(inputImage, outputImage, valueHorizontal);
 	if (valueVertical > 0) {
-		outputImage = outputImage.t();
+		outputImage = inputImage.t();
 		RLSAIteration(outputImage, outputImage, valueVertical);
 		outputImage = outputImage.t();
 	}
 }
 
-void LicensePlateDetection::Postprocess::RLSAIteration(cv::Mat& inputImage, cv::Mat& outputImage, const int value)
+void LicensePlateDetection::Postprocess::RLSAIteration(const cv::Mat& inputImage, cv::Mat& outputImage, const int value)
 {
+	outputImage = inputImage.clone();
 	for (int index = 0; index < inputImage.rows; index++) {
 
-		uchar* row_pointer = inputImage.ptr<uchar>(index);
+		uchar* row_pointer = outputImage.ptr<uchar>(index);
 		int start = 0;
 
 		for (int secondIndex = 0; secondIndex < inputImage.cols; secondIndex++) {
@@ -149,61 +160,54 @@ void LicensePlateDetection::Postprocess::RLSAIteration(cv::Mat& inputImage, cv::
 			float pixel = pixel_pointer[0];
 		}
 	}
-	outputImage = inputImage.clone();
+}
+
+void LicensePlateDetection::Postprocess::ClearCharImage(const cv::Mat& inputCharImage, cv::Mat& outputCharImage)
+{
+
+	std::vector<cv::Point> max_cnt;
+
+	cv::Mat biggerInput(inputCharImage.rows + 30, inputCharImage.cols+30, CV_8UC1, cv::Scalar(255));
+	inputCharImage.copyTo(biggerInput(cv::Rect(30 / 2, 30 / 2, inputCharImage.cols, inputCharImage.rows)));
+	cv::Mat whiteImage(inputCharImage.rows + 30, inputCharImage.cols + 30, CV_8UC1, cv::Scalar(255));
+
+	Utils::GetImageByHighestContour(biggerInput, outputCharImage, max_cnt);
+
+	cv::drawContours(whiteImage, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(0), cv::FILLED);
+	/*cv::bitwise_xor(inputCharImage, whiteImage, outputCharImage);*/
+	Utils::BitwiseCharImage(biggerInput, whiteImage, outputCharImage);
 }
 
 void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv::Mat& outputImage)
 {
-	cv::Mat original = inputImage.clone();
-	//cv::Mat elementStructure = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
-	//cv::morphologyEx(inputImage, outputImage, cv::MORPH_CLOSE, elementStructure);
-	//
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
+	cv::morphologyEx(inputImage, inputImage, cv::MORPH_OPEN, kernel);
+
 	std::vector<std::vector<cv::Point>> contours;
 	cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
-	cv::Mat contouredImage = inputImage.clone();
-	cv::cvtColor(contouredImage, contouredImage, cv::COLOR_GRAY2BGR);
-	cv::drawContours(contouredImage, contours, -1, cv::Scalar(0, 255, 0), 1);
 	std::vector<std::pair<cv::Mat, cv::Rect>> lettersBox;
-
 
 	for (size_t index = 0; index < contours.size(); index++) {
 		cv::Rect contourRectangle = cv::boundingRect(contours[index]);
 		double x = contourRectangle.x;
 		double y = contourRectangle.y;
-		double width = contourRectangle.width;
+		double width = contourRectangle.width; 
 		double height = contourRectangle.height;
-		//if (m_postprocessing.RatioCheck(cv::contourArea(contours[index]), 1, 1, 50, 10000)) {
-		if (height > outputImage.cols * 0.075 && width < outputImage.rows / 2) {
-			cv::Mat charImage = outputImage(cv::Rect(x, y, width, height));
+		if ((height > inputImage.rows * 0.3 && width < inputImage.cols / 2) && RatioCheck(cv::contourArea(contours[index]), 1, 1, Utils::MINIMUM_CONTOUR_AREA, Utils::MAXIMUM_CONTOUR_AREA)) {
+			cv::Mat charImage = inputImage(cv::Rect(x, y, width, height));
+			//ClearCharImage(inputImage(cv::Rect(x, y, width, height)), charImage);
 			lettersBox.push_back(std::make_pair(charImage, contourRectangle));
 		}
 	}
 
-	//std::sort(lettersBox.begin(), lettersBox.end(), letterLocationComparator);
-	//std::sort(lettersBox.begin(), lettersBox.end(), letterLocationComparatorByY);
+	cv::Mat whiteImage(inputImage.rows, inputImage.cols, CV_8UC1, cv::Scalar(255));
 
-	double startY = inputImage.rows - 1;
-	double endY = 1;
-	for (auto& letter : lettersBox) {
-		if (letter.second.height > endY)
-			endY = letter.second.height;
-		if (letter.second.y < startY)
-			startY = letter.second.y;
+	for (size_t index = 0; index < lettersBox.size(); index++) {
+		lettersBox[index].first.copyTo(whiteImage(cv::Rect(lettersBox[index].second)));
+		//cv::imwrite("chars/" + std::to_string(index) + ".jpg", lettersBox[index].first);
 	}
-
-
-	cv::Mat whiteImage(100, 300, CV_8UC1, cv::Scalar(255));
-	cv::Mat croppedImage = outputImage(cv::Rect(0, startY, inputImage.cols, endY));
-	croppedImage.copyTo(whiteImage(cv::Rect(0, startY, inputImage.cols, endY)));
-
 	outputImage = whiteImage;
-
-	std::vector<std::vector<cv::Point>> contours2;
-	cv::findContours(outputImage, contours2, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
-
-	cv::cvtColor(outputImage, outputImage, cv::COLOR_GRAY2BGR);
-	cv::drawContours(outputImage, contours2, -1, cv::Scalar(0, 255, 0), 1);
 }
 
 bool LicensePlateDetection::Postprocess::RatioCheck(const double area, const double width, const double height, const double ratioMin, const double ratioMax)

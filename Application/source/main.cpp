@@ -6,7 +6,7 @@
 int main() {
 	
 	LicensePlateDetection::Workflow licenseWorkflow;
-	//cv::Mat testImage = cv::imread("C:/Users/mihai/Desktop/Licenta/Licenta/Resources/t4.jpg");
+	//cv::Mat testImage = cv::imread("C:/Users/mihai/Desktop/Licenta/Licenta/Resources/n5.JPEG"); // test on BV20WXP.jpeg
 	//licenseWorkflow.Detect(testImage, testImage, std::string(), LicensePlateDetection::DetectionType::DNN);
 	licenseWorkflow.DetectMultiple(LicensePlateDetection::DetectionType::DNN, "test_images.txt");
 

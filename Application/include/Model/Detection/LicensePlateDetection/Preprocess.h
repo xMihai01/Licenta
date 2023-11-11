@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "SmoothingAlgorithmEnum.h"
+#include <Model/Utils.h>
 
 namespace LicensePlateDetection {
 
@@ -24,11 +25,10 @@ namespace LicensePlateDetection {
 		void AdaptiveHistogramEqualization(const cv::Mat& inputImage, cv::Mat& outputImage);
 
 		void SkewCorrection(cv::Mat& inputImage, cv::Mat& outputImage);
-		void GetImageByHighestContour(cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour, const bool crop = false);
 
 		void PreProcessForHaarCascade(const cv::Mat& inputImage, cv::Mat& outputImage);
 
-		void DetectEdges(const cv::Mat& inputImage, cv::Mat& outputImage, const double minValue, const double maxValue);
+		void DetectEdges(const cv::Mat& inputImage, cv::Mat& outputImage, const int xDirection, const int yDirection);
 		void GetVerticalEdges(cv::Mat& inputOutputImage);
 
 	};

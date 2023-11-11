@@ -94,14 +94,15 @@ void LicensePlateDetection::Preprocess::PreProcessForHaarCascade(const cv::Mat& 
 void LicensePlateDetection::Preprocess::SkewCorrection(cv::Mat& inputImage, cv::Mat& outputImage)
 {
 	ConvertImageToGray(inputImage, outputImage);
-	ResizeImage(outputImage, outputImage, 300, 100);
-	//m_preprocessing.NoiseReduction(outputImage, outputImage, Gaussian);
+	NoiseReduction(outputImage, outputImage, Gaussian);
+
+	ResizeImage(outputImage, outputImage, Utils::PLATE_WIDTH, Utils::PLATE_HEIGHT);
 
 	cv::threshold(outputImage, outputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
-
+	
 	std::vector<cv::Point> max_cnt;
 
-	GetImageByHighestContour(outputImage, outputImage, max_cnt);
+	Utils::GetImageByHighestContour(outputImage, outputImage, max_cnt);
 	//cv::drawContours(inputImage, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(0, 255, 0), 1);
 	// 
 	//m_preprocessing.ConvertImageToGray(outputImage, outputImage);
@@ -112,7 +113,7 @@ void LicensePlateDetection::Preprocess::SkewCorrection(cv::Mat& inputImage, cv::
 	cv::RotatedRect rotatedRect = cv::minAreaRect(max_cnt);
 	float angle = rotatedRect.angle;
 
-	if (angle > 86 && angle < 10) // image doesn't need skew correction
+	if (angle > 85 && angle < 5) // image doesn't need skew correction
 		return;
 
 	int h = outputImage.rows;
@@ -121,40 +122,18 @@ void LicensePlateDetection::Preprocess::SkewCorrection(cv::Mat& inputImage, cv::
 	cv::Mat rotationMatrix = cv::getRotationMatrix2D(center, angle < 45 ? angle : angle - 90, 1.0); // bottom-left down - 90. bottom-left up + 0
 
 	cv::warpAffine(outputImage, outputImage, rotationMatrix, cv::Size(w, h), cv::INTER_CUBIC, cv::BORDER_REPLICATE);
-
 	cv::bitwise_not(outputImage, outputImage);
 
-	GetImageByHighestContour(outputImage, outputImage, max_cnt, true);
+	Utils::GetImageByHighestContour(outputImage, outputImage, max_cnt, true);
 }
 
-void LicensePlateDetection::Preprocess::GetImageByHighestContour(cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour, const bool crop)
+void LicensePlateDetection::Preprocess::DetectEdges(const cv::Mat& inputImage, cv::Mat& outputImage, const int xDirection, const int yDirection)
 {
-	std::vector<std::vector<cv::Point>> contours;
-	cv::findContours(inputImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
-
-	std::vector<double> areas;
-	for (const auto& contour : contours) {
-		areas.push_back(cv::contourArea(contour));
-	}
-
-	int maxIndex = static_cast<int>(std::distance(areas.begin(), std::max_element(areas.begin(), areas.end())));
-	std::vector<cv::Point> max_cnt = contours[maxIndex];
-
-	//cv::drawContours(originalImage, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(0, 255, 0), 1);
-
-	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
-	double x = contourRectangle.x;
-	double y = contourRectangle.y;
-	double width = contourRectangle.width;
-	double height = contourRectangle.height;
-	if (crop)
-		outputImage = inputImage(cv::Rect(x, y, width, height));
-	maxContour = max_cnt;
-}
-
-void LicensePlateDetection::Preprocess::DetectEdges(const cv::Mat& inputImage, cv::Mat& outputImage, const double minValue, const double maxValue)
-{
-	cv::Canny(inputImage, outputImage, minValue, maxValue);
+	cv::Sobel(inputImage, outputImage, CV_8U, xDirection, yDirection);
+	cv::threshold(outputImage, outputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
+	cv::Mat elementStructure = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+	cv::dilate(outputImage, outputImage, elementStructure, cv::Point(-1, -1), 2);
+	cv::erode(outputImage, outputImage, elementStructure);
 }
 
 void LicensePlateDetection::Preprocess::GetVerticalEdges(cv::Mat& inputOutputImage)

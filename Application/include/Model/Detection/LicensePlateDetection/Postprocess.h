@@ -2,6 +2,8 @@
 #include <vector>
 #include <algorithm>
 
+#include <Model/Utils.h>
+
 namespace LicensePlateDetection {
 
 	class Postprocess {
@@ -26,9 +28,10 @@ namespace LicensePlateDetection {
 		bool ValidateRatio(const cv::RotatedRect& rectangle);
 		bool RatioCheck(const double area, const double width, const double height, const double ratioMin, const double ratioMax);
 
-		void RLSA(cv::Mat& inputImage, cv::Mat& outputImage, const int valueHorizontal = -1, const int valueVertical = -1);
-		void RLSAIteration(cv::Mat& inputImage, cv::Mat& outputImage, const int value);
+		void RLSA(const cv::Mat& inputImage, cv::Mat& outputImage, const int valueHorizontal = -1, const int valueVertical = -1);
+		void RLSAIteration(const cv::Mat& inputImage, cv::Mat& outputImage, const int value);
 
+		void ClearCharImage(const cv::Mat& inputCharImage, cv::Mat& outputCharImage);
 	};
 
 }

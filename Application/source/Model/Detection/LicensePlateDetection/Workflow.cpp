@@ -1,19 +1,9 @@
 #include "Model/Detection/LicensePlateDetection/Workflow.h"
 
-bool letterLocationComparator(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b) {
-	return a.second.x < b.second.x;
-}
-
-bool letterLocationComparatorByY(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b) {
-	return a.second.y < b.second.y;
-}
-bool letterLocationComparatorByHeight(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b) {
-	return a.second.height < b.second.height;
-}
-
 LicensePlateDetection::Workflow::Workflow()
 {
-	m_detector.ChangeDetectionModel("license_weights_480trained.onnx", "license_classList.txt", 480.0, 480.0, 0.4);
+	//m_detector.ChangeDetectionModel("license_weights_640trained.onnx", "license_classList.txt", 640.0, 640.0, 0.4);
+	m_detector.ChangeDetectionModel(Utils::PLATE_MODEL_NAME, Utils::PLATE_MODEL_CLASS_LIST, Utils::INPUT_WIDTH, Utils::INPUT_HEIGHT, 0.4);
 }
 
 void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outputImage, std::string& outputText, const LicensePlateDetection::DetectionType detectionType)
@@ -40,15 +30,12 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 
 		break;
 	case DetectionType::DNN:
-	
-		m_detector.IsModelReady() ? outputImage = m_detector.Detect(inputImage) : outputImage = originalInputImage;
+		//m_detector.IsModelReady() ? outputImage = m_detector.Detect(inputImage) : outputImage = originalInputImage;
 		//m_preprocessing.NoiseReduction(outputImage, outputImage, Gaussian);
-		//m_detector.IsModelReady() ? m_preprocessing.SkewCorrection(outputImage, originalInputImage) : outputImage = originalInputImage;
-		//outputImage = originalInputImage;
-		//m_detector.IsModelReady() ? RLSA(outputImage, originalInputImage, 10, 10) : outputImage = originalInputImage;
-		//outputImage = originalInputImage;
-		//m_detector.IsModelReady() ? m_postprocessing.LetterDetection(outputImage, originalInputImage) : outputImage = originalInputImage;
-		//outputImage = originalInputImage;
+		m_detector.IsModelReady() ? m_preprocessing.SkewCorrection(m_detector.Detect(inputImage), originalInputImage) : outputImage = originalInputImage;
+		outputImage = originalInputImage;
+		m_detector.IsModelReady() ? m_postprocessing.LetterDetection(outputImage, originalInputImage) : outputImage = originalInputImage;
+		outputImage = originalInputImage;
 		break;
 	default:
 		break;
@@ -69,7 +56,14 @@ void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection
 		cv::Mat outputImage;
 		licenseWorkflow.Detect(testImage, outputImage, std::string(), detectionType);
 
-		cv::imwrite(std::to_string(i) + imageName, outputImage);
+		//std::vector<std::vector<cv::Point>> contours;
+		//cv::findContours(outputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+		//cv::cvtColor(outputImage, outputImage, cv::COLOR_GRAY2BGR);
+		//cv::drawContours(outputImage, contours, -1, cv::Scalar(0, 255, 0), 1);
+
+		cv::imwrite(std::to_string(i) + "_" + imageName, outputImage);
+		//system("pause");
 	}
+	
 }
 
