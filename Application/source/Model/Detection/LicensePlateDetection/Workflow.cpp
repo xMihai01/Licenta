@@ -19,7 +19,6 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 
 		originalInputImage = inputImage.clone();
 		m_postprocessing.NumberPlateExtraction(outputImage, originalInputImage, outputImage);
-
 		break;
 	case DetectionType::HAAR_CASCADE:
 		m_preprocessing.ResizeImage(inputImage, inputImage, 640, 480);
@@ -30,12 +29,15 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 
 		break;
 	case DetectionType::DNN:
-		//m_detector.IsModelReady() ? outputImage = m_detector.Detect(inputImage) : outputImage = originalInputImage;
+		m_detector.IsModelReady() ? outputImage = m_detector.Detect(inputImage) : outputImage = originalInputImage;
 		//m_preprocessing.NoiseReduction(outputImage, outputImage, Gaussian);
-		m_detector.IsModelReady() ? m_preprocessing.SkewCorrection(m_detector.Detect(inputImage), originalInputImage) : outputImage = originalInputImage;
-		outputImage = originalInputImage;
-		m_detector.IsModelReady() ? m_postprocessing.LetterDetection(outputImage, originalInputImage) : outputImage = originalInputImage;
-		outputImage = originalInputImage;
+		m_preprocessing.Undistortion(outputImage, outputImage);
+		//m_detector.IsModelReady() ? m_preprocessing.SkewCorrection(m_detector.Detect(inputImage), originalInputImage) : outputImage = originalInputImage;
+		//outputImage = originalInputImage;
+		//m_postprocessing.CleanPlateDetection(outputImage, originalInputImage);
+		//outputImage = originalInputImage;
+	/*	m_detector.IsModelReady() ? m_postprocessing.LetterDetection(outputImage, originalInputImage) : outputImage = originalInputImage;
+		outputImage = originalInputImage;*/
 		break;
 	default:
 		break;

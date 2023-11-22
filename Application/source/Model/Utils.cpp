@@ -87,7 +87,7 @@ void Utils::BitwiseCharImage(const cv::Mat& src1, const cv::Mat& src2, cv::Mat& 
 			uchar pixelValueSrc2 = pixelSrc2[0] <= 254 ? 0 : 255;
 			uchar* pixelDst = ptrDst + j;
 
-			pixelValueSrc1 == pixelValueSrc2 ? pixelDst[0] = 0 : pixelDst[0] = 255;
+			pixelValueSrc1 == pixelValueSrc2 ? ((pixelValueSrc1 == 0) ? pixelDst[0] = 0 : pixelDst[0] = 255) : pixelDst[0] = 0;
 
 		}
 	}

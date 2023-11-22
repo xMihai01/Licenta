@@ -11,7 +11,6 @@ n8.JPEG
 n9.JPEG
 n10.JPEG
 n11.JPEG
-001.jpg
 BV20WXP.jpeg
 BV65DCV.jpeg
 c1.jpg
@@ -20,7 +19,6 @@ c3.jpeg
 c4.jpeg
 c5.jpeg
 c6.jpeg
-c7.jpeg
 t1.jpg
 t2.jpg
 t3.jpg
@@ -30,8 +28,6 @@ t6.jpg
 tcar.jpg
 tcar1.jpg
 tcar2.jpg
-testImage.jpg
-testImage2.jpg
 BV20WXP_night1.jpeg
 BV20WXP_night2.jpeg
 BV65DCV_night1.jpeg

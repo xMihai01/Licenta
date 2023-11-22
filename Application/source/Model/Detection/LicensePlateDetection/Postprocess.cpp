@@ -166,16 +166,45 @@ void LicensePlateDetection::Postprocess::ClearCharImage(const cv::Mat& inputChar
 {
 
 	std::vector<cv::Point> max_cnt;
-
-	cv::Mat biggerInput(inputCharImage.rows + 30, inputCharImage.cols+30, CV_8UC1, cv::Scalar(255));
-	inputCharImage.copyTo(biggerInput(cv::Rect(30 / 2, 30 / 2, inputCharImage.cols, inputCharImage.rows)));
-	cv::Mat whiteImage(inputCharImage.rows + 30, inputCharImage.cols + 30, CV_8UC1, cv::Scalar(255));
+	cv::Mat invertedChar = inputCharImage.clone();
+	cv::threshold(invertedChar, invertedChar, 0, 255, cv::THRESH_BINARY);
+	cv::bitwise_not(invertedChar, invertedChar);
+	cv::Mat biggerInput(inputCharImage.rows + 30, inputCharImage.cols+30, CV_8UC1, cv::Scalar(0));
+	invertedChar.copyTo(biggerInput(cv::Rect(30 / 2, 30 / 2, inputCharImage.cols, inputCharImage.rows)));
+	cv::Mat blackImage(inputCharImage.rows + 30, inputCharImage.cols + 30, CV_8UC1, cv::Scalar(0));
 
 	Utils::GetImageByHighestContour(biggerInput, outputCharImage, max_cnt);
+	//std::vector<std::vector<cv::Point>> contours;
+	//cv::findContours(biggerInput, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 
-	cv::drawContours(whiteImage, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(0), cv::FILLED);
-	/*cv::bitwise_xor(inputCharImage, whiteImage, outputCharImage);*/
-	Utils::BitwiseCharImage(biggerInput, whiteImage, outputCharImage);
+	//std::vector<double> areas;
+	//for (const auto& contour : contours) {
+	//	areas.push_back(cv::contourArea(contour));
+	//}
+
+	//int maxIndex = static_cast<int>(std::distance(areas.begin(), std::max_element(areas.begin(), areas.end())));
+	//std::vector<cv::Point> max_cnt = contours[maxIndex];
+
+	//cv::cvtColor(biggerInput, biggerInput, cv::COLOR_GRAY2BGR);
+	cv::drawContours(blackImage, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(255), cv::FILLED);
+	//outputCharImage = biggerInput;
+	//cv::bitwise_xor(biggerInput, blackImage, outputCharImage);
+	Utils::BitwiseCharImage(biggerInput, blackImage, outputCharImage);
+	
+	cv::RotatedRect rotatedRect = cv::minAreaRect(max_cnt);
+	float angle = rotatedRect.angle;
+
+	if (angle > 88 && angle < 2) // image doesn't need skew correction
+		return;
+
+	int h = biggerInput.rows;
+	int w = biggerInput.cols;
+	cv::Point2f center(w / 2, h / 2);
+	cv::Mat rotationMatrix = cv::getRotationMatrix2D(center, angle < 45 ? angle : angle - 90, 1.0); // bottom-left down - 90. bottom-left up + 0
+
+	cv::warpAffine(outputCharImage, outputCharImage, rotationMatrix, cv::Size(w, h), cv::INTER_CUBIC, cv::BORDER_REPLICATE);
+	cv::bitwise_not(outputCharImage, outputCharImage);
+
 }
 
 void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv::Mat& outputImage)
@@ -202,12 +231,62 @@ void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv
 	}
 
 	cv::Mat whiteImage(inputImage.rows, inputImage.cols, CV_8UC1, cv::Scalar(255));
-
+	std::sort(lettersBox.begin(), lettersBox.end(), letterLocationComparator);
 	for (size_t index = 0; index < lettersBox.size(); index++) {
 		lettersBox[index].first.copyTo(whiteImage(cv::Rect(lettersBox[index].second)));
-		//cv::imwrite("chars/" + std::to_string(index) + ".jpg", lettersBox[index].first);
+		cv::Mat clearChar;
+		//ClearCharImage(lettersBox[index].first, clearChar);
+		//cv::resize(clearChar, clearChar, cv::Size(lettersBox[index].first.cols, lettersBox[index].first.rows));
+		//clearChar.copyTo(whiteImage(cv::Rect(lettersBox[index].second)));
+		//cv::imwrite("chars/" + std::to_string(index) + ".jpg", clearChar);
 	}
 	outputImage = whiteImage;
+}
+
+void LicensePlateDetection::Postprocess::CleanPlateDetection(cv::Mat& inputImage, cv::Mat& outputImage)
+{
+	cv::Mat labels, stats, centroids;
+	//cv::bitwise_not(inputImage, inputImage);
+	outputImage = inputImage.clone();
+	int numComponents = cv::connectedComponentsWithStats(inputImage, labels, stats, centroids);
+	cv::cvtColor(outputImage, outputImage, cv::COLOR_GRAY2BGR);
+	// Iterate through components and draw rectangles
+	int maxAreaIndex = -1;
+	int maxArea = -1;
+
+	std::vector<cv::Vec3b> colors(numComponents);
+
+	for (int i = 0; i < numComponents; i++) {
+		colors[i] = cv::Vec3b(rand() % 255, rand() % 255, rand() % 255);
+	}
+
+	for (int i = 0; i < outputImage.cols; i++) {
+		for (int j = 0; j < outputImage.rows; j++) {
+			if (labels.at<int>(cv::Point(i, j)) != 0) {
+				outputImage.at<cv::Vec3b>(cv::Point(i, j)) = colors[(int)labels.at<int>(cv::Point(i, j))];
+			}
+		}
+	}
+
+	//for (int i = 1; i < numComponents; i++) {
+	//	int area = stats.at<int>(i, cv::CC_STAT_AREA);
+
+	//	if (area > maxArea) {
+	//		maxArea = area;
+	//		maxAreaIndex = i;
+	//	}
+	//}
+
+
+	//// Draw a rectangle around the component with the second-highest area
+	//if (maxAreaIndex != -1) {
+	//	cv::Rect boundingBox(stats.at<int>(maxAreaIndex, cv::CC_STAT_LEFT),
+	//		stats.at<int>(maxAreaIndex, cv::CC_STAT_TOP),
+	//		stats.at<int>(maxAreaIndex, cv::CC_STAT_WIDTH),
+	//		stats.at<int>(maxAreaIndex, cv::CC_STAT_HEIGHT));
+
+	//	cv::rectangle(outputImage, boundingBox, cv::Scalar(0, 255, 0), 2);
+	//}
 }
 
 bool LicensePlateDetection::Postprocess::RatioCheck(const double area, const double width, const double height, const double ratioMin, const double ratioMax)

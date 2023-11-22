@@ -2,6 +2,8 @@ configure_file(test_images.txt test_images.txt COPYONLY)
 configure_file(car_weights.onnx car_weights.onnx COPYONLY)
 configure_file(car_classList.txt car_classList.txt COPYONLY)
 configure_file(license_weights.onnx license_weights.onnx COPYONLY)
+configure_file(license_weights_480trained.onnx license_weights_480trained.onnx COPYONLY)
+configure_file(license_weights_640trained.onnx license_weights_640trained.onnx COPYONLY)
 configure_file(license_classList.txt license_classList.txt COPYONLY)
 
 configure_file(license.xml license.xml COPYONLY)

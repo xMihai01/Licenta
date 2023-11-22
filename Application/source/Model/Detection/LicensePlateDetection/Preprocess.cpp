@@ -1,5 +1,9 @@
 #include "Model/Detection/LicensePlateDetection/Preprocess.h"
 
+bool pointComparatorByX(cv::Point& a, cv::Point& b) {
+	return a.x > b.x;
+}
+
 LicensePlateDetection::Preprocess::Preprocess()
 {
 
@@ -124,6 +128,62 @@ void LicensePlateDetection::Preprocess::SkewCorrection(cv::Mat& inputImage, cv::
 	cv::warpAffine(outputImage, outputImage, rotationMatrix, cv::Size(w, h), cv::INTER_CUBIC, cv::BORDER_REPLICATE);
 	cv::bitwise_not(outputImage, outputImage);
 
+	Utils::GetImageByHighestContour(outputImage, outputImage, max_cnt, true);
+}
+
+void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Mat& outputImage)
+{
+	cv::Mat licensePlate;
+	ConvertImageToGray(inputImage, licensePlate);
+	ResizeImage(licensePlate, licensePlate, Utils::PLATE_WIDTH, Utils::PLATE_HEIGHT);
+	cv::threshold(licensePlate, licensePlate, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
+
+	/*cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(4, 4));
+	cv::morphologyEx(licensePlate, licensePlate, cv::MORPH_CLOSE, kernel);*/
+	//cv::dilate(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(4, 4)));
+	cv::erode(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));
+
+	std::vector<cv::Point> max_cnt;
+
+	Utils::GetImageByHighestContour(licensePlate, licensePlate, max_cnt);
+	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
+	//cv::cvtColor(licensePlate, licensePlate, cv::COLOR_GRAY2BGR);
+	double epsilon = 0.02 * cv::arcLength(max_cnt, true);
+	std::vector<cv::Point> approx;
+	cv::approxPolyDP(max_cnt, approx, epsilon, true);
+	std::sort(approx.begin(), approx.end(), pointComparatorByX);
+
+	const int NUMBER_OF_CORNERS = 4;
+	if (approx.size() < NUMBER_OF_CORNERS)
+		return;
+
+	cv::cvtColor(licensePlate, licensePlate, cv::COLOR_GRAY2BGR);
+	for (int i = 0; i < approx.size(); i++) {
+		cv::circle(licensePlate, approx[i], 5, cv::Scalar(255, 0, 0), -1);
+	}
+	for (int i = 0; i < NUMBER_OF_CORNERS; i++) {
+		cv::circle(licensePlate, approx[i], 5, cv::Scalar(0, 0, 255), -1);
+	}
+	std::vector<cv::Point> srcPoints = {
+		(approx[2].y < approx[3].y) ? approx[2] : approx[3], // top left
+		(approx[0].y < approx[1].y) ? approx[0] : approx[1], // top right
+		(approx[0].y < approx[1].y) ? approx[1] : approx[0], // bottom right
+		(approx[2].y < approx[3].y) ? approx[3] : approx[2] // bottom left
+	};
+	std::vector<cv::Point> dstPoints = {
+		cv::Point(50, 50),
+		cv::Point(350, 50),
+		cv::Point(350, 100),
+		cv::Point(50, 100)
+	};
+
+	cv::Mat H = cv::findHomography(srcPoints, dstPoints, cv::RANSAC);
+
+	cv::Mat transformedImage = licensePlate.clone();
+
+	cv::warpPerspective(licensePlate, transformedImage, H, licensePlate.size());
+
+	outputImage = transformedImage;
 	Utils::GetImageByHighestContour(outputImage, outputImage, max_cnt, true);
 }
 
