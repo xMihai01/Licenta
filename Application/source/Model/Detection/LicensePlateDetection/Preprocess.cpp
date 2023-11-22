@@ -134,56 +134,72 @@ void LicensePlateDetection::Preprocess::SkewCorrection(cv::Mat& inputImage, cv::
 void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Mat& outputImage)
 {
 	cv::Mat licensePlate;
-	ConvertImageToGray(inputImage, licensePlate);
-	ResizeImage(licensePlate, licensePlate, Utils::PLATE_WIDTH, Utils::PLATE_HEIGHT);
-	cv::threshold(licensePlate, licensePlate, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
+	ConvertImageToGray(inputImage, inputImage);
+	ResizeImage(inputImage, inputImage, Utils::PLATE_WIDTH, Utils::PLATE_HEIGHT);
+	cv::threshold(inputImage, inputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
+	licensePlate = inputImage.clone();
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(6, 6));
+	//cv::dilate(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(6, 6)));
+	//cv::erode(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(4, 4)));
 
-	/*cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(4, 4));
-	cv::morphologyEx(licensePlate, licensePlate, cv::MORPH_CLOSE, kernel);*/
-	//cv::dilate(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(4, 4)));
-	cv::erode(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));
 
 	std::vector<cv::Point> max_cnt;
 
 	Utils::GetImageByHighestContour(licensePlate, licensePlate, max_cnt);
+	cv::drawContours(licensePlate, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(255), cv::FILLED);
+	cv::erode(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7)));
+	cv::dilate(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));
+	Utils::GetImageByHighestContour(licensePlate, licensePlate, max_cnt);
 	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
 	//cv::cvtColor(licensePlate, licensePlate, cv::COLOR_GRAY2BGR);
+
 	double epsilon = 0.02 * cv::arcLength(max_cnt, true);
 	std::vector<cv::Point> approx;
 	cv::approxPolyDP(max_cnt, approx, epsilon, true);
-	std::sort(approx.begin(), approx.end(), pointComparatorByX);
+	//std::sort(approx.begin(), approx.end(), pointComparatorByX);
 
-	const int NUMBER_OF_CORNERS = 4;
-	if (approx.size() < NUMBER_OF_CORNERS)
+	std::array<cv::Point, NUMBER_OF_CORNERS_IN_LICENSE_PLATE> corners;
+	try {
+		corners = GetLicensePlateCornersFromApproximatedCurves(approx);
+	}
+	catch (const std::exception& e) {
+		// TODO: treat exception when corners are not found (prob try skew correction)
 		return;
+	}
+	
+	//for (int i = 0; i < approx.size(); i++) {
+	//	cv::circle(licensePlate, approx[i], 5, cv::Scalar(255, 0, 0), -1);
+	//}
+	//cv::cvtColor(licensePlate, licensePlate, cv::COLOR_GRAY2BGR);
+	//for (int i = 0; i < approx.size(); i++) {
+	//	cv::circle(licensePlate, approx[i], 5, cv::Scalar(255, 0, 0), -1);
+	//}
+	//for (int i = 0; i < 2; i++) {
+	//	cv::circle(licensePlate, approx[i], 5, cv::Scalar(0, 0, 255), -1);
+	//}
+	//for (int i = approx.size() - 1; i > approx.size() - 3; i--) {
+	//	cv::circle(licensePlate, approx[i], 5, cv::Scalar(0, 0, 255), -1);
+	//}
+	//outputImage = licensePlate;
+	//return;
 
-	cv::cvtColor(licensePlate, licensePlate, cv::COLOR_GRAY2BGR);
-	for (int i = 0; i < approx.size(); i++) {
-		cv::circle(licensePlate, approx[i], 5, cv::Scalar(255, 0, 0), -1);
-	}
-	for (int i = 0; i < NUMBER_OF_CORNERS; i++) {
-		cv::circle(licensePlate, approx[i], 5, cv::Scalar(0, 0, 255), -1);
-	}
 	std::vector<cv::Point> srcPoints = {
-		(approx[2].y < approx[3].y) ? approx[2] : approx[3], // top left
-		(approx[0].y < approx[1].y) ? approx[0] : approx[1], // top right
-		(approx[0].y < approx[1].y) ? approx[1] : approx[0], // bottom right
-		(approx[2].y < approx[3].y) ? approx[3] : approx[2] // bottom left
+	(corners[3].y < corners[2].y) ? corners[3] : corners[2], // top left
+	(corners[0].y < corners[1].y) ? corners[0] : corners[1], // top right
+	(corners[0].y < corners[1].y) ? corners[1] : corners[0], // bottom right
+	(corners[3].y < corners[2].y) ? corners[2] : corners[3] // bottom left
 	};
 	std::vector<cv::Point> dstPoints = {
-		cv::Point(50, 50),
-		cv::Point(350, 50),
-		cv::Point(350, 100),
-		cv::Point(50, 100)
+		cv::Point(1.0f / 8.0f * Utils::PLATE_WIDTH, 1.0f / 3.0f * Utils::PLATE_HEIGHT), // top left
+		cv::Point(Utils::PLATE_WIDTH - 1.0f / 3.0f * Utils::PLATE_HEIGHT, 1.0f / 3.0f * Utils::PLATE_HEIGHT), // top right
+		cv::Point(Utils::PLATE_WIDTH - 1.0f / 3.0f * Utils::PLATE_HEIGHT, 2.0f / 3.0f * Utils::PLATE_HEIGHT), // bottom right
+		cv::Point(1.0f / 8.0f * Utils::PLATE_WIDTH, 2.0f / 3.0f * Utils::PLATE_HEIGHT) // bottom left
 	};
 
 	cv::Mat H = cv::findHomography(srcPoints, dstPoints, cv::RANSAC);
 
-	cv::Mat transformedImage = licensePlate.clone();
+	cv::warpPerspective(inputImage, outputImage, H, licensePlate.size());
 
-	cv::warpPerspective(licensePlate, transformedImage, H, licensePlate.size());
-
-	outputImage = transformedImage;
 	Utils::GetImageByHighestContour(outputImage, outputImage, max_cnt, true);
 }
 
@@ -202,4 +218,21 @@ void LicensePlateDetection::Preprocess::GetVerticalEdges(cv::Mat& inputOutputIma
 	cv::threshold(inputOutputImage, inputOutputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
 	cv::Mat elementStructure = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7));
 	cv::morphologyEx(inputOutputImage, inputOutputImage, cv::MORPH_CLOSE, elementStructure);
+}
+
+std::array<cv::Point, LicensePlateDetection::Preprocess::NUMBER_OF_CORNERS_IN_LICENSE_PLATE> LicensePlateDetection::Preprocess::GetLicensePlateCornersFromApproximatedCurves(std::vector<cv::Point>& approximations)
+{
+	if (approximations.size() < 4)
+		throw new std::runtime_error("Couldn't detect corners of license plate using distortion correction. A minimum of 4 corners required but only " + std::to_string(approximations.size()) + " were found");
+	
+	std::array<cv::Point, NUMBER_OF_CORNERS_IN_LICENSE_PLATE> corners;
+
+	std::sort(approximations.begin(), approximations.end(), pointComparatorByX);
+
+	corners[0] = approximations[0];
+	corners[1] = approximations[1];
+	corners[2] = approximations[approximations.size() - 1];
+	corners[3] = approximations[approximations.size() - 2];
+
+	return corners;
 }
