@@ -20,6 +20,7 @@ namespace LicensePlateDetection {
 		void NumberPlateExtractionUsingHaarCascade(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& outputImage);
 
 		void LetterDetection(cv::Mat& inputImage, cv::Mat& outputImage);
+		void CleanPlateDetection(cv::Mat& inputImage, cv::Mat& outputImage);
 
 	private:
 

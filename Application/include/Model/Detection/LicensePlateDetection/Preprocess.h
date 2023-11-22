@@ -25,6 +25,7 @@ namespace LicensePlateDetection {
 		void AdaptiveHistogramEqualization(const cv::Mat& inputImage, cv::Mat& outputImage);
 
 		void SkewCorrection(cv::Mat& inputImage, cv::Mat& outputImage);
+		void Undistortion(cv::Mat& inputImage, cv::Mat& outputImage);
 
 		void PreProcessForHaarCascade(const cv::Mat& inputImage, cv::Mat& outputImage);
 
