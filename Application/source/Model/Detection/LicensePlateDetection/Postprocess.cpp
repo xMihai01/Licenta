@@ -43,15 +43,33 @@ void LicensePlateDetection::Postprocess::NumberPlateExtraction(const cv::Mat& pr
 
 
 	std::vector<std::vector<cv::Point>> contours;
+	std::vector<std::vector<cv::Point>> validContours;
 	// TODO: Replace findContours with connected components and find the highest connected component
 	cv::findContours(postProcessedImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 	//cv::drawContours(m_originalImage, contours, -1, cv::Scalar(0, 255, 0), 2);
 	int contourNumber = 0;
 	for (const auto& contour : contours) {
-		CheckPlate(originalImage, outImage, contour, contourNumber);
+		if (CheckPlate(originalImage, outImage, contour, contourNumber)) {
+			validContours.push_back(contour);
+		}
 		contourNumber++;
 	}
-	outputImage = outImage;
+	std::vector<double> areas;
+	for (const auto& validContour : validContours) {
+		areas.push_back(cv::contourArea(validContour));
+	}
+
+
+	int maxIndex = static_cast<int>(std::distance(areas.begin(), std::max_element(areas.begin(), areas.end())));
+	std::vector<cv::Point> max_cnt = validContours[maxIndex];
+	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
+	double x = contourRectangle.x;
+	double y = contourRectangle.y;
+	double width = contourRectangle.width;
+	double height = contourRectangle.height;
+	outputImage = outImage(cv::Rect(x, y, width, height));
+	//cv::drawContours(outImage, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(255, 0, 0), 2);
+	//outputImage = outImage;
 }
 
 void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingHaarCascade(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& outputImage)
@@ -66,7 +84,7 @@ void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingHaarCascade(c
 
 }
 
-void LicensePlateDetection::Postprocess::CheckPlate(const cv::Mat& originalImage, cv::Mat& outputImage, const std::vector<cv::Point>& contour, const int contourNumber)
+bool LicensePlateDetection::Postprocess::CheckPlate(const cv::Mat& originalImage, cv::Mat& outputImage, const std::vector<cv::Point>& contour, const int contourNumber)
 {
 	cv::RotatedRect rect = cv::minAreaRect(contour);
 	if (ValidateRatio(rect)) {
@@ -78,9 +96,11 @@ void LicensePlateDetection::Postprocess::CheckPlate(const cv::Mat& originalImage
 		cv::Mat afterValidationImage = originalImage(cv::Rect(x, y, width, height));
 		if (CleanPlate(afterValidationImage)) {
 			//cv::imwrite(std::to_string(contourNumber) + ".jpg", afterValidationImage);
-			cv::drawContours(outputImage, std::vector<std::vector<cv::Point>>{contour}, -1, cv::Scalar(0, 255, 0), 2);
+			//cv::drawContours(outputImage, std::vector<std::vector<cv::Point>>{contour}, -1, cv::Scalar(0, 255, 0), 2);
+			return true;
 		}
 	}
+	return false;
 }
 
 bool LicensePlateDetection::Postprocess::CleanPlate(const cv::Mat& plateImage)
@@ -118,7 +138,7 @@ bool LicensePlateDetection::Postprocess::CleanPlate(const cv::Mat& plateImage)
 	// Extract the minimum area rectangle
 	cv::RotatedRect rect = cv::minAreaRect(max_cnt);
 
-	if (RatioCheck(max_cntArea, plateImage.size[0], plateImage.size[1], 1000, 5000)) {
+	if (RatioCheck(max_cntArea, plateImage.size[0], plateImage.size[1], 1000, 4000)) {
 		//m_postProcessedImage = plateImage;
 		return true;
 	}

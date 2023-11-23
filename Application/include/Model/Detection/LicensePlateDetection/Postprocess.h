@@ -24,7 +24,7 @@ namespace LicensePlateDetection {
 
 	private:
 
-		void CheckPlate(const cv::Mat& originalImage, cv::Mat& outputImage, const std::vector<cv::Point>& contour, const int contourNumber);
+		bool CheckPlate(const cv::Mat& originalImage, cv::Mat& outputImage, const std::vector<cv::Point>& contour, const int contourNumber);
 		bool CleanPlate(const cv::Mat& plateImage);
 		bool ValidateRatio(const cv::RotatedRect& rectangle);
 		bool RatioCheck(const double area, const double width, const double height, const double ratioMin, const double ratioMax);

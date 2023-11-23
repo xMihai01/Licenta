@@ -19,6 +19,7 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 
 		originalInputImage = inputImage.clone();
 		m_postprocessing.NumberPlateExtraction(outputImage, originalInputImage, outputImage);
+		m_preprocessing.Undistortion(outputImage, outputImage);
 		break;
 	case DetectionType::HAAR_CASCADE:
 		m_preprocessing.ResizeImage(inputImage, inputImage, 640, 480);
@@ -63,7 +64,7 @@ void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection
 		//cv::cvtColor(outputImage, outputImage, cv::COLOR_GRAY2BGR);
 		//cv::drawContours(outputImage, contours, -1, cv::Scalar(0, 255, 0), 1);
 
-		cv::imwrite(std::to_string(i) + "_" + imageName, outputImage);
+		cv::imwrite("../../test/" + std::to_string(i) + "_" + imageName, outputImage);
 		//system("pause");
 	}
 	
