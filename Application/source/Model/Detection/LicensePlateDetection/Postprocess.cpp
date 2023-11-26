@@ -25,7 +25,7 @@ void LicensePlateDetection::Postprocess::NumberPlateExtraction(const cv::Mat& pr
 {
 	cv::Mat outImage = originalImage.clone();
 
-	cv::Mat elementStructure = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(13, 13));
+	cv::Mat elementStructure = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(13, 13));
 	cv::morphologyEx(preProcessedImage, postProcessedImage, cv::MORPH_OPEN, elementStructure);
 
 	cv::subtract(preProcessedImage, postProcessedImage, postProcessedImage);
@@ -46,7 +46,7 @@ void LicensePlateDetection::Postprocess::NumberPlateExtraction(const cv::Mat& pr
 	std::vector<std::vector<cv::Point>> validContours;
 	// TODO: Replace findContours with connected components and find the highest connected component
 	cv::findContours(postProcessedImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
-	//cv::drawContours(m_originalImage, contours, -1, cv::Scalar(0, 255, 0), 2);
+	//cv::drawContours(outImage, contours, -1, cv::Scalar(0, 255, 0), 2);
 	int contourNumber = 0;
 	for (const auto& contour : contours) {
 		if (CheckPlate(originalImage, outImage, contour, contourNumber)) {
@@ -59,6 +59,11 @@ void LicensePlateDetection::Postprocess::NumberPlateExtraction(const cv::Mat& pr
 		areas.push_back(cv::contourArea(validContour));
 	}
 
+	// TODO: Throw an exception
+	if (!validContours.size()) {
+		outputImage = outImage;
+		return;
+	}
 
 	int maxIndex = static_cast<int>(std::distance(areas.begin(), std::max_element(areas.begin(), areas.end())));
 	std::vector<cv::Point> max_cnt = validContours[maxIndex];

@@ -29,4 +29,6 @@ public:
 	static std::vector<std::string> GetImageNamesFromFile(const std::string& path);
 	static void GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour, const bool crop = false);
 	static void BitwiseCharImage(const cv::Mat& src1, const cv::Mat& src2, cv::Mat& dst);
+	static void BitwiseLicensePlateImage(const cv::Mat& blankLicensePlate, const cv::Mat& thresholdedLicensePlate, cv::Mat& outputPlate);
+
 };

@@ -164,6 +164,7 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 	}
 	catch (const std::exception& e) {
 		// TODO: treat exception when corners are not found (prob try skew correction)
+		outputImage = licensePlate;
 		return;
 	}
 	
@@ -183,6 +184,7 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 	//outputImage = licensePlate;
 	//return;
 
+
 	std::vector<cv::Point> srcPoints = {
 	(corners[3].y < corners[2].y) ? corners[3] : corners[2], // top left
 	(corners[0].y < corners[1].y) ? corners[0] : corners[1], // top right
@@ -198,9 +200,12 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 
 	cv::Mat H = cv::findHomography(srcPoints, dstPoints, cv::RANSAC);
 
-	cv::warpPerspective(inputImage, outputImage, H, licensePlate.size());
+	cv::Mat cleanPlateImage;
+	Utils::BitwiseLicensePlateImage(licensePlate, inputImage, cleanPlateImage);
 
-	Utils::GetImageByHighestContour(outputImage, outputImage, max_cnt, true);
+	cv::warpPerspective(cleanPlateImage, outputImage, H, licensePlate.size());
+
+	//Utils::GetImageByHighestContour(outputImage, outputImage, max_cnt, true);
 }
 
 void LicensePlateDetection::Preprocess::DetectEdges(const cv::Mat& inputImage, cv::Mat& outputImage, const int xDirection, const int yDirection)
@@ -223,7 +228,7 @@ void LicensePlateDetection::Preprocess::GetVerticalEdges(cv::Mat& inputOutputIma
 std::array<cv::Point, LicensePlateDetection::Preprocess::NUMBER_OF_CORNERS_IN_LICENSE_PLATE> LicensePlateDetection::Preprocess::GetLicensePlateCornersFromApproximatedCurves(std::vector<cv::Point>& approximations)
 {
 	if (approximations.size() < 4)
-		throw new std::runtime_error("Couldn't detect corners of license plate using distortion correction. A minimum of 4 corners required but only " + std::to_string(approximations.size()) + " were found");
+		throw std::runtime_error("Couldn't detect corners of license plate using distortion correction. A minimum of 4 corners required but only " + std::to_string(approximations.size()) + " were found");
 	
 	std::array<cv::Point, NUMBER_OF_CORNERS_IN_LICENSE_PLATE> corners;
 

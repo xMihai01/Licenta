@@ -13,11 +13,12 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 	{
 	case DetectionType::IMAGE_PROCESSING:
 		m_preprocessing.ResizeImage(inputImage, inputImage, 640, 480);
+		originalInputImage = inputImage.clone();
 		m_preprocessing.ConvertImageToGray(inputImage, outputImage);
 		m_preprocessing.NoiseReduction(outputImage, outputImage, BilateralFilter);
 		//m_preprocessing.AdaptiveHistogramEqualization(outputImage, outputImage);
 
-		originalInputImage = inputImage.clone();
+		
 		m_postprocessing.NumberPlateExtraction(outputImage, originalInputImage, outputImage);
 		m_preprocessing.Undistortion(outputImage, outputImage);
 		break;

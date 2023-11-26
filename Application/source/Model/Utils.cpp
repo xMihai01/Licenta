@@ -3,7 +3,7 @@
 std::pair<cv::Mat, cv::Mat> Utils::GetHistograms(const cv::Mat grayImage)
 {
 	if (grayImage.channels() != 1)
-		throw new std::runtime_error("GetHistogram() requires a gray image, but it has been given a color image");
+		throw std::runtime_error("GetHistogram() requires a gray image, but it has been given a color image");
 
 	int histogramSize = 256;
 	float range[] = { 0, 256 };
@@ -72,7 +72,7 @@ void Utils::GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputI
 void Utils::BitwiseCharImage(const cv::Mat& src1, const cv::Mat& src2, cv::Mat& dst)
 {
 	if (src1.size != src2.size)
-		throw new std::runtime_error("Src1 and src2 images are of different sizes!");
+		throw std::runtime_error("Src1 and src2 images are of different sizes!");
 	dst = src1.clone();
 	for (int i = 0; i < src1.rows; i++) {
 		const uchar* ptr1 = src1.ptr<uchar>(i);
@@ -90,6 +90,31 @@ void Utils::BitwiseCharImage(const cv::Mat& src1, const cv::Mat& src2, cv::Mat& 
 			pixelValueSrc1 == pixelValueSrc2 ? ((pixelValueSrc1 == 0) ? pixelDst[0] = 0 : pixelDst[0] = 255) : pixelDst[0] = 0;
 
 		}
+	}
+}
+
+void Utils::BitwiseLicensePlateImage(const cv::Mat& blankLicensePlate, const cv::Mat& thresholdedLicensePlate, cv::Mat& outputPlate)
+{
+	if (blankLicensePlate.size != thresholdedLicensePlate.size)
+		throw std::runtime_error("Src1 and src2 images are of different sizes!");
+	outputPlate = blankLicensePlate.clone();
+	for (int i = 0; i < blankLicensePlate.rows; i++) {
+		const uchar* blankPlatePtr = blankLicensePlate.ptr<uchar>(i);
+		const uchar* threshPlatePtr = thresholdedLicensePlate.ptr<uchar>(i);
+		uchar* outputPtr = outputPlate.ptr<uchar>(i);
+
+		for (int j = 0; j < blankLicensePlate.cols; j++)
+		{
+			const uchar* pixelBlankPlate = blankPlatePtr + j;
+			const uchar* pixelThreshPlate = threshPlatePtr + j;
+			uchar pixelValueBlankPlate = pixelBlankPlate[0] <= 254 ? 0 : 255;
+			uchar pixelValueThreshPlate = pixelThreshPlate[0] <= 254 ? 0 : 255;
+			uchar* pixelOutputPlate = outputPtr + j;
+
+			(pixelValueBlankPlate == 255 && pixelValueThreshPlate == 0) ? pixelOutputPlate[0] = 0 : pixelOutputPlate[0] = 255;
+
+		}
+
 	}
 }
 
