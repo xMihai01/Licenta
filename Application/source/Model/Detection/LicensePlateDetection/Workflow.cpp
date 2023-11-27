@@ -2,8 +2,8 @@
 
 LicensePlateDetection::Workflow::Workflow()
 {
-	//m_detector.ChangeDetectionModel("license_weights_640trained.onnx", "license_classList.txt", 640.0, 640.0, 0.4);
-	m_detector.ChangeDetectionModel(Utils::PLATE_MODEL_NAME, Utils::PLATE_MODEL_CLASS_LIST, Utils::INPUT_WIDTH, Utils::INPUT_HEIGHT, 0.4);
+	m_detector = new ObjectDetector;
+	m_detector->ChangeDetectionModel(Utils::PLATE_MODEL_NAME, Utils::PLATE_MODEL_CLASS_LIST, Utils::INPUT_WIDTH, Utils::INPUT_HEIGHT, 0.4);
 }
 
 void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outputImage, std::string& outputText, const LicensePlateDetection::DetectionType detectionType)
@@ -16,11 +16,8 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 		originalInputImage = inputImage.clone();
 		m_preprocessing.ConvertImageToGray(inputImage, outputImage);
 		m_preprocessing.NoiseReduction(outputImage, outputImage, BilateralFilter);
-		//m_preprocessing.AdaptiveHistogramEqualization(outputImage, outputImage);
 
-		
-		m_postprocessing.NumberPlateExtraction(outputImage, originalInputImage, outputImage);
-		m_preprocessing.Undistortion(outputImage, outputImage);
+		m_postprocessing.NumberPlateExtractionUsingImageProcessing(outputImage, originalInputImage, outputImage);
 		break;
 	case DetectionType::HAAR_CASCADE:
 		m_preprocessing.ResizeImage(inputImage, inputImage, 640, 480);
@@ -31,19 +28,13 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 
 		break;
 	case DetectionType::DNN:
-		m_detector.IsModelReady() ? outputImage = m_detector.Detect(inputImage) : outputImage = originalInputImage;
-		//m_preprocessing.NoiseReduction(outputImage, outputImage, Gaussian);
-		m_preprocessing.Undistortion(outputImage, outputImage);
-		//m_detector.IsModelReady() ? m_preprocessing.SkewCorrection(m_detector.Detect(inputImage), originalInputImage) : outputImage = originalInputImage;
-		//outputImage = originalInputImage;
-		//m_postprocessing.CleanPlateDetection(outputImage, originalInputImage);
-		//outputImage = originalInputImage;
-	/*	m_detector.IsModelReady() ? m_postprocessing.LetterDetection(outputImage, originalInputImage) : outputImage = originalInputImage;
-		outputImage = originalInputImage;*/
+		m_postprocessing.NumberPlateExtractionUsingDNN(inputImage, outputImage, this->m_detector);
 		break;
 	default:
 		break;
 	}
+	m_preprocessing.Undistortion(outputImage, outputImage);
+	m_postprocessing.LetterDetection(outputImage, outputImage);
 	// TODO: change outputText after implementing text recognition
 }
 

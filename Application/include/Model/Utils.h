@@ -27,8 +27,14 @@ public:
 
 	static std::pair<cv::Mat, cv::Mat> GetHistograms(const cv::Mat grayImage);
 	static std::vector<std::string> GetImageNamesFromFile(const std::string& path);
-	static void GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour, const bool crop = false);
+	static void GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour
+		, const bool crop = false, const std::vector<std::vector<cv::Point>>& customContours = std::vector<std::vector<cv::Point>>{});
 	static void BitwiseCharImage(const cv::Mat& src1, const cv::Mat& src2, cv::Mat& dst);
 	static void BitwiseLicensePlateImage(const cv::Mat& blankLicensePlate, const cv::Mat& thresholdedLicensePlate, cv::Mat& outputPlate);
+
+	// Comparators
+
+	static bool letterLocationComparator(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b);
+	static bool pointComparatorByX(cv::Point& a, cv::Point& b);
 
 };

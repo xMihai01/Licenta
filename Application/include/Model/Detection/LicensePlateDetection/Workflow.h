@@ -28,7 +28,7 @@ namespace LicensePlateDetection {
 		LicensePlateDetection::Postprocess m_postprocessing;
 		LicensePlateDetection::Preprocess m_preprocessing;
 
-		ObjectDetector m_detector;
+		ObjectDetector* m_detector;
 	};
 
 }

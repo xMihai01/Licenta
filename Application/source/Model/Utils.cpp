@@ -44,10 +44,14 @@ std::pair<cv::Mat, cv::Mat> Utils::GetHistograms(const cv::Mat grayImage)
 	return std::make_pair(histogramImage, cumulativeHistogramImage);
 }
 
-void Utils::GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour, const bool crop)
+void Utils::GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour
+	, const bool crop, const std::vector<std::vector<cv::Point>>& customContours)
 {
+	if ((inputImage.empty() || outputImage.empty()) && crop == true)
+		throw std::runtime_error("Can't crop given images. They are empty!");
+
 	std::vector<std::vector<cv::Point>> contours;
-	cv::findContours(inputImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+	customContours.size() == 0 ? cv::findContours(inputImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE) : contours = customContours;
 
 	std::vector<double> areas;
 	for (const auto& contour : contours) {
@@ -116,6 +120,15 @@ void Utils::BitwiseLicensePlateImage(const cv::Mat& blankLicensePlate, const cv:
 		}
 
 	}
+}
+
+bool Utils::letterLocationComparator(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b)
+{
+	return a.second.x < b.second.x;
+}
+
+bool Utils::pointComparatorByX(cv::Point& a, cv::Point& b) {
+	return a.x > b.x;
 }
 
 std::vector<std::string> Utils::GetImageNamesFromFile(const std::string& path)

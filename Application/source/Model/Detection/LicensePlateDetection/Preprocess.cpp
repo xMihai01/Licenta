@@ -1,9 +1,5 @@
 #include "Model/Detection/LicensePlateDetection/Preprocess.h"
 
-bool pointComparatorByX(cv::Point& a, cv::Point& b) {
-	return a.x > b.x;
-}
-
 LicensePlateDetection::Preprocess::Preprocess()
 {
 
@@ -76,15 +72,12 @@ void LicensePlateDetection::Preprocess::AdaptiveHistogramEqualization(const cv::
 	cv::Ptr<cv::CLAHE> adaptiveHE = cv::createCLAHE();
 	adaptiveHE->apply(inputImage, outputImage);
 
-	//cv::equalizeHist(inputImage, outputImage);
-	
 }
 
 void LicensePlateDetection::Preprocess::PreProcessForHaarCascade(const cv::Mat& inputImage, cv::Mat& outputImage)
 {
 	ConvertImageToGray(inputImage, outputImage);
 	NoiseReduction(outputImage, outputImage, SmoothingAlgorithm::Gaussian);
-
 
 	cv::Mat dilateKernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
 
@@ -108,11 +101,8 @@ void LicensePlateDetection::Preprocess::SkewCorrection(cv::Mat& inputImage, cv::
 
 	Utils::GetImageByHighestContour(outputImage, outputImage, max_cnt);
 	//cv::drawContours(inputImage, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(0, 255, 0), 1);
-	// 
-	//m_preprocessing.ConvertImageToGray(outputImage, outputImage);
 
 	cv::bitwise_not(outputImage, outputImage);
-	//cv::threshold(outputImage, outputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
 
 	cv::RotatedRect rotatedRect = cv::minAreaRect(max_cnt);
 	float angle = rotatedRect.angle;
@@ -134,21 +124,21 @@ void LicensePlateDetection::Preprocess::SkewCorrection(cv::Mat& inputImage, cv::
 void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Mat& outputImage)
 {
 	cv::Mat licensePlate;
+
 	ConvertImageToGray(inputImage, inputImage);
 	ResizeImage(inputImage, inputImage, Utils::PLATE_WIDTH, Utils::PLATE_HEIGHT);
 	cv::threshold(inputImage, inputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
 	licensePlate = inputImage.clone();
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(6, 6));
-	//cv::dilate(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(6, 6)));
-	//cv::erode(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(4, 4)));
-
 
 	std::vector<cv::Point> max_cnt;
 
 	Utils::GetImageByHighestContour(licensePlate, licensePlate, max_cnt);
+
 	cv::drawContours(licensePlate, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(255), cv::FILLED);
 	cv::erode(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7)));
 	cv::dilate(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));
+
 	Utils::GetImageByHighestContour(licensePlate, licensePlate, max_cnt);
 	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
 	//cv::cvtColor(licensePlate, licensePlate, cv::COLOR_GRAY2BGR);
@@ -156,7 +146,6 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 	double epsilon = 0.02 * cv::arcLength(max_cnt, true);
 	std::vector<cv::Point> approx;
 	cv::approxPolyDP(max_cnt, approx, epsilon, true);
-	//std::sort(approx.begin(), approx.end(), pointComparatorByX);
 
 	std::array<cv::Point, NUMBER_OF_CORNERS_IN_LICENSE_PLATE> corners;
 	try {
@@ -204,8 +193,23 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 	Utils::BitwiseLicensePlateImage(licensePlate, inputImage, cleanPlateImage);
 
 	cv::warpPerspective(cleanPlateImage, outputImage, H, licensePlate.size());
+}
 
-	//Utils::GetImageByHighestContour(outputImage, outputImage, max_cnt, true);
+std::array<cv::Point, LicensePlateDetection::Preprocess::NUMBER_OF_CORNERS_IN_LICENSE_PLATE> LicensePlateDetection::Preprocess::GetLicensePlateCornersFromApproximatedCurves(std::vector<cv::Point>& approximations)
+{
+	if (approximations.size() < 4)
+		throw std::runtime_error("Couldn't detect corners of license plate using distortion correction. A minimum of 4 corners required but only " + std::to_string(approximations.size()) + " were found");
+
+	std::array<cv::Point, NUMBER_OF_CORNERS_IN_LICENSE_PLATE> corners;
+
+	std::sort(approximations.begin(), approximations.end(), Utils::pointComparatorByX);
+
+	corners[0] = approximations[0];
+	corners[1] = approximations[1];
+	corners[2] = approximations[approximations.size() - 1];
+	corners[3] = approximations[approximations.size() - 2];
+
+	return corners;
 }
 
 void LicensePlateDetection::Preprocess::DetectEdges(const cv::Mat& inputImage, cv::Mat& outputImage, const int xDirection, const int yDirection)
@@ -223,21 +227,4 @@ void LicensePlateDetection::Preprocess::GetVerticalEdges(cv::Mat& inputOutputIma
 	cv::threshold(inputOutputImage, inputOutputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
 	cv::Mat elementStructure = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7));
 	cv::morphologyEx(inputOutputImage, inputOutputImage, cv::MORPH_CLOSE, elementStructure);
-}
-
-std::array<cv::Point, LicensePlateDetection::Preprocess::NUMBER_OF_CORNERS_IN_LICENSE_PLATE> LicensePlateDetection::Preprocess::GetLicensePlateCornersFromApproximatedCurves(std::vector<cv::Point>& approximations)
-{
-	if (approximations.size() < 4)
-		throw std::runtime_error("Couldn't detect corners of license plate using distortion correction. A minimum of 4 corners required but only " + std::to_string(approximations.size()) + " were found");
-	
-	std::array<cv::Point, NUMBER_OF_CORNERS_IN_LICENSE_PLATE> corners;
-
-	std::sort(approximations.begin(), approximations.end(), pointComparatorByX);
-
-	corners[0] = approximations[0];
-	corners[1] = approximations[1];
-	corners[2] = approximations[approximations.size() - 1];
-	corners[3] = approximations[approximations.size() - 2];
-
-	return corners;
 }

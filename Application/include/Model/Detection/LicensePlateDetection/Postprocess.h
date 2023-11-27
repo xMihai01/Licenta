@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include <Model/Utils.h>
+#include <Model/Detection/ObjectDetector.h>
 
 namespace LicensePlateDetection {
 
@@ -15,9 +16,9 @@ namespace LicensePlateDetection {
 
 		Postprocess();
 
-		void NumberPlateExtraction(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& outputImage, cv::Mat& postProcessedImage = cv::Mat());
-
-		void NumberPlateExtractionUsingHaarCascade(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& outputImage);
+		void NumberPlateExtractionUsingImageProcessing(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& detectedPlate);
+		void NumberPlateExtractionUsingHaarCascade(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& detectedPlate);
+		void NumberPlateExtractionUsingDNN(const cv::Mat& originalImage, cv::Mat& detectedPlate, ObjectDetector* detector);
 
 		void LetterDetection(cv::Mat& inputImage, cv::Mat& outputImage);
 		void CleanPlateDetection(cv::Mat& inputImage, cv::Mat& outputImage);
