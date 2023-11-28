@@ -3,6 +3,8 @@
 #include <Model/Detection/ObjectDetector.h>
 #include <Model/Utils.h>
 
+#include <map>
+
 namespace LicensePlateDetection {
 
 	enum class DetectionType {
@@ -26,7 +28,7 @@ namespace LicensePlateDetection {
 		LicensePlateDetection::Postprocess m_postprocessing;
 		LicensePlateDetection::Preprocess m_preprocessing;
 
-		ObjectDetector m_detector;
+		ObjectDetector* m_detector;
 	};
 
 }

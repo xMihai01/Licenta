@@ -86,6 +86,7 @@ cv::Mat ObjectDetector::PostProcess(cv::Mat& inputImage, std::vector<cv::Mat>& o
     // Perform Non-Maximum Suppression and draw predictions.
     std::vector<int> indices;
     cv::dnn::NMSBoxes(boxes, confidences, SCORE_THRESHOLD, NMS_THRESHOLD, indices);
+    cv::Rect maxRect = cv::Rect(0,0,0,0);
     for (int i = 0; i < indices.size(); i++)
     {
         int idx = indices[i];
@@ -95,12 +96,15 @@ cv::Mat ObjectDetector::PostProcess(cv::Mat& inputImage, std::vector<cv::Mat>& o
         int width = box.width;
         int height = box.height;
         // Draw bounding box.
+        // TODO: Refactor this.
         //return inputImage(cv::Rect(left, top, width, height));
-        rectangle(inputImage, cv::Point(left, top), cv::Point(left + width, top + height), BLUE, 3 * THICKNESS);
+        if (width * height > maxRect.width * maxRect.height)
+            maxRect = cv::Rect(left, top, width, height);
+        //rectangle(inputImage, cv::Point(left, top), cv::Point(left + width, top + height), BLUE, 3 * THICKNESS);
         //DrawLabel(inputImage, m_classList[class_ids[idx]] + ":" + cv::format("%.2f", confidences[idx]), left, top);
     }
 
-    return inputImage;
+    return (maxRect.height != 0 && maxRect.width != 0 ) ? inputImage(maxRect) : inputImage;
 }
 
 void ObjectDetector::ReadClassListFromTxtFile(const std::string& classListFileName)

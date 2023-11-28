@@ -2,7 +2,8 @@
 
 LicensePlateDetection::Workflow::Workflow()
 {
-	m_detector.ChangeDetectionModel("license_weights.onnx", "license_classList.txt", 480.0, 480.0, 0.4);
+	m_detector = new ObjectDetector;
+	m_detector->ChangeDetectionModel(Utils::PLATE_MODEL_NAME, Utils::PLATE_MODEL_CLASS_LIST, Utils::INPUT_WIDTH, Utils::INPUT_HEIGHT, 0.4);
 }
 
 void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outputImage, std::string& outputText, const LicensePlateDetection::DetectionType detectionType)
@@ -12,13 +13,11 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 	{
 	case DetectionType::IMAGE_PROCESSING:
 		m_preprocessing.ResizeImage(inputImage, inputImage, 640, 480);
+		originalInputImage = inputImage.clone();
 		m_preprocessing.ConvertImageToGray(inputImage, outputImage);
 		m_preprocessing.NoiseReduction(outputImage, outputImage, BilateralFilter);
-		//m_preprocessing.AdaptiveHistogramEqualization(outputImage, outputImage);
 
-		originalInputImage = inputImage.clone();
-		m_postprocessing.NumberPlateExtraction(outputImage, originalInputImage, outputImage);
-
+		m_postprocessing.NumberPlateExtractionUsingImageProcessing(outputImage, originalInputImage, outputImage);
 		break;
 	case DetectionType::HAAR_CASCADE:
 		m_preprocessing.ResizeImage(inputImage, inputImage, 640, 480);
@@ -29,11 +28,13 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 
 		break;
 	case DetectionType::DNN:
-		m_detector.IsModelReady() ? outputImage = m_detector.Detect(inputImage) : outputImage = originalInputImage;
+		m_postprocessing.NumberPlateExtractionUsingDNN(inputImage, outputImage, this->m_detector);
 		break;
 	default:
 		break;
 	}
+	m_preprocessing.Undistortion(outputImage, outputImage);
+	m_postprocessing.LetterDetection(outputImage, outputImage);
 	// TODO: change outputText after implementing text recognition
 }
 
@@ -42,12 +43,22 @@ void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection
 	std::vector<std::string> imageNames = Utils::GetImageNamesFromFile("../Resources/" + fileName);
 
 	LicensePlateDetection::Workflow licenseWorkflow;
+	int i = 0;
 	for (std::string imageName : imageNames) {
+		i++;
 		std::cout << "\nCurrent image: " + imageName;
 		cv::Mat testImage = cv::imread("../../Licenta/Resources/" + imageName);
 		cv::Mat outputImage;
 		licenseWorkflow.Detect(testImage, outputImage, std::string(), detectionType);
 
-		cv::imwrite(imageName + "_1.jpg", outputImage);
+		//std::vector<std::vector<cv::Point>> contours;
+		//cv::findContours(outputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+		//cv::cvtColor(outputImage, outputImage, cv::COLOR_GRAY2BGR);
+		//cv::drawContours(outputImage, contours, -1, cv::Scalar(0, 255, 0), 1);
+
+		cv::imwrite("../../test/" + std::to_string(i) + "_" + imageName, outputImage);
+		//system("pause");
 	}
+	
 }
+
