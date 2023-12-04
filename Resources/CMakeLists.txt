@@ -8,3 +8,5 @@ configure_file(license_classList.txt license_classList.txt COPYONLY)
 
 configure_file(license.xml license.xml COPYONLY)
 configure_file(haarcascade_cars.xml haarcascade_cars.xml COPYONLY)
+configure_file(charTemplates.txt charTemplates.txt COPYONLY)
+configure_file(expectedPlates.txt expectedPlates.txt COPYONLY)

@@ -196,7 +196,36 @@ void LicensePlateDetection::Postprocess::ClearCharImage(const cv::Mat& inputChar
 
 }
 
-void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv::Mat& outputImage)
+char LicensePlateDetection::Postprocess::RecognizeCharacterUsingTemplateMatching(const cv::Mat& inputCharImage)
+{
+	cv::Mat charImage = inputCharImage.clone();
+
+	std::vector<std::string> imageNames = Utils::GetImageNamesFromFile("../Resources/charTemplates.txt");
+	double threshold = 0.40;
+	std::pair<double, char> maxChar = std::make_pair(0, '-');
+
+	for (std::string imageName : imageNames) {
+		//std::cout << "\nCurrent image: " + imageName;
+		cv::Mat templateImage = cv::imread("../../Licenta/Resources/CharTemplates/" + imageName, cv::IMREAD_GRAYSCALE);
+		cv::resize(charImage, charImage, cv::Size(templateImage.cols, templateImage.rows));
+		cv::Mat result;
+		cv::matchTemplate(charImage, templateImage, result, cv::TM_CCOEFF_NORMED);
+
+		double minVal, maxVal;
+		cv::Point minLoc, maxLoc;
+		cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
+		//std::cout << "\nMAX VAL: " << maxVal << "C: " << imageName[0] << "\n";
+		if (maxVal > maxChar.first && maxVal > threshold)
+			maxChar = std::make_pair(maxVal, imageName[0]);
+		
+	}
+	//std::cout << "\nC: " << maxChar.second << "\n";
+	return maxChar.second;
+
+}
+
+
+void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv::Mat& outputImage, std::string& detectedText)
 {
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
 	cv::morphologyEx(inputImage, inputImage, cv::MORPH_OPEN, kernel);
@@ -212,7 +241,7 @@ void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv
 		double y = contourRectangle.y;
 		double width = contourRectangle.width; 
 		double height = contourRectangle.height;
-		if ((height > inputImage.rows * 0.1 && width < inputImage.cols / 2) && RatioCheck(cv::contourArea(contours[index]), 1, 1, Utils::MINIMUM_CONTOUR_AREA, Utils::MAXIMUM_CONTOUR_AREA)) {
+		if ((height > inputImage.rows * 0.2 && width < inputImage.cols / 2) && RatioCheck(cv::contourArea(contours[index]), 1, 1, Utils::MINIMUM_CONTOUR_AREA, Utils::MAXIMUM_CONTOUR_AREA)) {
 			cv::Mat charImage = inputImage(cv::Rect(x, y, width, height));
 			//ClearCharImage(inputImage(cv::Rect(x, y, width, height)), charImage);
 			lettersBox.push_back(std::make_pair(charImage, contourRectangle));
@@ -221,14 +250,20 @@ void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv
 
 	cv::Mat whiteImage(inputImage.rows, inputImage.cols, CV_8UC1, cv::Scalar(255));
 	std::sort(lettersBox.begin(), lettersBox.end(), Utils::letterLocationComparator);
+	std::string text = "";
 	for (size_t index = 0; index < lettersBox.size(); index++) {
 		lettersBox[index].first.copyTo(whiteImage(cv::Rect(lettersBox[index].second)));
 		cv::Mat clearChar;
+		//ClearCharImage(lettersBox[index].first, clearChar);
+		char ch = RecognizeCharacterUsingTemplateMatching(lettersBox[index].first);
+		if (ch != '-')
+			text += ch;
 		//ClearCharImage(lettersBox[index].first, clearChar);
 		//cv::resize(clearChar, clearChar, cv::Size(lettersBox[index].first.cols, lettersBox[index].first.rows));
 		//clearChar.copyTo(whiteImage(cv::Rect(lettersBox[index].second)));
 		//cv::imwrite("chars/" + std::to_string(index) + ".jpg", clearChar);
 	}
+	detectedText = text;
 	outputImage = whiteImage;
 }
 

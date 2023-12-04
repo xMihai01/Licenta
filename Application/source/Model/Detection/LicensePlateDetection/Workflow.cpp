@@ -34,23 +34,30 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 		break;
 	}
 	m_preprocessing.Undistortion(outputImage, outputImage);
-	m_postprocessing.LetterDetection(outputImage, outputImage);
-	// TODO: change outputText after implementing text recognition
+	m_postprocessing.LetterDetection(outputImage, outputImage, outputText);
+	std::cout << "\nTEXT: " << outputText << "\n";
 }
 
 void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection::DetectionType detectionType, const std::string& fileName)
 {
 	std::vector<std::string> imageNames = Utils::GetImageNamesFromFile("../Resources/" + fileName);
+	std::vector<std::string> plateWords = Utils::GetImageNamesFromFile("../Resources/expectedPlates.txt");
 
 	LicensePlateDetection::Workflow licenseWorkflow;
+	
+	int numberOfPlates = plateWords.size();
+	int correctPlates = 0;
+
 	int i = 0;
 	for (std::string imageName : imageNames) {
 		i++;
 		std::cout << "\nCurrent image: " + imageName;
 		cv::Mat testImage = cv::imread("../../Licenta/Resources/" + imageName);
 		cv::Mat outputImage;
-		licenseWorkflow.Detect(testImage, outputImage, std::string(), detectionType);
-
+		std::string text;
+		licenseWorkflow.Detect(testImage, outputImage, text, detectionType);
+		if (text == plateWords[i - 1])
+			correctPlates++;
 		//std::vector<std::vector<cv::Point>> contours;
 		//cv::findContours(outputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 		//cv::cvtColor(outputImage, outputImage, cv::COLOR_GRAY2BGR);
@@ -59,6 +66,6 @@ void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection
 		cv::imwrite("../../test/" + std::to_string(i) + "_" + imageName, outputImage);
 		//system("pause");
 	}
-	
+	std::cout << "Accuraccy: " << (float)correctPlates / (float)numberOfPlates * 100.0f << "%";
 }
 
