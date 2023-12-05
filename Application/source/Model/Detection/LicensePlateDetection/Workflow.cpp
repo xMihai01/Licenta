@@ -34,8 +34,9 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 		break;
 	}
 	m_preprocessing.Undistortion(outputImage, outputImage);
+	//m_preprocessing.SkewCorrection(outputImage, outputImage);
 	m_postprocessing.LetterDetection(outputImage, outputImage, outputText);
-	std::cout << "\nTEXT: " << outputText << "\n";
+	//std::cout << "\nTEXT: " << outputText << "\n";
 }
 
 void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection::DetectionType detectionType, const std::string& fileName)
@@ -65,6 +66,7 @@ void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection
 
 		cv::imwrite("../../test/" + std::to_string(i) + "_" + imageName, outputImage);
 		//system("pause");
+		std::cout << "\nTEXT: " << text << " expected: " << plateWords[i-1] << "\n";
 	}
 	std::cout << "Accuraccy: " << (float)correctPlates / (float)numberOfPlates * 100.0f << "%";
 }

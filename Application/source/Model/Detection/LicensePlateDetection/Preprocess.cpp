@@ -165,10 +165,10 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 	//	cv::circle(licensePlate, approx[i], 5, cv::Scalar(255, 0, 0), -1);
 	//}
 	//for (int i = 0; i < 2; i++) {
-	//	cv::circle(licensePlate, approx[i], 5, cv::Scalar(0, 0, 255), -1);
+	//	cv::circle(licensePlate, corners[i], 5, cv::Scalar(0, 0, 255), -1);
 	//}
-	//for (int i = approx.size() - 1; i > approx.size() - 3; i--) {
-	//	cv::circle(licensePlate, approx[i], 5, cv::Scalar(0, 0, 255), -1);
+	//for (int i = corners.size() - 1; i > corners.size() - 3; i--) {
+	//	cv::circle(licensePlate, corners[i], 5, cv::Scalar(0, 255, 0), -1);
 	//}
 	//outputImage = licensePlate;
 	//return;

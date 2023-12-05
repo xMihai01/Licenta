@@ -201,12 +201,12 @@ char LicensePlateDetection::Postprocess::RecognizeCharacterUsingTemplateMatching
 	cv::Mat charImage = inputCharImage.clone();
 
 	std::vector<std::string> imageNames = Utils::GetImageNamesFromFile("../Resources/charTemplates.txt");
-	double threshold = 0.40;
+	double threshold = 0.45;
 	std::pair<double, char> maxChar = std::make_pair(0, '-');
 
 	for (std::string imageName : imageNames) {
 		//std::cout << "\nCurrent image: " + imageName;
-		cv::Mat templateImage = cv::imread("../../Licenta/Resources/CharTemplates/" + imageName, cv::IMREAD_GRAYSCALE);
+		cv::Mat templateImage = cv::imread("../../Licenta/Resources/RoCharTemplates/" + imageName, cv::IMREAD_GRAYSCALE);
 		cv::resize(charImage, charImage, cv::Size(templateImage.cols, templateImage.rows));
 		cv::Mat result;
 		cv::matchTemplate(charImage, templateImage, result, cv::TM_CCOEFF_NORMED);
@@ -214,7 +214,7 @@ char LicensePlateDetection::Postprocess::RecognizeCharacterUsingTemplateMatching
 		double minVal, maxVal;
 		cv::Point minLoc, maxLoc;
 		cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
-		//std::cout << "\nMAX VAL: " << maxVal << "C: " << imageName[0] << "\n";
+		std::cout << "\nMAX VAL: " << maxVal << "C: " << imageName[0] << "\n";
 		if (maxVal > maxChar.first && maxVal > threshold)
 			maxChar = std::make_pair(maxVal, imageName[0]);
 		
@@ -247,6 +247,7 @@ void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv
 			lettersBox.push_back(std::make_pair(charImage, contourRectangle));
 		}
 	}
+	// TODO: Get external contours on the white image
 
 	cv::Mat whiteImage(inputImage.rows, inputImage.cols, CV_8UC1, cv::Scalar(255));
 	std::sort(lettersBox.begin(), lettersBox.end(), Utils::letterLocationComparator);
