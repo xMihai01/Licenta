@@ -172,7 +172,7 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 	//}
 	//outputImage = licensePlate;
 	//return;
-
+	//cv::cvtColor(licensePlate, licensePlate, cv::COLOR_BGR2GRAY);
 
 	std::vector<cv::Point> srcPoints = {
 	(corners[3].y < corners[2].y) ? corners[3] : corners[2], // top left
@@ -204,10 +204,56 @@ std::array<cv::Point, LicensePlateDetection::Preprocess::NUMBER_OF_CORNERS_IN_LI
 
 	std::sort(approximations.begin(), approximations.end(), Utils::pointComparatorByX);
 
+	cv::Point topLeft;
+	cv::Point topRight;
+	cv::Point bottomLeft;
+	cv::Point bottomRight;
+
+	double yMaxLeft = 0;
+	double yMaxRight = 0;
+	double yMinLeft = 100000;
+	double yMinRight = 100000;
+	double xMaxLeft = 0;
+	double xMaxRight = 0;
+	double xMinLeft = 0;
+	double xMinRight = 0;
+
+
+	for (size_t index = 0; index < approximations.size(); index++) {
+		if (approximations[index].x > Utils::INPUT_WIDTH / 2) {
+			if (approximations[index].y < yMinRight) {
+				topRight = cv::Point(approximations[index].x, approximations[index].y);
+				yMinRight = approximations[index].y;
+			}
+			if (approximations[index].y > yMaxRight) {
+				bottomRight = cv::Point(approximations[index].x, approximations[index].y);
+				yMaxRight = approximations[index].y;
+			}
+			//right
+		}
+		else {
+			if (approximations[index].y < yMinLeft) {
+				topLeft = cv::Point(approximations[index].x, approximations[index].y);
+				yMinLeft = approximations[index].y;
+			}
+			if (approximations[index].y > yMaxLeft) {
+				bottomLeft = cv::Point(approximations[index].x, approximations[index].y);
+				yMaxLeft = approximations[index].y;
+			}
+			//left
+
+		}
+	}
+
 	corners[0] = approximations[0];
 	corners[1] = approximations[1];
-	corners[2] = approximations[approximations.size() - 1];
-	corners[3] = approximations[approximations.size() - 2];
+	/*corners[2] = approximations[approximations.size() - 1];
+	corners[3] = approximations[approximations.size() - 2];*/
+
+	//corners[0] = bottomRight.x != 0 ? bottomRight : approximations[0];
+	//corners[1] = topRight.x != 0 ? topRight : approximations[1];
+	corners[2] = bottomLeft.x != 0 ? bottomLeft : approximations[approximations.size()-1] ;
+	corners[3] = topLeft.x != 0 ? topLeft : approximations[approximations.size()-2];
 
 	return corners;
 }

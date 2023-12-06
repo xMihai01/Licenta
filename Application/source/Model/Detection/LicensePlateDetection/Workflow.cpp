@@ -28,15 +28,21 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 
 		break;
 	case DetectionType::DNN:
+		originalInputImage = inputImage.clone();
 		m_postprocessing.NumberPlateExtractionUsingDNN(inputImage, outputImage, this->m_detector);
 		break;
 	default:
 		break;
 	}
+	// in case of DNN, if sizes are the same, there was no detection and it attempts IMAGE_PROCESSING method by default.
+	if (outputImage.size() == cv::Size(Utils::INPUT_WIDTH, Utils::INPUT_HEIGHT) && detectionType == DetectionType::DNN) {
+		Detect(originalInputImage, outputImage, outputText, DetectionType::IMAGE_PROCESSING);
+		return;
+	}
 	m_preprocessing.Undistortion(outputImage, outputImage);
 	//m_preprocessing.SkewCorrection(outputImage, outputImage);
 	m_postprocessing.LetterDetection(outputImage, outputImage, outputText);
-	//std::cout << "\nTEXT: " << outputText << "\n";
+	std::cout << "\nTEXT: " << outputText << "\n";
 }
 
 void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection::DetectionType detectionType, const std::string& fileName)

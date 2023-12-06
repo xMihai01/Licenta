@@ -19,7 +19,7 @@ public:
 	inline static const std::string PLATE_MODEL_CLASS_LIST = "license_classList.txt";
 
 	static const int PLATE_WIDTH = 400;
-	static const int PLATE_HEIGHT = 150;
+	static const int PLATE_HEIGHT = 125;
 	static const int MAXIMUM_CONTOUR_AREA = 4000;
 	static const int MINIMUM_CONTOUR_AREA = 100;
 
