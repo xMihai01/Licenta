@@ -170,8 +170,8 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 	//for (int i = corners.size() - 1; i > corners.size() - 3; i--) {
 	//	cv::circle(licensePlate, corners[i], 5, cv::Scalar(0, 255, 0), -1);
 	//}
-	//outputImage = licensePlate;
-	//return;
+	///*outputImage = licensePlate;
+	////return;*/
 	//cv::cvtColor(licensePlate, licensePlate, cv::COLOR_BGR2GRAY);
 
 	std::vector<cv::Point> srcPoints = {
@@ -213,10 +213,6 @@ std::array<cv::Point, LicensePlateDetection::Preprocess::NUMBER_OF_CORNERS_IN_LI
 	double yMaxRight = 0;
 	double yMinLeft = 100000;
 	double yMinRight = 100000;
-	double xMaxLeft = 0;
-	double xMaxRight = 0;
-	double xMinLeft = 0;
-	double xMinRight = 0;
 
 
 	for (size_t index = 0; index < approximations.size(); index++) {
@@ -244,14 +240,11 @@ std::array<cv::Point, LicensePlateDetection::Preprocess::NUMBER_OF_CORNERS_IN_LI
 
 		}
 	}
-
 	corners[0] = approximations[0];
 	corners[1] = approximations[1];
 	/*corners[2] = approximations[approximations.size() - 1];
 	corners[3] = approximations[approximations.size() - 2];*/
 
-	//corners[0] = bottomRight.x != 0 ? bottomRight : approximations[0];
-	//corners[1] = topRight.x != 0 ? topRight : approximations[1];
 	corners[2] = bottomLeft.x != 0 ? bottomLeft : approximations[approximations.size()-1] ;
 	corners[3] = topLeft.x != 0 ? topLeft : approximations[approximations.size()-2];
 

@@ -19,6 +19,7 @@ namespace LicensePlateDetection {
 		void NumberPlateExtractionUsingImageProcessing(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& detectedPlate);
 		void NumberPlateExtractionUsingHaarCascade(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& detectedPlate);
 		void NumberPlateExtractionUsingDNN(const cv::Mat& originalImage, cv::Mat& detectedPlate, ObjectDetector* detector);
+		void NumberPlateExtractionUsingImageProcessingCC(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& detectedPlate);
 
 		void LetterDetection(cv::Mat& inputImage, cv::Mat& outputImage, std::string& detectedtext);
 		void CleanPlateDetection(cv::Mat& inputImage, cv::Mat& outputImage);
@@ -35,7 +36,7 @@ namespace LicensePlateDetection {
 
 		void ClearCharImage(const cv::Mat& inputCharImage, cv::Mat& outputCharImage);
 
-		char RecognizeCharacterUsingTemplateMatching(const cv::Mat& inputCharImage);
+		char RecognizeCharacterUsingTemplateMatching(const cv::Mat& inputCharImage, double threshold = 0.40);
 	};
 
 }

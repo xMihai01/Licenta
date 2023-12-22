@@ -47,11 +47,12 @@ std::pair<cv::Mat, cv::Mat> Utils::GetHistograms(const cv::Mat grayImage)
 void Utils::GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour
 	, const bool crop, const std::vector<std::vector<cv::Point>>& customContours)
 {
-	if ((inputImage.empty() || outputImage.empty()) && crop == true)
+	//if ((inputImage.empty() || outputImage.empty()) && crop == true)
+	if (inputImage.empty() && crop == true)
 		throw std::runtime_error("Can't crop given images. They are empty!");
 
 	std::vector<std::vector<cv::Point>> contours;
-	customContours.size() == 0 ? cv::findContours(inputImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE) : contours = customContours;
+	customContours.size() == 0 ? cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE) : contours = customContours;
 
 	std::vector<double> areas;
 	for (const auto& contour : contours) {
@@ -122,6 +123,42 @@ void Utils::BitwiseLicensePlateImage(const cv::Mat& blankLicensePlate, const cv:
 	}
 }
 
+void Utils::SkeletonizeImage(const cv::Mat& inputImage, cv::Mat& outputImage)
+{
+	cv::Mat originalImage;
+	cv::bitwise_not(inputImage, originalImage);
+	//cv::resize(originalImage, originalImage, cv::Size(100, 100));
+	cv::Size size = originalImage.size();
+	cv::Mat skel = cv::Mat::zeros(originalImage.size(), CV_8U);
+
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
+	bool done = false;
+
+	while (!done) {
+		cv::Mat eroded;
+		cv::erode(originalImage, eroded, kernel);
+		cv::Mat temp;
+		cv::dilate(eroded, temp, kernel);
+		cv::subtract(originalImage, temp, temp);
+		cv::bitwise_or(skel, temp, skel);
+
+		originalImage = eroded.clone();
+
+		int zeros = size.width * size.height - cv::countNonZero(originalImage);
+		if (zeros == size.width * size.height) {
+			done = true;
+		}
+	}
+	outputImage = skel;
+}
+
+bool Utils::IsRectangleInsideAnotherRectangle(const cv::Rect& first, const cv::Rect& second) // first rectangle (smaller one) is in second rectangle (bigger one)
+{
+	bool isXcoordInside = second.x <= first.x && second.x + second.width >= first.x + first.width;
+	bool isYcoordInside = second.y <= first.y && second.y + second.height >= first.y + first.height;
+	return isXcoordInside && isYcoordInside;
+}
+
 bool Utils::letterLocationComparator(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b)
 {
 	return a.second.x < b.second.x;
@@ -129,6 +166,11 @@ bool Utils::letterLocationComparator(std::pair<cv::Mat, cv::Rect>& a, std::pair<
 
 bool Utils::pointComparatorByX(cv::Point& a, cv::Point& b) {
 	return a.x > b.x;
+}
+
+bool Utils::areaComparatorForContours(std::vector<cv::Point>& a, std::vector<cv::Point>& b)
+{
+	return cv::contourArea(a) < cv::contourArea(b);
 }
 
 std::vector<std::string> Utils::GetImageNamesFromFile(const std::string& path)

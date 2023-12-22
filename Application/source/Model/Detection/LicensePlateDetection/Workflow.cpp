@@ -39,10 +39,12 @@ void LicensePlateDetection::Workflow::Detect(cv::Mat& inputImage, cv::Mat& outpu
 		Detect(originalInputImage, outputImage, outputText, DetectionType::IMAGE_PROCESSING);
 		return;
 	}
+	if (outputImage.size() == cv::Size(Utils::INPUT_WIDTH, Utils::INPUT_HEIGHT))
+		return;
 	m_preprocessing.Undistortion(outputImage, outputImage);
 	//m_preprocessing.SkewCorrection(outputImage, outputImage);
 	m_postprocessing.LetterDetection(outputImage, outputImage, outputText);
-	std::cout << "\nTEXT: " << outputText << "\n";
+	//std::cout << "\nTEXT: " << outputText << "\n";
 }
 
 void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection::DetectionType detectionType, const std::string& fileName)
@@ -55,6 +57,9 @@ void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection
 	int numberOfPlates = plateWords.size();
 	int correctPlates = 0;
 
+	int totalChars = 0;
+	int correctChars = 0;
+
 	int i = 0;
 	for (std::string imageName : imageNames) {
 		i++;
@@ -63,6 +68,16 @@ void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection
 		cv::Mat outputImage;
 		std::string text;
 		licenseWorkflow.Detect(testImage, outputImage, text, detectionType);
+		if (std::abs(((float)plateWords[i-1].length() - text.length())) < 2) {
+			for (size_t index = 0; index < plateWords[i - 1].length(); index++) {
+				if (index < text.length()) {
+					if (text[index] == plateWords[i - 1][index]) {
+						correctChars++;
+					}
+				}
+				totalChars++;
+			}
+		}
 		if (text == plateWords[i - 1])
 			correctPlates++;
 		//std::vector<std::vector<cv::Point>> contours;
@@ -72,8 +87,9 @@ void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection
 
 		cv::imwrite("../../test/" + std::to_string(i) + "_" + imageName, outputImage);
 		//system("pause");
-		std::cout << "\nTEXT: " << text << " expected: " << plateWords[i-1] << "\n";
+		std::cout << "\nTEXT: " << text << " expected: " << plateWords[i-1] << " | Char accuracy: " << (float)correctChars/(float)totalChars*100.0f << "\n";
 	}
 	std::cout << "Accuraccy: " << (float)correctPlates / (float)numberOfPlates * 100.0f << "%";
+	std::cout << "Chars Accuraccy: " << (float)correctChars / (float)totalChars * 100.0f << "%";
 }
 
