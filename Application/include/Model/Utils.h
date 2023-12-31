@@ -19,9 +19,9 @@ public:
 	inline static const std::string PLATE_MODEL_CLASS_LIST = "license_classList.txt";
 
 	static const int PLATE_WIDTH = 400;
-	static const int PLATE_HEIGHT = 150;
+	static const int PLATE_HEIGHT = 125;
 	static const int MAXIMUM_CONTOUR_AREA = 4000;
-	static const int MINIMUM_CONTOUR_AREA = 100;
+	static const int MINIMUM_CONTOUR_AREA = 75;
 
 public:
 
@@ -31,10 +31,13 @@ public:
 		, const bool crop = false, const std::vector<std::vector<cv::Point>>& customContours = std::vector<std::vector<cv::Point>>{});
 	static void BitwiseCharImage(const cv::Mat& src1, const cv::Mat& src2, cv::Mat& dst);
 	static void BitwiseLicensePlateImage(const cv::Mat& blankLicensePlate, const cv::Mat& thresholdedLicensePlate, cv::Mat& outputPlate);
+	static void SkeletonizeImage(const cv::Mat& inputImage, cv::Mat& outputImage);
+	static bool IsRectangleInsideAnotherRectangle(const cv::Rect& first, const cv::Rect& second);
 
 	// Comparators
 
 	static bool letterLocationComparator(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b);
 	static bool pointComparatorByX(cv::Point& a, cv::Point& b);
+	static bool areaComparatorForContours(std::vector<cv::Point>& a, std::vector<cv::Point>& b);
 
 };

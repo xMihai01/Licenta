@@ -65,6 +65,84 @@ void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingDNN(const cv:
 		detectedPlate = detector->Detect(originalImage);
 }
 
+void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingImageProcessingCC(const cv::Mat& preProcessedImage, const cv::Mat& originalImage, cv::Mat& detectedPlate)
+{
+	srand(time(NULL));
+	cv::threshold(preProcessedImage, detectedPlate, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
+	//cv::bitwise_not(detectedPlate, detectedPlate);
+	cv::Mat labels, stats, centroids;
+	//detectedPlate = preProcessedImage.clone();
+	int numComponents = cv::connectedComponentsWithStats(detectedPlate, labels, stats, centroids);
+	cv::cvtColor(detectedPlate, detectedPlate, cv::COLOR_GRAY2BGR);
+	// Iterate through components and draw rectangles
+	int maxAreaIndex = -1;
+	int maxArea = -1;
+
+	std::vector<cv::Vec3b> colors(numComponents);
+
+	for (int i = 0; i < numComponents; i++) {
+		colors[i] = cv::Vec3b(rand() % 255, rand() % 255, rand() % 255);
+	}
+
+	/*for (int i = 0; i < detectedPlate.cols; i++) {
+		for (int j = 0; j < detectedPlate.rows; j++) {
+			if (labels.at<int>(cv::Point(i, j)) != 0) {
+				detectedPlate.at<cv::Vec3b>(cv::Point(i, j)) = colors[(int)labels.at<int>(cv::Point(i, j))];
+			}
+		}
+	}*/
+	int maxX = 0;
+	int maxY = 0;
+	int maxWidth = 0;
+	int maxHeight = 0;
+	for (int i = 1; i < numComponents; i++) {
+		// Skip the background component (index 0)
+		int area = stats.at<int>(i, cv::CC_STAT_AREA);
+
+		// You can add additional conditions to filter out small or large components
+		if (area > 700 && area < 2500) {
+			int x = stats.at<int>(i, cv::CC_STAT_LEFT);
+			int y = stats.at<int>(i, cv::CC_STAT_TOP);
+			int width = stats.at<int>(i, cv::CC_STAT_WIDTH);
+			int height = stats.at<int>(i, cv::CC_STAT_HEIGHT);
+
+			cv::Mat possiblePlate = preProcessedImage(cv::Rect(x, y, width, height));
+			cv::cvtColor(possiblePlate, possiblePlate, cv::COLOR_BGR2GRAY);
+			std::vector<std::vector<cv::Point>> contours;
+
+			//detectedPlate = preProcessedImage.clone();
+
+			cv::findContours(possiblePlate, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+			std::sort(contours.begin(), contours.end(), Utils::areaComparatorForContours);
+			if (contours.size() > 5) {
+				std::vector<cv::Point> max_cnt;
+				cv::Mat possibleChar = possiblePlate(cv::Rect(cv::boundingRect(contours[contours.size()/2])));
+
+				//Utils::GetImageByHighestContour(possiblePlate, possibleChar, max_cnt, true);
+				//(possibleChar.rows > possiblePlate.rows*0.2 && possibleChar.cols < possiblePlate.cols/2) && 
+				Utils::GetImageByHighestContour(possiblePlate, possiblePlate, max_cnt);
+				cv::Rect contourRectangle = cv::boundingRect(max_cnt);
+				//cv::cvtColor(possiblePlate, possiblePlate, cv::COLOR_GRAY2BGR);
+				double epsilon = 0.02 * cv::arcLength(max_cnt, true);
+				std::vector<cv::Point> approx;
+				cv::approxPolyDP(max_cnt, approx, epsilon, true);
+		/*		for (int i = 0; i < approx.size(); i++) {
+					cv::circle(possiblePlate, approx[i], 5, cv::Scalar(0, 0, 255), -1);
+				}*/
+				//std::cout << "AREA: " << area << "\n";
+				if (RecognizeCharacterUsingTemplateMatching(possibleChar, 0.6) != '_') {
+					detectedPlate = originalImage(cv::Rect(x, y, width, height));
+					return;
+					//cv::rectangle(detectedPlate, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);
+				}
+			}
+		
+		}
+	}
+	//std::cout << maxX << " " << maxY << " " << maxWidth << " " << maxHeight << "\n";
+	detectedPlate = originalImage;
+}
+
 bool LicensePlateDetection::Postprocess::CheckPlate(const cv::Mat& originalImage, cv::Mat& outputImage, const std::vector<cv::Point>& contour, const int contourNumber)
 {
 	cv::RotatedRect rect = cv::minAreaRect(contour);
@@ -194,16 +272,42 @@ void LicensePlateDetection::Postprocess::ClearCharImage(const cv::Mat& inputChar
 	cv::warpAffine(outputCharImage, outputCharImage, rotationMatrix, cv::Size(w, h), cv::INTER_CUBIC, cv::BORDER_REPLICATE);
 	cv::bitwise_not(outputCharImage, outputCharImage);
 
+
 }
 
-void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv::Mat& outputImage)
+char LicensePlateDetection::Postprocess::RecognizeCharacterUsingTemplateMatching(const cv::Mat& inputCharImage, double threshold)
+{
+	cv::Mat charImage = inputCharImage.clone();
+
+	std::vector<std::string> imageNames = Utils::GetImageNamesFromFile("../Resources/charTemplates.txt");
+	std::pair<double, char> maxChar = std::make_pair(0, '-');
+
+	for (std::string imageName : imageNames) {
+		cv::Mat templateImage = cv::imread("../../Licenta/Resources/RoCharTemplates/" + imageName, cv::IMREAD_GRAYSCALE);
+		cv::resize(charImage, charImage, cv::Size(templateImage.cols, templateImage.rows));
+		cv::Mat result;
+		cv::matchTemplate(charImage, templateImage, result, cv::TM_CCOEFF_NORMED);
+
+		double minVal, maxVal;
+		cv::Point minLoc, maxLoc;
+		cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
+		//std::cout << "\nMAX VAL: " << maxVal << "C: " << imageName[0] << "\n";
+		if (maxVal > maxChar.first && maxVal > threshold)
+			maxChar = std::make_pair(maxVal, imageName[0]);
+		
+	}
+	//std::cout << "\nC: " << maxChar.second << "\n";
+	return maxChar.second;
+
+}
+
+
+void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv::Mat& outputImage, std::string& detectedText)
 {
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
-	cv::morphologyEx(inputImage, inputImage, cv::MORPH_OPEN, kernel);
-
+	//cv::morphologyEx(inputImage, inputImage, cv::MORPH_OPEN, kernel); IMPROVED ACCURACY without this
 	std::vector<std::vector<cv::Point>> contours;
 	cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
-
 	std::vector<std::pair<cv::Mat, cv::Rect>> lettersBox;
 
 	for (size_t index = 0; index < contours.size(); index++) {
@@ -212,7 +316,8 @@ void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv
 		double y = contourRectangle.y;
 		double width = contourRectangle.width; 
 		double height = contourRectangle.height;
-		if ((height > inputImage.rows * 0.1 && width < inputImage.cols / 2) && RatioCheck(cv::contourArea(contours[index]), 1, 1, Utils::MINIMUM_CONTOUR_AREA, Utils::MAXIMUM_CONTOUR_AREA)) {
+		if ((height > inputImage.rows * 0.2 && width < inputImage.cols / 2)
+			&& RatioCheck(cv::contourArea(contours[index]), 1, 1, Utils::MINIMUM_CONTOUR_AREA, Utils::MAXIMUM_CONTOUR_AREA)) {
 			cv::Mat charImage = inputImage(cv::Rect(x, y, width, height));
 			//ClearCharImage(inputImage(cv::Rect(x, y, width, height)), charImage);
 			lettersBox.push_back(std::make_pair(charImage, contourRectangle));
@@ -221,14 +326,20 @@ void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv
 
 	cv::Mat whiteImage(inputImage.rows, inputImage.cols, CV_8UC1, cv::Scalar(255));
 	std::sort(lettersBox.begin(), lettersBox.end(), Utils::letterLocationComparator);
+	std::string text = "";
 	for (size_t index = 0; index < lettersBox.size(); index++) {
+		if (index > 0 && Utils::IsRectangleInsideAnotherRectangle(lettersBox[index].second, lettersBox[index - 1].second))
+			continue;
+
 		lettersBox[index].first.copyTo(whiteImage(cv::Rect(lettersBox[index].second)));
-		cv::Mat clearChar;
-		//ClearCharImage(lettersBox[index].first, clearChar);
-		//cv::resize(clearChar, clearChar, cv::Size(lettersBox[index].first.cols, lettersBox[index].first.rows));
-		//clearChar.copyTo(whiteImage(cv::Rect(lettersBox[index].second)));
-		//cv::imwrite("chars/" + std::to_string(index) + ".jpg", clearChar);
+		//Utils::SkeletonizeImage(lettersBox[index].first, lettersBox[index].first);
+		//cv::threshold(lettersBox[index].first, lettersBox[index].first, 128, 256, cv::THRESH_BINARY);
+		char ch = RecognizeCharacterUsingTemplateMatching(lettersBox[index].first, 0.4);
+		if (ch != '-')
+			text += ch;
+
 	}
+	detectedText = text;
 	outputImage = whiteImage;
 }
 
@@ -255,26 +366,6 @@ void LicensePlateDetection::Postprocess::CleanPlateDetection(cv::Mat& inputImage
 			}
 		}
 	}
-
-	//for (int i = 1; i < numComponents; i++) {
-	//	int area = stats.at<int>(i, cv::CC_STAT_AREA);
-
-	//	if (area > maxArea) {
-	//		maxArea = area;
-	//		maxAreaIndex = i;
-	//	}
-	//}
-
-
-	//// Draw a rectangle around the component with the second-highest area
-	//if (maxAreaIndex != -1) {
-	//	cv::Rect boundingBox(stats.at<int>(maxAreaIndex, cv::CC_STAT_LEFT),
-	//		stats.at<int>(maxAreaIndex, cv::CC_STAT_TOP),
-	//		stats.at<int>(maxAreaIndex, cv::CC_STAT_WIDTH),
-	//		stats.at<int>(maxAreaIndex, cv::CC_STAT_HEIGHT));
-
-	//	cv::rectangle(outputImage, boundingBox, cv::Scalar(0, 255, 0), 2);
-	//}
 }
 
 bool LicensePlateDetection::Postprocess::RatioCheck(const double area, const double width, const double height, const double ratioMin, const double ratioMax)
