@@ -40,7 +40,8 @@ void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingImageProcessi
 	}
 
 	std::vector<cv::Point> max_cnt;
-	Utils::GetImageByHighestContour(cv::Mat(), cv::Mat(), max_cnt, false, validContours);
+	cv::Mat someImage;
+	Utils::GetImageByHighestContour(cv::Mat(), someImage, max_cnt, false, validContours);
 	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
 
 	detectedPlate = outImage(cv::Rect(contourRectangle.x, contourRectangle.y, contourRectangle.width, contourRectangle.height));

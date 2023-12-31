@@ -52,7 +52,11 @@ void Utils::GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputI
 		throw std::runtime_error("Can't crop given images. They are empty!");
 
 	std::vector<std::vector<cv::Point>> contours;
-	customContours.size() == 0 ? cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE) : contours = customContours;
+	//customContours.size() == 0 ? cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE) : contours = customContours;
+	if (customContours.size() == 0)
+		cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+	else
+		contours = customContours;
 
 	std::vector<double> areas;
 	for (const auto& contour : contours) {
