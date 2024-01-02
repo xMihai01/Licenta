@@ -6,11 +6,14 @@ set(SOURCES
     Model
     Model/Detection
     Model/Detection/LicensePlateDetection
+    Model/Utils
+    Model/Utils/Interfaces
+    Model/Database
     View 
     Controller
 )
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Sql)
 find_package(OpenCV REQUIRED)
 
 qt_standard_project_setup()
@@ -46,4 +49,4 @@ set(CMAKE_AUTORCC ON)
 
 add_executable(Application ${HEADER_FILES} ${SRC_FILES} ${UI_FILES})
 
-target_link_libraries(Application PRIVATE ${OpenCV_LIBS} Qt6::Widgets)
+target_link_libraries(Application PRIVATE ${OpenCV_LIBS} Qt6::Widgets Qt6::Sql)

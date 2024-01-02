@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
     try {
-        this->windowController = new MainWindowController();
+        this->windowController = new MainWindowController(ui->entranceCameraLabel, ui->exitCameraLabel);
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
@@ -59,6 +59,7 @@ void MainWindow::OnRefreshButtonClicked()
 
 MainWindow::~MainWindow()
 {
+    delete windowController;
     delete ui;
 }
 

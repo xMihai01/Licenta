@@ -1,8 +1,23 @@
 #include "Model/VideoCamera.h"
 
-VideoCamera::VideoCamera(cv::Mat* frame)
+VideoCamera::VideoCamera()
+{}
+
+void VideoCamera::ReadFrames()
 {
-	m_frame = new cv::Mat();
+	while (m_videoCapture.isOpened()) {
+
+		{
+			std::lock_guard<std::mutex> lock(frameMutex);
+			if (!m_videoCapture.read(m_frame)) {
+				break;
+			}
+			m_useableFrame = m_frame.clone();
+			NotifyListeners();
+		}
+	
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000 / FRAME_RATE));
+	}
 }
 
 void VideoCamera::OpenCamera(const int index)
@@ -11,11 +26,6 @@ void VideoCamera::OpenCamera(const int index)
 
 	if (!m_videoCapture.isOpened()) {
 		throw std::runtime_error("Camera index " + std::to_string(index) + " could not open!");
-	}
-
-	while (m_videoCapture.isOpened()) {
-		m_videoCapture.read(*m_frame);
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 / FRAME_RATE));
 	}
 
 	m_frameWidth = m_videoCapture.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -30,19 +40,13 @@ void VideoCamera::OpenCamera(const std::string& filename)
 		throw std::runtime_error("Camera " + filename + " could not open!");
 	}
 
-	while (m_videoCapture.isOpened()) {
-		m_videoCapture.read(*m_frame);
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 / FRAME_RATE));
-	}
-
 	m_frameWidth = m_videoCapture.get(cv::CAP_PROP_FRAME_WIDTH);
 	m_frameHeight = m_videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT);
 }
 
 void VideoCamera::StopCamera()
 {
-	//m_frame = NULL;
-	delete m_frame;
+	m_frame = cv::Mat();
 	m_videoCapture.release();
 	cv::destroyAllWindows();
 }
@@ -51,8 +55,13 @@ cv::Mat VideoCamera::GetCurrentFrame()
 {
 	if (!m_videoCapture.isOpened())
 		throw std::runtime_error("Tried taking the current frame on video camera but it is not opened!");
+	cv::Mat frame;
+	{
+		std::lock_guard<std::mutex> lock(frameMutex);
+		frame = m_useableFrame.clone();
+	}
 
-	return m_frame->clone();
+	return frame;
 }
 
 bool VideoCamera::IsCameraOpened()
@@ -68,5 +77,27 @@ int VideoCamera::GetFrameHeight() const
 int VideoCamera::GetFrameWidth() const
 {
 	return m_frameWidth;
+}
+
+void VideoCamera::AddListener(std::shared_ptr<IVideoListener> listener)
+{
+	m_listeners.push_back(listener);
+}
+
+void VideoCamera::RemoveListener(std::shared_ptr<IVideoListener> listener)
+{
+	for (auto iterator = m_listeners.begin(); iterator != m_listeners.end(); )
+	{
+		if (*iterator == listener)
+			iterator = m_listeners.erase(iterator);
+		else
+			++iterator;
+	}
+}
+
+void VideoCamera::NotifyListeners()
+{
+	for (auto& listener : m_listeners)
+		listener->Update(m_useableFrame);
 }
 

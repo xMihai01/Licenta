@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QShortcut>
 
+#include <Model/Utils/Interfaces/InterfaceVideoListener.h>
 #include <Controller/MainWindowController.h>
 
 QT_BEGIN_NAMESPACE
