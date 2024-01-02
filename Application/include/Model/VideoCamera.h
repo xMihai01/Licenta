@@ -5,9 +5,10 @@ class VideoCamera {
 
 public:
 
-	VideoCamera();
+	VideoCamera(cv::Mat* frame);
 
-	void OpenCamera();
+	void OpenCamera(const int index);
+	void OpenCamera(const std::string& filename);
 	void StopCamera();
 
 	cv::Mat GetCurrentFrame();
@@ -19,10 +20,14 @@ public:
 private:
 
 	cv::VideoCapture m_videoCapture;
-	cv::Mat m_frame;
+	cv::Mat* m_frame;
 
 	int m_frameHeight;
 	int m_frameWidth;
+
+	int FRAME_RATE = 30;
+
+	std::mutex m_frameMutex;
 };
 
 

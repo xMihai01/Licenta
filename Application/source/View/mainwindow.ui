@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1169</width>
-    <height>647</height>
+    <width>1171</width>
+    <height>663</height>
    </rect>
   </property>
   <property name="palette">
@@ -25,9 +25,9 @@
      <colorrole role="Button">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>220</red>
-        <green>255</green>
-        <blue>220</blue>
+        <red>226</red>
+        <green>226</green>
+        <blue>226</blue>
        </color>
       </brush>
      </colorrole>
@@ -43,27 +43,27 @@
      <colorrole role="Midlight">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>237</red>
-        <green>255</green>
-        <blue>237</blue>
+        <red>240</red>
+        <green>240</green>
+        <blue>240</blue>
        </color>
       </brush>
      </colorrole>
      <colorrole role="Dark">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>110</red>
-        <green>127</green>
-        <blue>110</blue>
+        <red>113</red>
+        <green>113</green>
+        <blue>113</blue>
        </color>
       </brush>
      </colorrole>
      <colorrole role="Mid">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>147</red>
-        <green>170</green>
-        <blue>147</blue>
+        <red>151</red>
+        <green>151</green>
+        <blue>151</blue>
        </color>
       </brush>
      </colorrole>
@@ -97,18 +97,18 @@
      <colorrole role="Base">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>255</red>
-        <green>255</green>
-        <blue>255</blue>
+        <red>226</red>
+        <green>226</green>
+        <blue>226</blue>
        </color>
       </brush>
      </colorrole>
      <colorrole role="Window">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>220</red>
-        <green>255</green>
-        <blue>220</blue>
+        <red>226</red>
+        <green>226</green>
+        <blue>226</blue>
        </color>
       </brush>
      </colorrole>
@@ -124,9 +124,9 @@
      <colorrole role="AlternateBase">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>237</red>
-        <green>255</green>
-        <blue>237</blue>
+        <red>240</red>
+        <green>240</green>
+        <blue>240</blue>
        </color>
       </brush>
      </colorrole>
@@ -308,18 +308,18 @@
      <colorrole role="WindowText">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>110</red>
-        <green>127</green>
-        <blue>110</blue>
+        <red>113</red>
+        <green>113</green>
+        <blue>113</blue>
        </color>
       </brush>
      </colorrole>
      <colorrole role="Button">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>220</red>
-        <green>255</green>
-        <blue>220</blue>
+        <red>226</red>
+        <green>226</green>
+        <blue>226</blue>
        </color>
       </brush>
      </colorrole>
@@ -335,36 +335,36 @@
      <colorrole role="Midlight">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>237</red>
-        <green>255</green>
-        <blue>237</blue>
+        <red>240</red>
+        <green>240</green>
+        <blue>240</blue>
        </color>
       </brush>
      </colorrole>
      <colorrole role="Dark">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>110</red>
-        <green>127</green>
-        <blue>110</blue>
+        <red>113</red>
+        <green>113</green>
+        <blue>113</blue>
        </color>
       </brush>
      </colorrole>
      <colorrole role="Mid">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>147</red>
-        <green>170</green>
-        <blue>147</blue>
+        <red>151</red>
+        <green>151</green>
+        <blue>151</blue>
        </color>
       </brush>
      </colorrole>
      <colorrole role="Text">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>110</red>
-        <green>127</green>
-        <blue>110</blue>
+        <red>113</red>
+        <green>113</green>
+        <blue>113</blue>
        </color>
       </brush>
      </colorrole>
@@ -380,27 +380,27 @@
      <colorrole role="ButtonText">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>110</red>
-        <green>127</green>
-        <blue>110</blue>
+        <red>113</red>
+        <green>113</green>
+        <blue>113</blue>
        </color>
       </brush>
      </colorrole>
      <colorrole role="Base">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>220</red>
-        <green>255</green>
-        <blue>220</blue>
+        <red>226</red>
+        <green>226</green>
+        <blue>226</blue>
        </color>
       </brush>
      </colorrole>
      <colorrole role="Window">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>220</red>
-        <green>255</green>
-        <blue>220</blue>
+        <red>226</red>
+        <green>226</green>
+        <blue>226</blue>
        </color>
       </brush>
      </colorrole>
@@ -459,54 +459,30 @@
    <enum>Qt::ToolButtonTextOnly</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="gridLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>480</y>
-      <width>301</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="HSVslidersGrid"/>
-   </widget>
-   <widget class="QLabel" name="HSV_infoLabel">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>450</y>
-      <width>301</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::WinPanel</enum>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>../../Resources/hue_values.png</pixmap>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
    <widget class="QWidget" name="gridLayoutWidget_2">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>30</y>
       <width>1081</width>
-      <height>391</height>
+      <height>531</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="grid_videoStreams">
+    <layout class="QGridLayout" name="videoStreamsGrid">
      <item row="0" column="0">
-      <widget class="QLabel" name="camera_label">
+      <widget class="QLabel" name="entranceCameraLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="palette">
         <palette>
          <active>
@@ -950,7 +926,7 @@
         </palette>
        </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::WinPanel</enum>
        </property>
        <property name="lineWidth">
         <number>2</number>
@@ -964,9 +940,12 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLabel" name="convertedCamera_label">
+      <widget class="QLabel" name="exitCameraLabel">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::WinPanel</enum>
        </property>
        <property name="lineWidth">
         <number>2</number>
@@ -978,28 +957,17 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="gridLayoutWidget_3">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>440</y>
-      <width>221</width>
-      <height>148</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="HSVcolorsGrid"/>
-   </widget>
-   <widget class="QPushButton" name="camera_button">
+   <widget class="QPushButton" name="systemTurnButton">
     <property name="geometry">
      <rect>
       <x>540</x>
-      <y>0</y>
+      <y>580</y>
       <width>81</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Refresh</string>
     </property>
    </widget>
   </widget>
@@ -1008,76 +976,28 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1169</width>
-     <height>17</height>
+     <width>1171</width>
+     <height>26</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuDetect_by">
+   <widget class="QMenu" name="settingsMenu">
     <property name="title">
-     <string>Detect by</string>
+     <string>Settings</string>
     </property>
-    <addaction name="actionColor"/>
-    <addaction name="separator"/>
-    <addaction name="actionShape"/>
+    <addaction name="changeVideoSourceAction"/>
+    <addaction name="viewSpecificCameraAction"/>
    </widget>
-   <widget class="QMenu" name="menuConvert_Image_to">
-    <property name="title">
-     <string>Convert Image to</string>
-    </property>
-    <widget class="QMenu" name="menuGrey">
-     <property name="title">
-      <string>Grey</string>
-     </property>
-     <addaction name="actionLuminosity_Algorithm"/>
-     <addaction name="separator"/>
-     <addaction name="actionCustom_Shades_of_grey"/>
-    </widget>
-    <addaction name="menuGrey"/>
-    <addaction name="actionHSV"/>
-    <addaction name="actionBGR"/>
-   </widget>
-   <addaction name="menuDetect_by"/>
-   <addaction name="menuConvert_Image_to"/>
+   <addaction name="settingsMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionColor">
+  <action name="changeVideoSourceAction">
    <property name="text">
-    <string>Color</string>
+    <string>Change Video Source</string>
    </property>
   </action>
-  <action name="actionShape">
+  <action name="viewSpecificCameraAction">
    <property name="text">
-    <string>Object</string>
-   </property>
-  </action>
-  <action name="actionLuminosity_Algorithm">
-   <property name="text">
-    <string>Luminosity Algorithm</string>
-   </property>
-  </action>
-  <action name="actionCustom_Shades_of_grey">
-   <property name="text">
-    <string>Custom Shades of Grey </string>
-   </property>
-  </action>
-  <action name="actionOpen">
-   <property name="text">
-    <string>Open</string>
-   </property>
-  </action>
-  <action name="actionClose">
-   <property name="text">
-    <string>Close</string>
-   </property>
-  </action>
-  <action name="actionHSV">
-   <property name="text">
-    <string>HSV</string>
-   </property>
-  </action>
-  <action name="actionBGR">
-   <property name="text">
-    <string>BGR</string>
+    <string>View Specific Camera</string>
    </property>
   </action>
  </widget>
