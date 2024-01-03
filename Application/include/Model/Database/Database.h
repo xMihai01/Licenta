@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Model/Utils.h>
+#include <Model/Database/DataAccess/CameraType.h>
+
 #include <QSql>
 #include <QSqlDriver>
 #include <QSqlDatabase>
@@ -12,29 +15,21 @@ class Database {
 
 public:
 
-	void Connect(const std::string& serverName, const std::string& username, const std::string& password);
-
-	void QueryTest() {
-        QSqlQuery query("SELECT * FROM test");
-
-        if (!query.isActive()) {
-            std::cerr << "Query error: " << query.lastError().text().toStdString() << std::endl;
-        }
-
-        while (query.next()) {
-            QString column1 = query.value("id").toString();
-            QString column2 = query.value("name").toString();
-
-            std::cout << "Column1: " << column1.toStdString() << ", Column2: " << column2.toStdString() << std::endl;
-        }
-
-	}
+	void Connect(const QString& databaseName);
 
 	QSqlDatabase GetDatabase() const;
+
+    DatabaseDataAccess::CameraType ToCameraType() const;
+
+private:
+
+    void Validations();
 
 private:
 
 	QSqlDatabase m_database;
+
+    DatabaseDataAccess::CameraType m_cameraType;
 
 	bool isConncted = false;
 };

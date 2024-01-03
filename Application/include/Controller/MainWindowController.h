@@ -23,6 +23,8 @@ public:
 
 	void SetupCameras();
 
+	void Close();
+
 	~MainWindowController();
 
 private:
@@ -41,5 +43,7 @@ private:
 
 	QLabel* m_labelForEntranceCameraFrame;
 	QLabel* m_labelForExitCameraFrame;
+
+	Database m_database;
 
 };

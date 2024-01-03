@@ -57,6 +57,12 @@ void MainWindow::OnRefreshButtonClicked()
     }
 }
 
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    windowController->Close();
+    event->accept();
+}
+
 MainWindow::~MainWindow()
 {
     delete windowController;

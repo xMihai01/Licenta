@@ -4,22 +4,29 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
     : m_labelForEntranceCameraFrame(labelForEntranceCameraFrame)
     , m_labelForExitCameraFrame(labelForExitCameraFrame)
 {
-    m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForEntranceCameraFrame));
-    m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForExitCameraFrame));
-    m_entranceVideoCameras = new VideoCamera();
-    m_exitVideoCameras = new VideoCamera();
-    m_entranceVideoCameras->AddListener(m_videoListeners[0]);
-    m_exitVideoCameras->AddListener(m_videoListeners[1]);
+    try {
+        // currently hardcoded \/
+        m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForEntranceCameraFrame));
+        m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForExitCameraFrame));
+        m_entranceVideoCameras = new VideoCamera();
+        m_exitVideoCameras = new VideoCamera();
+        m_entranceVideoCameras->AddListener(m_videoListeners[0]);
+        m_exitVideoCameras->AddListener(m_videoListeners[1]);
 
-    m_exitVideoCameras->OpenCamera("C:/Users/mihai/Desktop/Products/testVideo.mp4");
-    m_entranceVideoCameras->OpenCamera(0);
-    std::thread([&]() { m_exitVideoCameras->ReadFrames(); }).detach();
+        m_exitVideoCameras->OpenCamera("C:/Users/mihai/Desktop/Products/testVideo.mp4");
+        m_entranceVideoCameras->OpenCamera(0);
+        std::thread([&]() { m_exitVideoCameras->ReadFrames(); }).detach();
 
-    std::thread([&]() { m_entranceVideoCameras->ReadFrames(); }).detach();
-
-    Database db;
-    db.Connect("", "", "");
-    db.QueryTest();
+        std::thread([&]() { m_entranceVideoCameras->ReadFrames(); }).detach();
+        // /\
+       
+        m_database.Connect("main");
+       
+    }
+    catch (const std::exception& exception) {
+        throw exception;
+    }
+    
 }
 
 void MainWindowController::TakeEntranceFrame()
@@ -43,6 +50,14 @@ void MainWindowController::SetupCameras()
 
 }
 
+void MainWindowController::Close()
+{
+    m_entranceVideoCameras->RemoveListener(m_videoListeners[0]);
+    m_exitVideoCameras->RemoveListener(m_videoListeners[1]);
+    m_entranceVideoCameras->StopCamera();   
+    m_exitVideoCameras->StopCamera();
+}
+
 std::string MainWindowController::TakePlateFromFrame(const cv::Mat& frame)
 {
     return std::string();
@@ -50,10 +65,6 @@ std::string MainWindowController::TakePlateFromFrame(const cv::Mat& frame)
 
 MainWindowController::~MainWindowController()
 {
-    m_entranceVideoCameras->RemoveListener(m_videoListeners[0]);
-    m_exitVideoCameras->RemoveListener(m_videoListeners[1]);
-    m_entranceVideoCameras->StopCamera();
-    m_exitVideoCameras->StopCamera();
-    //delete m_exitVideoCameras;
-    //delete m_entranceVideoCameras;
+    delete m_exitVideoCameras;
+    delete m_entranceVideoCameras;
 }

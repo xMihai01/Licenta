@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Model/Utils/JsonFile.h>
+#include <Model/Database/Database.h>
+
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <fstream>
@@ -39,5 +42,9 @@ public:
 	static bool letterLocationComparator(std::pair<cv::Mat, cv::Rect>& a, std::pair<cv::Mat, cv::Rect>& b);
 	static bool pointComparatorByX(cv::Point& a, cv::Point& b);
 	static bool areaComparatorForContours(std::vector<cv::Point>& a, std::vector<cv::Point>& b);
+
+	// Interface/Database related
+	
+	static std::vector<QString> ReadDatabaseInfoFromFile(const QString& databaseName);
 
 };

@@ -9,6 +9,9 @@ set(SOURCES
     Model/Utils
     Model/Utils/Interfaces
     Model/Database
+    Model/Database/Entities
+    Model/Database/DataAccess
+    Model/Database/BusinessLogic
     View 
     Controller
 )

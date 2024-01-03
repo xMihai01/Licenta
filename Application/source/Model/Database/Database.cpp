@@ -1,23 +1,49 @@
 #include <Model/Database/Database.h>
 
-void Database::Connect(const std::string& serverName, const std::string& username, const std::string& password)
+void Database::Connect(const QString& databaseName)
 {
-	m_database = QSqlDatabase::addDatabase("QPSQL");
-	m_database.setHostName("localhost");
-	m_database.setDatabaseName("Licenta");
-	m_database.setUserName("postgres");
-	m_database.setPassword("admin");
-	bool connectioncheck = m_database.open("postgres", "admin");
+	try {
+		if (isConncted)
+			throw std::runtime_error("Already connnected to database!");
 
-	if (connectioncheck == true) {
-		std::cout << "Connection to database established.";
+		auto databaseDetails = Utils::ReadDatabaseInfoFromFile(databaseName);
+
+		m_database = QSqlDatabase::addDatabase(databaseDetails[1]);
+		m_database.setHostName(databaseDetails[2]);
+		m_database.setDatabaseName(databaseDetails[3]);
+		m_database.setUserName(databaseDetails[4]);
+		m_database.setPassword(databaseDetails[5]);
+
+		if (m_database.open(databaseDetails[4], databaseDetails[5])) { // username, password
+			std::cout << "Connection to database established.";
+			isConncted = true;
+			Validations();
+		}
+		else {
+			throw std::runtime_error(m_database.lastError().text().toStdString());
+		}
 	}
-	else {
-		std::cout << "Error :" << m_database.lastError().text().toStdString();
+	catch (const std::exception& exception) {
+		throw exception;
 	}
 }
 
 QSqlDatabase Database::GetDatabase() const
 {
 	return m_database;
+}
+
+DatabaseDataAccess::CameraType Database::ToCameraType() const
+{
+	return m_cameraType;
+}
+
+void Database::Validations()
+{
+	try {
+		m_cameraType.CheckTableValidation();
+	}
+	catch (const std::exception& exception) {
+		throw exception;
+	}
 }

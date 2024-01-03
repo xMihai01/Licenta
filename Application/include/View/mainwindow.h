@@ -27,6 +27,10 @@ public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
+private:
+
+    void closeEvent(QCloseEvent* event);
+
 private slots:
 
     // TODO: Accept different keys in case of multiple entrances/exits
