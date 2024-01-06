@@ -38,6 +38,11 @@ DatabaseDataAccess::CameraType Database::ToCameraType() const
 	return m_cameraType;
 }
 
+DatabaseDataAccess::Camera Database::ToCamera() const
+{
+	return m_camera;
+}
+
 void Database::Validations()
 {
 	try {

@@ -2,6 +2,7 @@
 
 #include <Model/Utils.h>
 #include <Model/Database/DataAccess/CameraType.h>
+#include <Model/Database/DataAccess/Camera.h>
 
 #include <QSql>
 #include <QSqlDriver>
@@ -20,6 +21,7 @@ public:
 	QSqlDatabase GetDatabase() const;
 
     DatabaseDataAccess::CameraType ToCameraType() const;
+	DatabaseDataAccess::Camera ToCamera() const;
 
 private:
 
@@ -30,6 +32,7 @@ private:
 	QSqlDatabase m_database;
 
     DatabaseDataAccess::CameraType m_cameraType;
+	DatabaseDataAccess::Camera m_camera;
 
 	bool isConncted = false;
 };

@@ -65,6 +65,6 @@ std::string MainWindowController::TakePlateFromFrame(const cv::Mat& frame)
 
 MainWindowController::~MainWindowController()
 {
-    delete m_exitVideoCameras;
-    delete m_entranceVideoCameras;
+   // delete m_exitVideoCameras;
+    //delete m_entranceVideoCameras;
 }

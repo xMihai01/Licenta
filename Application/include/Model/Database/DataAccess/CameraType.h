@@ -17,16 +17,16 @@ namespace DatabaseDataAccess {
 
 		void CheckTableValidation();
 
+		std::vector<DatabaseEntity::CameraType> FindAll();
+		DatabaseEntity::CameraType FindByID(const uint32_t id);
+		DatabaseEntity::CameraType FindByType(const DatabaseEntity::CameraType::Type type);
+
 	private:
 
 		void Remove(const DatabaseEntity::CameraType& cameraType);
 		void RemoveAll();
 
 		void Add(const DatabaseEntity::CameraType& cameraType, const bool ignoreId = true);
-		
-		std::vector<DatabaseEntity::CameraType> FindAll();
-		DatabaseEntity::CameraType FindByID(const uint32_t id);
-		DatabaseEntity::CameraType FindByType(const DatabaseEntity::CameraType::Type type);
 		
 	private:
 

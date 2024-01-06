@@ -1022,7 +1022,17 @@
     <addaction name="changeVideoSourceAction"/>
     <addaction name="viewSpecificCameraAction"/>
    </widget>
+   <widget class="QMenu" name="manageCameraMenu">
+    <property name="title">
+     <string>Manage Cameras</string>
+    </property>
+    <addaction name="addCameraAction"/>
+    <addaction name="removeCameraAction"/>
+    <addaction name="updateCameraAction"/>
+    <addaction name="listCameraAction"/>
+   </widget>
    <addaction name="settingsMenu"/>
+   <addaction name="manageCameraMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="changeVideoSourceAction">
@@ -1033,6 +1043,26 @@
   <action name="viewSpecificCameraAction">
    <property name="text">
     <string>View Specific Camera</string>
+   </property>
+  </action>
+  <action name="addCameraAction">
+   <property name="text">
+    <string>Add</string>
+   </property>
+  </action>
+  <action name="removeCameraAction">
+   <property name="text">
+    <string>Remove</string>
+   </property>
+  </action>
+  <action name="updateCameraAction">
+   <property name="text">
+    <string>Update</string>
+   </property>
+  </action>
+  <action name="listCameraAction">
+   <property name="text">
+    <string>List</string>
    </property>
   </action>
  </widget>
