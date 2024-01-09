@@ -1,11 +1,15 @@
 #include <Model/Database/DataAccess/Camera.h>
 
+DatabaseDataAccess::Camera::Camera() {
+
+}
+
 void DatabaseDataAccess::Camera::Add(const DatabaseEntity::Camera& camera)
 {
     QSqlQuery query;
     query.prepare("INSERT INTO camera (camera_type_id, location, name) VALUES (:camera_type_id, :location, :name)");
     query.bindValue(":camera_type_id", camera.GetCameraType().GetID());
-    query.bindValue("location", QString::fromStdString(camera.GetLocation()));
+    query.bindValue(":location", QString::fromStdString(camera.GetLocation()));
     query.bindValue(":name", QString::fromStdString(camera.GetName()));
     if (query.exec())
         qDebug() << "Entry added successfully";
@@ -15,7 +19,7 @@ void DatabaseDataAccess::Camera::Add(const DatabaseEntity::Camera& camera)
 void DatabaseDataAccess::Camera::Remove(const DatabaseEntity::Camera& camera)
 {
     QSqlQuery query;
-    query.prepare("DELETE FROM camera WHERE camera_type.id = :id");
+    query.prepare("DELETE FROM camera WHERE camera.id = :id");
     query.bindValue(":id", camera.GetID());
 
     if (query.exec())
@@ -26,7 +30,7 @@ void DatabaseDataAccess::Camera::Remove(const DatabaseEntity::Camera& camera)
 void DatabaseDataAccess::Camera::Update(const DatabaseEntity::Camera& camera)
 {
     QSqlQuery query;
-    query.prepare("UPDATE camera camera_type_id = :camera_type_id , location = :location , name = :name WHERE id = :id; ");
+    query.prepare("UPDATE camera SET camera_type_id = :camera_type_id , location = :location , name = :name WHERE id = :id; ");
     query.bindValue(":id", camera.GetID());
     query.bindValue(":camera_type_id", camera.GetCameraType().GetID());
     query.bindValue(":location", QString::fromStdString(camera.GetLocation()));
@@ -41,7 +45,7 @@ void DatabaseDataAccess::Camera::Update(const DatabaseEntity::Camera& camera)
 std::vector<DatabaseEntity::Camera> DatabaseDataAccess::Camera::FindAll()
 {
     std::vector<DatabaseEntity::Camera> entries;
-    QSqlQuery query("SELECT * FROM camera_type");
+    QSqlQuery query("SELECT * FROM camera");
     DatabaseDataAccess::CameraType cameraTypeDataAccess;
     if (!query.isActive())
         throw std::runtime_error(query.lastError().text().toStdString());
@@ -61,7 +65,7 @@ std::vector<DatabaseEntity::Camera> DatabaseDataAccess::Camera::FindAll()
 
 DatabaseEntity::Camera DatabaseDataAccess::Camera::FindByID(const uint32_t id)
 {
-    QSqlQuery query("SELECT * FROM camera_type WHERE id = :id");
+    QSqlQuery query("SELECT * FROM camera WHERE id = :id");
     query.bindValue(":id", id);
     DatabaseDataAccess::CameraType cameraTypeDataAccess;
     if (!query.isActive())

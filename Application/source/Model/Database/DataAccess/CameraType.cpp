@@ -73,7 +73,7 @@ DatabaseEntity::CameraType DatabaseDataAccess::CameraType::FindByID(const uint32
     QSqlQuery query;
     query.prepare("SELECT * FROM camera_type WHERE camera_type.id = :id");
     query.bindValue(":id", id);
-    
+    query.exec();
     if (!query.isActive()) 
         throw std::runtime_error(query.lastError().text().toStdString());
 
@@ -90,20 +90,10 @@ DatabaseEntity::CameraType DatabaseDataAccess::CameraType::FindByID(const uint32
 
 DatabaseEntity::CameraType DatabaseDataAccess::CameraType::FindByType(const DatabaseEntity::CameraType::Type type)
 {
-    QSqlQuery query;
-    query.prepare("SELECT * FROM camera_type WHERE camera_type.type = ':type'");
-    query.bindValue(":type", m_businessLogic.ConvertTypeToQString(type));
+    return FindByID(static_cast<int>(type));
+}
 
-    if (!query.isActive()) 
-        throw std::runtime_error(query.lastError().text().toStdString());
-
-    DatabaseEntity::CameraType cameraTypeEntity;
-    
-    while (query.next()) {
-        uint32_t id = query.value("id").toInt();
-        DatabaseEntity::CameraType::Type type = m_businessLogic.ConvertQStringToType(query.value("type").toString());
-
-        cameraTypeEntity = DatabaseEntity::CameraType(id, type);
-    }
-    return cameraTypeEntity;
+DatabaseBusinessLogic::CameraType DatabaseDataAccess::CameraType::ToBusinessLogic() const 
+{
+    return m_businessLogic;
 }

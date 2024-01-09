@@ -30,7 +30,7 @@ private:
 
 private:
 
-	cv::VideoCapture m_videoCapture;
+	cv::VideoCapture* m_videoCapture;
 	cv::Mat m_frame;
 	cv::Mat m_useableFrame;
 

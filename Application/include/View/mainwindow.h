@@ -41,6 +41,10 @@ private slots:
     void OnChangeVideoSourceButtonClick();
     void OnRefreshButtonClicked();
 
+    void OnCameraManagementAddButtonClick();
+    void OnCameraManagementRemoveButtonClick();
+    void OnCameraManagementUpdateButtonClick();
+
 private:
     Ui::MainWindow *ui;
 

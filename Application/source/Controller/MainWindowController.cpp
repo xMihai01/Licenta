@@ -5,6 +5,8 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
     , m_labelForExitCameraFrame(labelForExitCameraFrame)
 {
     try {
+        m_database.Connect("main");
+
         // currently hardcoded \/
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForEntranceCameraFrame));
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForExitCameraFrame));
@@ -13,20 +15,28 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
         m_entranceVideoCameras->AddListener(m_videoListeners[0]);
         m_exitVideoCameras->AddListener(m_videoListeners[1]);
 
-        m_exitVideoCameras->OpenCamera("C:/Users/mihai/Desktop/Products/testVideo.mp4");
-        m_entranceVideoCameras->OpenCamera(0);
+        m_exitVideoCameras->OpenCamera("C:/Users/mihai/Desktop/Products/testVideo3.mp4");
+        m_entranceVideoCameras->OpenCamera("C:/Users/mihai/Desktop/Products/testVideo3.mp4");
         std::thread([&]() { m_exitVideoCameras->ReadFrames(); }).detach();
 
         std::thread([&]() { m_entranceVideoCameras->ReadFrames(); }).detach();
         // /\
        
-        m_database.Connect("main");
        
+        m_cameraManagementWindow = new CameraManagementWindow();
     }
     catch (const std::exception& exception) {
         throw exception;
     }
     
+}
+
+void MainWindowController::OpenCameraManagementWindow(const CameraManagementWindowController::CameraManagementMode mode)
+{
+    if (m_cameraManagementWindow->isVisible())
+        m_cameraManagementWindow->hide();
+    m_cameraManagementWindow->ChangeMode(mode);
+    m_cameraManagementWindow->show();
 }
 
 void MainWindowController::TakeEntranceFrame()
@@ -65,6 +75,7 @@ std::string MainWindowController::TakePlateFromFrame(const cv::Mat& frame)
 
 MainWindowController::~MainWindowController()
 {
+    delete m_cameraManagementWindow;
    // delete m_exitVideoCameras;
     //delete m_entranceVideoCameras;
 }

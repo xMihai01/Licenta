@@ -9,10 +9,10 @@ namespace DatabaseEntity {
 	public:
 
 		enum class Type {
-			ENTRANCE,
-			EXIT,
-			PARKING,
-			INVALID
+			ENTRANCE = 1,
+			EXIT = 2,
+			PARKING = 3,
+			INVALID = 0
 		};
 
 	public:

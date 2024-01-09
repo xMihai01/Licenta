@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include <Controller/CameraManagementWindowController.h>
+
 namespace Ui {
 class CameraManagementWindow;
 }
@@ -15,8 +17,26 @@ public:
     explicit CameraManagementWindow(QWidget *parent = nullptr);
     ~CameraManagementWindow();
 
+    void ChangeMode(const CameraManagementWindowController::CameraManagementMode mode);
+
+private slots:
+
+    void OnCameraClick(QListWidgetItem* camera);
+    void OnActionButtonClick();
+    void OnRunTestButtonClick();
+
+private:
+
+    void ReloadCameras();
+
 private:
     Ui::CameraManagementWindow *ui;
+
+    QHash<QListWidgetItem*, DatabaseEntity::Camera> m_camerasMap;
+
+    QListWidgetItem* m_selectedCamera;
+
+    CameraManagementWindowController* m_windowController;
 };
 
 #endif // CAMERAMANAGEMENTWINDOW_H

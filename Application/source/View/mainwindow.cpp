@@ -21,6 +21,11 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->changeVideoSourceAction, SIGNAL(triggered()), this, SLOT(OnChangeVideoSourceButtonClick()));
     connect(ui->systemTurnButton, SIGNAL(clicked()), this, SLOT(OnRefreshButtonClicked()));
 
+    // Camera management buttons (add, remove, update etc(
+    connect(ui->addCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementAddButtonClick()));
+    connect(ui->removeCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementRemoveButtonClick()));
+    connect(ui->updateCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementUpdateButtonClick()));
+
 }
 
 void MainWindow::GetEntranceFrame() {
@@ -55,6 +60,21 @@ void MainWindow::OnRefreshButtonClicked()
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
     }
+}
+
+void MainWindow::OnCameraManagementAddButtonClick()
+{
+    windowController->OpenCameraManagementWindow(CameraManagementWindowController::CameraManagementMode::ADD);
+}
+
+void MainWindow::OnCameraManagementRemoveButtonClick()
+{
+    windowController->OpenCameraManagementWindow(CameraManagementWindowController::CameraManagementMode::REMOVE);
+}
+
+void MainWindow::OnCameraManagementUpdateButtonClick()
+{
+    windowController->OpenCameraManagementWindow(CameraManagementWindowController::CameraManagementMode::UPDATE);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

@@ -4,6 +4,7 @@
 
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QDebug>
 
 #include <iostream>
 
@@ -20,6 +21,8 @@ namespace DatabaseDataAccess {
 		std::vector<DatabaseEntity::CameraType> FindAll();
 		DatabaseEntity::CameraType FindByID(const uint32_t id);
 		DatabaseEntity::CameraType FindByType(const DatabaseEntity::CameraType::Type type);
+
+		DatabaseBusinessLogic::CameraType ToBusinessLogic() const;
 
 	private:
 

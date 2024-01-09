@@ -1,13 +1,8 @@
 #pragma once
 
-#include <Model/VideoCamera.h>
+#include <View/cameramanagementwindow.h>
 
 #include <Model/Detection/LicensePlateDetection/Workflow.h>
-
-#include <Model/Utils/Interfaces/InterfaceVideoListener.h>
-#include <Model/Utils/ImageConversion.h>
-
-#include <Model/Database/Database.h>
 
 #include <QApplication>
 #include <QLabel>
@@ -17,6 +12,10 @@ class MainWindowController {
 public:
 
 	MainWindowController(QLabel* labelForEntranceCameraFrame, QLabel* labelForExitCameraFrame);
+
+
+	void OpenCameraManagementWindow(const CameraManagementWindowController::CameraManagementMode mode);
+
 
 	void TakeEntranceFrame();
 	void TakeExitFrame();
@@ -38,6 +37,8 @@ private:
 	std::vector<VideoCamera> m_parkingVideoCameras;
 
 	std::vector<std::shared_ptr<InterfaceVideoListener>> m_videoListeners;
+
+	CameraManagementWindow* m_cameraManagementWindow;
 
 	LicensePlateDetection::Workflow m_licenseWorkflow;
 
