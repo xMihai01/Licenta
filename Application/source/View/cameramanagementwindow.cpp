@@ -12,9 +12,12 @@ CameraManagementWindow::CameraManagementWindow(QWidget *parent) :
         connect(ui->cameraWidgetList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(OnCameraClick(QListWidgetItem*)));
         connect(ui->actionButton, SIGNAL(clicked()), this, SLOT(OnActionButtonClick()));
         connect(ui->runTestButton, SIGNAL(clicked()), this, SLOT(OnRunTestButtonClick()));
+        connect(ui->slot1Button, SIGNAL(clicked()), this, SLOT(OnSlot1ButtonClick()));
+        connect(ui->slot2Button, SIGNAL(clicked()), this, SLOT(OnSlot2ButtonClick()));
 
         ReloadCameras();
         m_selectedCamera = nullptr;
+
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
@@ -73,6 +76,7 @@ void CameraManagementWindow::OnActionButtonClick()
                     , ui->cameraNameLineEdit->text().toStdString()));
 
         ReloadCameras();
+        QMessageBox::warning(this, "Warning", "Cameras have been updated. Refresh cameras when going back to main window.");
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
@@ -83,6 +87,28 @@ void CameraManagementWindow::OnActionButtonClick()
 void CameraManagementWindow::OnRunTestButtonClick()
 {
     // TODO: Test how camera works during camera management
+}
+
+void CameraManagementWindow::OnSlot1ButtonClick()
+{
+    try {
+        m_windowController->UpdateDefaultCamera(m_camerasMap[m_selectedCamera], true);
+        QMessageBox::warning(this, "Warning", "Default Camera slot 1 has been updated. Refresh cameras when going back to main window.");
+    }
+    catch (const std::exception& exception) {
+        QMessageBox::critical(this, "Error", exception.what());
+    }
+}
+
+void CameraManagementWindow::OnSlot2ButtonClick()
+{
+    try {
+        m_windowController->UpdateDefaultCamera(m_camerasMap[m_selectedCamera], false);
+        QMessageBox::warning(this, "Warning", "Default Camera slot 2 has been updated. Refresh cameras when going back to main window.");
+    }
+    catch (const std::exception& exception) {
+        QMessageBox::critical(this, "Error", exception.what());
+    }
 }
 
 void CameraManagementWindow::ReloadCameras()

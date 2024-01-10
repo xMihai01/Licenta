@@ -6,7 +6,7 @@ void Database::Connect(const QString& databaseName)
 		if (isConncted)
 			throw std::runtime_error("Already connnected to database!");
 
-		auto databaseDetails = Utils::ReadDatabaseInfoFromFile(databaseName);
+		auto databaseDetails = JsonFileUtils::ReadDatabaseInfoFromFile(databaseName);
 
 		m_database = QSqlDatabase::addDatabase(databaseDetails[1]);
 		m_database.setHostName(databaseDetails[2]);

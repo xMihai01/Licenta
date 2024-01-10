@@ -22,6 +22,9 @@ public:
 
 	void SetupCameras();
 
+	void ChangeCameraOnSlot(DatabaseEntity::Camera camera, bool isSlotOne);
+	void Refresh();
+
 	void Close();
 
 	~MainWindowController();
@@ -29,12 +32,18 @@ public:
 private:
 
 	std::string TakePlateFromFrame(const cv::Mat& frame);
+	void GetDefaultCameras();
+
 
 private:
 
-	VideoCamera* m_entranceVideoCameras;
-	VideoCamera* m_exitVideoCameras;
-	std::vector<VideoCamera> m_parkingVideoCameras;
+	std::vector<VideoCamera*> m_entranceVideoCameras;
+	std::vector<VideoCamera*> m_exitVideoCameras;
+	std::vector<VideoCamera*> m_parkingVideoCameras;
+
+	std::pair<std::pair<DatabaseEntity::Camera, VideoCamera*>, std::pair<DatabaseEntity::Camera, VideoCamera*>> m_cameraSlot;
+
+	std::unordered_map<uint32_t, VideoCamera*> m_cameraIDToVideoCameraMap;
 
 	std::vector<std::shared_ptr<InterfaceVideoListener>> m_videoListeners;
 

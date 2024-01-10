@@ -29,6 +29,8 @@ public:
 
 	void DoAction(const DatabaseEntity::Camera& camera);
 
+	void UpdateDefaultCamera(const DatabaseEntity::Camera& camera, const bool isSlotOne);
+
 	CameraManagementMode GetCurrentMode() const;
 	void SetCurrentMode(const CameraManagementMode mode);
 

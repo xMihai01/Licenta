@@ -5,6 +5,11 @@ VideoCamera::VideoCamera()
 	m_videoCapture = new cv::VideoCapture();
 }
 
+VideoCamera::VideoCamera(const VideoCamera& camera)
+{
+
+}
+
 void VideoCamera::ReadFrames()
 {
 	while (m_videoCapture->isOpened()) {
@@ -17,7 +22,7 @@ void VideoCamera::ReadFrames()
 			//m_useableFrame = m_frame.clone();
 			NotifyListeners();
 		}
-	
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000 / FRAME_RATE));
 	}
 }
@@ -48,6 +53,7 @@ void VideoCamera::OpenCamera(const std::string& filename)
 
 void VideoCamera::StopCamera()
 {
+	std::lock_guard<std::mutex> lock(frameMutex);
 	m_frame = cv::Mat();
 	m_videoCapture->release();
 	cv::destroyAllWindows();

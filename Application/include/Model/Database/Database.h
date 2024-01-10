@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Model/Utils.h>
+#include <Model/Utils/JsonFileUtils.h>
 #include <Model/Database/DataAccess/CameraType.h>
 #include <Model/Database/DataAccess/Camera.h>
 

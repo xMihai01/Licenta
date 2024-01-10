@@ -2,6 +2,7 @@
 
 CameraManagementWindowController::CameraManagementWindowController()
 {
+	m_currentMode = CameraManagementMode::ADD;
 }
 
 void CameraManagementWindowController::GetAllCamerasFromDatabaseInAMap(QHash<QListWidgetItem*, DatabaseEntity::Camera>& map)
@@ -29,6 +30,12 @@ void CameraManagementWindowController::DoAction(const DatabaseEntity::Camera& ca
 	default:
 		break;
 	}
+}
+
+void CameraManagementWindowController::UpdateDefaultCamera(const DatabaseEntity::Camera& camera, const bool isSlotOne)
+{
+	JsonFile defaultCameras = JsonFileUtils::GetDefaultCamerasJsonFile();
+	isSlotOne ? defaultCameras.UpdateElement(std::vector<QString>{QString::number(camera.GetID())}, JsonFileUtils::DEFAULT_SLOT_ONE_CELL) : defaultCameras.UpdateElement(std::vector<QString>{QString::number(camera.GetID())}, JsonFileUtils::DEFAULT_SLOT_TWO_CELL);
 }
 
 CameraManagementWindowController::CameraManagementMode CameraManagementWindowController::GetCurrentMode() const

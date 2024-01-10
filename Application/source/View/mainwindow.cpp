@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     // Button for changing video source for parking lot cameras
     connect(ui->changeVideoSourceAction, SIGNAL(triggered()), this, SLOT(OnChangeVideoSourceButtonClick()));
+    connect(ui->viewSpecificCameraAction, SIGNAL(triggered()), this, SLOT(OnViewSpecificCameraButtonClick()));
     connect(ui->systemTurnButton, SIGNAL(clicked()), this, SLOT(OnRefreshButtonClicked()));
 
     // Camera management buttons (add, remove, update etc(
@@ -46,6 +47,20 @@ void MainWindow::GetExitFrame() {
     }
 }
 
+void MainWindow::OnViewSpecificCameraButtonClick()
+{
+    CameraComboBoxDialog dialog(this);
+    if (dialog.exec() == QDialog::Accepted) {
+        DatabaseEntity::Camera chosenCamera = dialog.GetChosenCamera();
+        if (dialog.GetSlotComboBoxText() == "Slot1") {
+            windowController->ChangeCameraOnSlot(chosenCamera, true);
+        }
+        else {
+            windowController->ChangeCameraOnSlot(chosenCamera, false);
+        }
+    }
+}
+
 void MainWindow::OnChangeVideoSourceButtonClick() {
     
     // TODO: Allow user to change video sources
@@ -55,7 +70,7 @@ void MainWindow::OnChangeVideoSourceButtonClick() {
 void MainWindow::OnRefreshButtonClicked()
 {
     try {
-        windowController->SetupCameras();
+        windowController->Refresh();
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());

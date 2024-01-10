@@ -25,6 +25,9 @@ private slots:
     void OnActionButtonClick();
     void OnRunTestButtonClick();
 
+    void OnSlot1ButtonClick();
+    void OnSlot2ButtonClick();
+
 private:
 
     void ReloadCameras();

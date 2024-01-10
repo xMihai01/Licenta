@@ -12,7 +12,8 @@ set(SOURCES
     Model/Database/Entities
     Model/Database/DataAccess
     Model/Database/BusinessLogic
-    View 
+    View
+    View/CustomComponents
     Controller
 )
 

@@ -8,6 +8,7 @@ class VideoCamera {
 public:
 
 	VideoCamera();
+	VideoCamera(const VideoCamera& camera);
 
 	void ReadFrames();
 

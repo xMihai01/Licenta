@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QShortcut>
 
+#include <View/CustomComponents/CameraComboBoxDialog.h>
 #include <Model/Utils/Interfaces/InterfaceVideoListener.h>
 #include <Controller/MainWindowController.h>
 
@@ -38,6 +39,7 @@ private slots:
     void GetEntranceFrame(); // when key E is pressed.
     void GetExitFrame(); // when key Q is pressed.
 
+    void OnViewSpecificCameraButtonClick();
     void OnChangeVideoSourceButtonClick();
     void OnRefreshButtonClicked();
 

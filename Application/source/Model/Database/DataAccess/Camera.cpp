@@ -65,8 +65,10 @@ std::vector<DatabaseEntity::Camera> DatabaseDataAccess::Camera::FindAll()
 
 DatabaseEntity::Camera DatabaseDataAccess::Camera::FindByID(const uint32_t id)
 {
-    QSqlQuery query("SELECT * FROM camera WHERE id = :id");
+    QSqlQuery query;
+    query.prepare("SELECT * FROM camera WHERE id = :id");
     query.bindValue(":id", id);
+    query.exec();
     DatabaseDataAccess::CameraType cameraTypeDataAccess;
     if (!query.isActive())
         throw std::runtime_error(query.lastError().text().toStdString());
