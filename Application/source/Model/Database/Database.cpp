@@ -33,6 +33,11 @@ QSqlDatabase Database::GetDatabase() const
 	return m_database;
 }
 
+DatabaseDataAccess::CameraKey Database::ToCameraKey() const
+{
+	return m_cameraKey;
+}
+
 DatabaseDataAccess::CameraType Database::ToCameraType() const
 {
 	return m_cameraType;

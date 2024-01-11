@@ -40,6 +40,14 @@ void MainWindowController::OpenCameraManagementWindow(const CameraManagementWind
     m_cameraManagementWindow->show();
 }
 
+void MainWindowController::ChangeCameraKey(const DatabaseEntity::Camera& camera, const QtKeyEnum key)
+{
+    if (m_database.ToCameraKey().FindByID(camera.GetID()).GetID() != 0)
+        m_database.ToCameraKey().Update(DatabaseEntity::CameraKey(camera.GetID(), key));
+    else
+        m_database.ToCameraKey().Add(DatabaseEntity::CameraKey(camera.GetID(), key));
+}
+
 void MainWindowController::TakeEntranceFrame()
 {
     //cv::Mat frame = m_entranceVideoCameras->GetCurrentFrame();
@@ -58,12 +66,15 @@ void MainWindowController::TakeExitFrame()
 
 void MainWindowController::SetupCameras()
 {
+    VideoCamera* currentCamera;
     try {
         GetDefaultCameras();
         std::vector<DatabaseEntity::Camera> cameras = m_database.ToCamera().FindAll();
 
         for (const auto& camera : cameras) {
             VideoCamera* videoCamera = new VideoCamera();
+            currentCamera = videoCamera;
+
             camera.IsLocationAnIndex() ? videoCamera->OpenCamera(std::stoi(camera.GetLocation())) : videoCamera->OpenCamera(camera.GetLocation());
             switch (camera.GetCameraType().GetType())
             {
@@ -101,7 +112,7 @@ void MainWindowController::SetupCameras()
     }
 }
 
-void MainWindowController::ChangeCameraOnSlot(DatabaseEntity::Camera camera, bool isSlotOne)
+void MainWindowController::ChangeCameraOnSlot(const DatabaseEntity::Camera& camera, bool isSlotOne)
 {
     if (isSlotOne) {
         m_cameraSlot.first.second->RemoveListener(m_videoListeners[0]);

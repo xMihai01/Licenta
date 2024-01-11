@@ -22,8 +22,12 @@ void DatabaseDataAccess::Camera::Remove(const DatabaseEntity::Camera& camera)
     query.prepare("DELETE FROM camera WHERE camera.id = :id");
     query.bindValue(":id", camera.GetID());
 
-    if (query.exec())
+    if (m_cameraKeyDataAccess.FindByID(camera.GetID()).GetID() != 0)
+        m_cameraKeyDataAccess.Remove(m_cameraKeyDataAccess.FindByID(camera.GetID()));
+
+    if (query.exec()) {
         std::cout << "Camera with ID " << camera.GetID() << " removed successfully";
+    }
     else throw std::runtime_error(query.lastError().text().toStdString());
 }
 

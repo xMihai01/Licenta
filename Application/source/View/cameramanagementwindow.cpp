@@ -76,7 +76,7 @@ void CameraManagementWindow::OnActionButtonClick()
                     , ui->cameraNameLineEdit->text().toStdString()));
 
         ReloadCameras();
-        QMessageBox::warning(this, "Warning", "Cameras have been updated. Refresh cameras when going back to main window.");
+        QMessageBox::about(this, "Warning", "Cameras have been updated. Refresh cameras when going back to main window.");
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
@@ -93,7 +93,7 @@ void CameraManagementWindow::OnSlot1ButtonClick()
 {
     try {
         m_windowController->UpdateDefaultCamera(m_camerasMap[m_selectedCamera], true);
-        QMessageBox::warning(this, "Warning", "Default Camera slot 1 has been updated. Refresh cameras when going back to main window.");
+        QMessageBox::about(this, "Warning", "Default Camera slot 1 has been updated. Refresh cameras when going back to main window.");
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
@@ -104,7 +104,7 @@ void CameraManagementWindow::OnSlot2ButtonClick()
 {
     try {
         m_windowController->UpdateDefaultCamera(m_camerasMap[m_selectedCamera], false);
-        QMessageBox::warning(this, "Warning", "Default Camera slot 2 has been updated. Refresh cameras when going back to main window.");
+        QMessageBox::about(this, "Warning", "Default Camera slot 2 has been updated. Refresh cameras when going back to main window.");
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());

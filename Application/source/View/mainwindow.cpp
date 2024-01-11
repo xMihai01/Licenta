@@ -13,13 +13,13 @@ MainWindow::MainWindow(QWidget* parent)
         QMessageBox::critical(this, "Error", exception.what());
     }
 
-    // For taking a photo from video at the entrance, by pressing key E, or at the exit, by pressing key Q
-    connect(new QShortcut(QKeySequence(Qt::Key_E), this), &QShortcut::activated, this, &MainWindow::GetEntranceFrame);
-    connect(new QShortcut(QKeySequence(Qt::Key_Q), this), &QShortcut::activated, this, &MainWindow::GetExitFrame);
+    // Gets all keys for each camera
+    ReloadKeys();
 
     // Button for changing video source for parking lot cameras
     connect(ui->changeVideoSourceAction, SIGNAL(triggered()), this, SLOT(OnChangeVideoSourceButtonClick()));
     connect(ui->viewSpecificCameraAction, SIGNAL(triggered()), this, SLOT(OnViewSpecificCameraButtonClick()));
+    connect(ui->setSpecificKeyForCameraAction, SIGNAL(triggered()), this, SLOT(OnSetSpecificKeyForCameraButtonClick()));
     connect(ui->systemTurnButton, SIGNAL(clicked()), this, SLOT(OnRefreshButtonClicked()));
 
     // Camera management buttons (add, remove, update etc(
@@ -47,17 +47,43 @@ void MainWindow::GetExitFrame() {
     }
 }
 
+void MainWindow::GetFrame(const uint32_t cameraID)
+{
+    try {
+        qDebug() << cameraID;
+    }
+    catch (const std::exception& exception) {
+        QMessageBox::critical(this, "Error", exception.what());
+    }
+}
+
 void MainWindow::OnViewSpecificCameraButtonClick()
 {
-    CameraComboBoxDialog dialog(this);
+    CameraComboBoxDialog dialog(CameraComboBoxDialog::CameraComboBoxDialogType::SLOT_SELECTION, this);
     if (dialog.exec() == QDialog::Accepted) {
         DatabaseEntity::Camera chosenCamera = dialog.GetChosenCamera();
-        if (dialog.GetSlotComboBoxText() == "Slot1") {
+        if (dialog.GetSecondComboBoxText() == "Slot1") {
             windowController->ChangeCameraOnSlot(chosenCamera, true);
         }
         else {
             windowController->ChangeCameraOnSlot(chosenCamera, false);
         }
+    }
+}
+
+void MainWindow::OnSetSpecificKeyForCameraButtonClick()
+{
+    try {
+        CameraComboBoxDialog dialog(CameraComboBoxDialog::CameraComboBoxDialogType::KEY_SELECTION, this);
+        if (dialog.exec() == QDialog::Accepted) {
+            DatabaseEntity::Camera chosenCamera = dialog.GetChosenCamera();
+            windowController->ChangeCameraKey(chosenCamera, QtKeyEnum(dialog.GetChosenKey()));
+            QMessageBox::about(this, "Success!", "Key changed successfully!");
+            ReloadKeys();
+        }
+    }
+    catch (const std::exception& exception) {
+        QMessageBox::critical(this, "Error", exception.what());
     }
 }
 
@@ -90,6 +116,29 @@ void MainWindow::OnCameraManagementRemoveButtonClick()
 void MainWindow::OnCameraManagementUpdateButtonClick()
 {
     windowController->OpenCameraManagementWindow(CameraManagementWindowController::CameraManagementMode::UPDATE);
+}
+
+void MainWindow::ReloadKeys()
+{
+    for (auto& connection : m_keyConnections)
+        QObject::disconnect(connection);
+    for (auto& shortcut : m_keyShortcuts)
+        delete shortcut;
+    m_keyConnections.clear();
+    m_keyShortcuts.clear();
+
+    DatabaseDataAccess::CameraKey cameraKeyDataAccess;
+    std::vector<DatabaseEntity::CameraKey> allKeys = cameraKeyDataAccess.FindAll();
+
+    for (auto& key : allKeys) {
+        const uint32_t cameraIDForKey = key.GetID();
+
+        QShortcut* shortcut = new QShortcut(QKeySequence(static_cast<int>(key.GetKey())), this);
+        m_keyShortcuts.push_back(shortcut);
+
+        QMetaObject::Connection connection = connect(shortcut, &QShortcut::activated, this, [cameraIDForKey, this](){GetFrame(cameraIDForKey);});
+        m_keyConnections.push_back(connection);
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

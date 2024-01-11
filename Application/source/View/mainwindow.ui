@@ -1021,6 +1021,7 @@
     </property>
     <addaction name="changeVideoSourceAction"/>
     <addaction name="viewSpecificCameraAction"/>
+    <addaction name="setSpecificKeyForCameraAction"/>
    </widget>
    <widget class="QMenu" name="manageCameraMenu">
     <property name="title">
@@ -1063,6 +1064,11 @@
   <action name="listCameraAction">
    <property name="text">
     <string>List</string>
+   </property>
+  </action>
+  <action name="setSpecificKeyForCameraAction">
+   <property name="text">
+    <string>Set Specific Key for Camera</string>
    </property>
   </action>
  </widget>

@@ -1,20 +1,31 @@
 #include <View/CustomComponents/CameraComboBoxDialog.h>
 
-CameraComboBoxDialog::CameraComboBoxDialog(QWidget* parent) : QDialog(parent) {
+CameraComboBoxDialog::CameraComboBoxDialog(const CameraComboBoxDialogType type, QWidget* parent) : QDialog(parent) {
     cameraComboBox = new QComboBox;
-    slotComboBox = new QComboBox;
+    secondComboBox = new QComboBox;
     okButton = new QPushButton("OK");
     layout = new QVBoxLayout(this);
 
-    layout->addWidget(slotComboBox);
+    layout->addWidget(secondComboBox);
     layout->addWidget(cameraComboBox);
     layout->addWidget(okButton);
 
     connect(okButton, SIGNAL(clicked()), this, SLOT(onOkButtonClicked()));
 
-    slotComboBox->addItem("Slot1");
-    slotComboBox->addItem("Slot2");
-    GetComboBoxMapForCameras();
+    switch (type)
+    {
+    case CameraComboBoxDialogType::SLOT_SELECTION:
+        secondComboBox->addItem("Slot1");
+        secondComboBox->addItem("Slot2");
+        GetComboBoxMapForCameras();
+        break;
+    case CameraComboBoxDialogType::KEY_SELECTION:
+        GetComboBoxMapForCameras();
+        SetComboBoxForKeys();
+        break;
+    default:
+        break;
+    }
 }
 
 CameraComboBoxDialog::~CameraComboBoxDialog()
@@ -24,9 +35,9 @@ CameraComboBoxDialog::~CameraComboBoxDialog()
     delete layout;
 }
 
-QString CameraComboBoxDialog::GetSlotComboBoxText()
+QString CameraComboBoxDialog::GetSecondComboBoxText()
 {
-    return slotComboBox->currentText();
+    return secondComboBox->currentText();
 }
 
 void CameraComboBoxDialog::GetComboBoxMapForCameras()
@@ -42,9 +53,23 @@ void CameraComboBoxDialog::GetComboBoxMapForCameras()
     }
 }
 
+void CameraComboBoxDialog::SetComboBoxForKeys()
+{
+    for (uint32_t currentKey = static_cast<uint32_t>(QtKeyEnum::A); currentKey <= static_cast<uint32_t>(QtKeyEnum::Z); currentKey++) {
+        QString comboBoxString = QString::fromStdString(QtEnumToString(QtKeyEnum(currentKey)));
+        secondComboBox->addItem(comboBoxString);
+        keysMap[comboBoxString] = QtKeyEnum(currentKey);
+    }
+}
+
 DatabaseEntity::Camera CameraComboBoxDialog::GetChosenCamera()
 {
     return map[cameraComboBox->currentText()];
+}
+
+QtKeyEnum CameraComboBoxDialog::GetChosenKey()
+{
+    return keysMap[secondComboBox->currentText()];
 }
 
 void CameraComboBoxDialog::onOkButtonClicked() {

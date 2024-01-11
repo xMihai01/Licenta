@@ -121,9 +121,7 @@ void Utils::BitwiseLicensePlateImage(const cv::Mat& blankLicensePlate, const cv:
 			uchar* pixelOutputPlate = outputPtr + j;
 
 			(pixelValueBlankPlate == 255 && pixelValueThreshPlate == 0) ? pixelOutputPlate[0] = 0 : pixelOutputPlate[0] = 255;
-
 		}
-
 	}
 }
 

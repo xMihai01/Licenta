@@ -9,27 +9,39 @@
 
 #include <Model/Database/Database.h>
 
+#include <Model/Utils/QtKeysEnum.h>
+
 class CameraComboBoxDialog : public QDialog {
     Q_OBJECT
 
 public:
-    CameraComboBoxDialog(QWidget* parent = nullptr);
+
+    enum class CameraComboBoxDialogType {
+        SLOT_SELECTION,
+        KEY_SELECTION // TODO: let user choose a desired key for each camera
+    };
+
+public:
+    CameraComboBoxDialog(const CameraComboBoxDialogType type, QWidget* parent = nullptr);
     ~CameraComboBoxDialog();
 
     DatabaseEntity::Camera GetChosenCamera();
-    QString GetSlotComboBoxText();
+    QtKeyEnum GetChosenKey();
+    QString GetSecondComboBoxText();
 
 private:
 
     void GetComboBoxMapForCameras();
+    void SetComboBoxForKeys();
 
 private:
     QComboBox* cameraComboBox;
-    QComboBox* slotComboBox;
+    QComboBox* secondComboBox;
     QPushButton* okButton;
     QVBoxLayout* layout;
 
     QHash<QString, DatabaseEntity::Camera> map;
+    QHash<QString, QtKeyEnum> keysMap;
 
 private slots:
     void onOkButtonClicked();

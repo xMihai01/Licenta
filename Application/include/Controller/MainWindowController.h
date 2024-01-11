@@ -2,6 +2,7 @@
 
 #include <View/cameramanagementwindow.h>
 
+#include <Model/Utils/QtKeysEnum.h>
 #include <Model/Detection/LicensePlateDetection/Workflow.h>
 
 #include <QApplication>
@@ -16,13 +17,14 @@ public:
 
 	void OpenCameraManagementWindow(const CameraManagementWindowController::CameraManagementMode mode);
 
+	void ChangeCameraKey(const DatabaseEntity::Camera& camera, const QtKeyEnum key);
 
 	void TakeEntranceFrame();
 	void TakeExitFrame();
 
 	void SetupCameras();
 
-	void ChangeCameraOnSlot(DatabaseEntity::Camera camera, bool isSlotOne);
+	void ChangeCameraOnSlot(const DatabaseEntity::Camera& camera, bool isSlotOne);
 	void Refresh();
 
 	void Close();

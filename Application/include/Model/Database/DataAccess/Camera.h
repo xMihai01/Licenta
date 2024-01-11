@@ -2,6 +2,7 @@
 
 #include <Model/Database/BusinessLogic/Camera.h>
 #include <Model/Database/DataAccess/CameraType.h>
+#include <Model/Database/DataAccess/CameraKey.h>
 
 #include <QSqlQuery>
 #include <QSqlError>
@@ -27,6 +28,8 @@ namespace DatabaseDataAccess {
 	private:
 
 		DatabaseBusinessLogic::Camera m_businessLogic;
+
+		DatabaseDataAccess::CameraKey m_cameraKeyDataAccess;
 
 	};
 

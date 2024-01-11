@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Model/Utils/JsonFileUtils.h>
+#include <Model/Database/DataAccess/CameraKey.h>
 #include <Model/Database/DataAccess/CameraType.h>
 #include <Model/Database/DataAccess/Camera.h>
 
@@ -20,6 +21,7 @@ public:
 
 	QSqlDatabase GetDatabase() const;
 
+	DatabaseDataAccess::CameraKey ToCameraKey() const;
     DatabaseDataAccess::CameraType ToCameraType() const;
 	DatabaseDataAccess::Camera ToCamera() const;
 
@@ -31,6 +33,7 @@ private:
 
 	QSqlDatabase m_database;
 
+	DatabaseDataAccess::CameraKey m_cameraKey;
     DatabaseDataAccess::CameraType m_cameraType;
 	DatabaseDataAccess::Camera m_camera;
 

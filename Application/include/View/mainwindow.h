@@ -30,6 +30,7 @@ public:
 
 private:
 
+    void ReloadKeys();
     void closeEvent(QCloseEvent* event);
 
 private slots:
@@ -38,8 +39,10 @@ private slots:
 
     void GetEntranceFrame(); // when key E is pressed.
     void GetExitFrame(); // when key Q is pressed.
+    void GetFrame(const uint32_t cameraID);
 
     void OnViewSpecificCameraButtonClick();
+    void OnSetSpecificKeyForCameraButtonClick();
     void OnChangeVideoSourceButtonClick();
     void OnRefreshButtonClicked();
 
@@ -49,6 +52,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    std::vector<QMetaObject::Connection> m_keyConnections;
+    std::vector<QShortcut*> m_keyShortcuts;
 
     MainWindowController* windowController;
 };
