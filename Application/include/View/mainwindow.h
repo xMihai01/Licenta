@@ -50,6 +50,9 @@ private:
     std::vector<QMetaObject::Connection> m_keyConnections;
     std::vector<QShortcut*> m_keyShortcuts;
 
+    CameraManagementWindow* repairWindow;
+    bool repairMode = false;
+
     MainWindowController* windowController;
 };
 #endif // MAINWINDOW_H

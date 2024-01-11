@@ -46,6 +46,20 @@ void CameraManagementWindowController::AddOrUpdateKey(const uint32_t id, const Q
 		m_database.ToCameraKey().Update(DatabaseEntity::CameraKey(id, key));
 }
 
+void CameraManagementWindowController::TestCamera(const QString& cameraLocation)
+{
+	try {
+		VideoCamera testVideoCamera;
+		DatabaseEntity::Camera testCamera(-1, DatabaseEntity::CameraType::Type::INVALID, cameraLocation.toStdString(), "");
+		testCamera.SetIsLocationAnIndex(DatabaseBusinessLogic::Camera().IsLocationAnIndex(testCamera));
+		testCamera.IsLocationAnIndex() ? testVideoCamera.OpenCamera(cameraLocation.toInt()) : testVideoCamera.OpenCamera(cameraLocation.toStdString());
+		testVideoCamera.StopCamera();
+	}
+	catch (const std::exception& exception) {
+		throw exception;
+	}
+}
+
 void CameraManagementWindowController::UpdateDefaultCamera(const DatabaseEntity::Camera& camera, const bool isSlotOne)
 {
 	JsonFile defaultCameras = JsonFileUtils::GetDefaultCamerasJsonFile();

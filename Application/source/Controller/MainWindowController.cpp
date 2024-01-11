@@ -7,18 +7,43 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
     try {
         m_database.Connect("main");
 
+        m_cameraManagementWindow = new CameraManagementWindow();
+
         // Since there are only 2 slots, there will be 2 listeners.
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForEntranceCameraFrame));
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForExitCameraFrame));
         
         SetupCameras();
-        
-        m_cameraManagementWindow = new CameraManagementWindow();
+       
     }
     catch (const std::exception& exception) {
         throw exception;
     }
     
+}
+
+void MainWindowController::GetFrameAndStartAction(const uint32_t cameraID)
+{
+    const DatabaseEntity::Camera camera = m_database.ToCamera().FindByID(cameraID);
+    cv::Mat inputFrame = m_cameraIDToVideoCameraMap[cameraID]->GetCurrentFrame();
+
+    std::string plateText;
+    cv::Mat outputPlateImage;
+    m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::DNN);
+    switch (camera.GetCameraType().GetType())
+    {
+    case DatabaseEntity::CameraType::Type::ENTRANCE:
+        std::cout << "Entered: " << plateText;
+        break;
+    case DatabaseEntity::CameraType::Type::EXIT:
+        std::cout << "Exited: " << plateText;
+        break;
+    case DatabaseEntity::CameraType::Type::PARKING:
+        std::cout << "Parked: " << plateText;
+        break;
+    default:
+        break;
+    }
 }
 
 void MainWindowController::OpenCameraManagementWindow(const CameraManagementWindowController::CameraManagementMode mode)
@@ -27,14 +52,6 @@ void MainWindowController::OpenCameraManagementWindow(const CameraManagementWind
         m_cameraManagementWindow->hide();
     m_cameraManagementWindow->ChangeMode(mode);
     m_cameraManagementWindow->show();
-}
-
-void MainWindowController::ChangeCameraKey(const DatabaseEntity::Camera& camera, const QtKeyEnum key)
-{
-    if (m_database.ToCameraKey().FindByID(camera.GetID()).GetID() != 0)
-        m_database.ToCameraKey().Update(DatabaseEntity::CameraKey(camera.GetID(), key));
-    else
-        m_database.ToCameraKey().Add(DatabaseEntity::CameraKey(camera.GetID(), key));
 }
 
 void MainWindowController::SetupCameras()

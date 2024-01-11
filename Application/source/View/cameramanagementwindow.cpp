@@ -99,7 +99,18 @@ void CameraManagementWindow::OnActionButtonClick()
 
 void CameraManagementWindow::OnRunTestButtonClick()
 {
-    // TODO: Test how camera works during camera management
+    try {
+        if (ui->cameraLocationLineEdit->text() == "") {
+            QMessageBox::warning(this, "Warning!", "No path/index given!");
+            return;
+        }
+            
+        m_windowController->TestCamera(ui->cameraLocationLineEdit->text());
+        QMessageBox::about(this, "Success!", "Camera test ran successfully!\n\nAfter exiting, a refresh might be needed to reload cameras correctly!");
+    }
+    catch (const std::exception& exception) {
+        QMessageBox::critical(this, "Failed!", "Camera test failed!\n\nUsing this camera could make the application inoperable until removal!");
+    }
 }
 
 void CameraManagementWindow::OnSlot1ButtonClick()

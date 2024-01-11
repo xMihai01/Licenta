@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget* parent)
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
+        repairMode = true;
+        repairWindow = new CameraManagementWindow();
     }
 
     // Gets all keys for each camera
@@ -31,6 +33,7 @@ void MainWindow::GetFrame(const uint32_t cameraID)
 {
     try {
         qDebug() << cameraID;
+        windowController->GetFrameAndStartAction(cameraID);
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
@@ -39,6 +42,10 @@ void MainWindow::GetFrame(const uint32_t cameraID)
 
 void MainWindow::OnViewSpecificCameraButtonClick()
 {
+    if (repairMode) {
+        QMessageBox::critical(this, "Error", "Can't use this while in repair mode!\n\nReview Camera Management and refresh!");
+        return;
+    }
     CameraComboBoxDialog dialog(CameraComboBoxDialog::CameraComboBoxDialogType::SLOT_SELECTION, this);
     if (dialog.exec() == QDialog::Accepted) {
         DatabaseEntity::Camera chosenCamera = dialog.GetChosenCamera();
@@ -54,8 +61,12 @@ void MainWindow::OnViewSpecificCameraButtonClick()
 void MainWindow::OnRefreshButtonClicked()
 {
     try {
+        if (repairMode) {
+            windowController = new MainWindowController(ui->entranceCameraLabel, ui->exitCameraLabel);
+        }
         windowController->Refresh();
         ReloadKeys();
+        repairMode = false;
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
@@ -64,16 +75,31 @@ void MainWindow::OnRefreshButtonClicked()
 
 void MainWindow::OnCameraManagementAddButtonClick()
 {
+    if (repairMode) {
+        repairWindow->ChangeMode(CameraManagementWindowController::CameraManagementMode::ADD);
+        repairWindow->show();
+        return;
+    }
     windowController->OpenCameraManagementWindow(CameraManagementWindowController::CameraManagementMode::ADD);
 }
 
 void MainWindow::OnCameraManagementRemoveButtonClick()
 {
+    if (repairMode) {
+        repairWindow->ChangeMode(CameraManagementWindowController::CameraManagementMode::REMOVE);
+        repairWindow->show();
+        return;
+    }
     windowController->OpenCameraManagementWindow(CameraManagementWindowController::CameraManagementMode::REMOVE);
 }
 
 void MainWindow::OnCameraManagementUpdateButtonClick()
 {
+    if (repairMode) {
+        repairWindow->ChangeMode(CameraManagementWindowController::CameraManagementMode::UPDATE);
+        repairWindow->show();
+        return;
+    }
     windowController->OpenCameraManagementWindow(CameraManagementWindowController::CameraManagementMode::UPDATE);
 }
 
@@ -102,7 +128,8 @@ void MainWindow::ReloadKeys()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    windowController->Close();
+    if (!repairMode)
+        windowController->Close();
     event->accept();
 }
 

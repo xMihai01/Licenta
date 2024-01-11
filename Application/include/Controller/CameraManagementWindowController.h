@@ -31,6 +31,8 @@ public:
 	void DoAction(const DatabaseEntity::Camera& camera);
 	void AddOrUpdateKey(const uint32_t id, const QtKeyEnum key);
 
+	void TestCamera(const QString& cameraLocation);
+
 	void UpdateDefaultCamera(const DatabaseEntity::Camera& camera, const bool isSlotOne);
 
 	CameraManagementMode GetCurrentMode() const;

@@ -14,10 +14,10 @@ public:
 
 	MainWindowController(QLabel* labelForEntranceCameraFrame, QLabel* labelForExitCameraFrame);
 
+	void GetFrameAndStartAction(const uint32_t cameraID);
 
 	void OpenCameraManagementWindow(const CameraManagementWindowController::CameraManagementMode mode);
 
-	void ChangeCameraKey(const DatabaseEntity::Camera& camera, const QtKeyEnum key);
 	void ChangeCameraOnSlot(const DatabaseEntity::Camera& camera, bool isSlotOne);
 	
 	void SetupCameras();
