@@ -32,10 +32,13 @@ private:
 
     void ReloadCameras();
 
+    void SetComboBoxForKeys();
+
 private:
     Ui::CameraManagementWindow *ui;
 
     QHash<QListWidgetItem*, DatabaseEntity::Camera> m_camerasMap;
+    QHash<QString, QtKeyEnum> m_keysMap;
 
     QListWidgetItem* m_selectedCamera;
 

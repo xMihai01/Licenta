@@ -18,11 +18,11 @@ namespace DatabaseDataAccess {
 
 		CameraKey();
 
-		//std::vector<DatabaseEntity::CameraType> FindAll();
 		DatabaseEntity::CameraKey FindByID(const uint32_t id);
+		DatabaseEntity::CameraKey FindByKey(const QtKeyEnum key);
 		std::vector<DatabaseEntity::CameraKey> FindAll();
 
-		//DatabaseBusinessLogic::CameraType ToBusinessLogic() const;
+		bool IsKeyUsed(const QtKeyEnum key);
 
 		void Add(const DatabaseEntity::CameraKey& cameraKey);
 		void Remove(const DatabaseEntity::CameraKey& cameraKey);

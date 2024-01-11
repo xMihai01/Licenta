@@ -18,7 +18,8 @@ public:
 	enum class CameraManagementMode {
 		ADD,
 		REMOVE,
-		UPDATE
+		UPDATE,
+		LIST
 	};
 
 public:
@@ -28,6 +29,7 @@ public:
 	void GetAllCamerasFromDatabaseInAMap(QHash<QListWidgetItem*, DatabaseEntity::Camera>& map);
 
 	void DoAction(const DatabaseEntity::Camera& camera);
+	void AddOrUpdateKey(const uint32_t id, const QtKeyEnum key);
 
 	void UpdateDefaultCamera(const DatabaseEntity::Camera& camera, const bool isSlotOne);
 

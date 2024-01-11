@@ -48,10 +48,13 @@
      <x>10</x>
      <y>60</y>
      <width>211</width>
-     <height>123</height>
+     <height>155</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="cameraNameLineEdit"/>
+    </item>
     <item row="2" column="0">
      <widget class="QLabel" name="cameraNameLabel">
       <property name="text">
@@ -61,9 +64,6 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="cameraLocationLineEdit"/>
     </item>
     <item row="1" column="0">
      <widget class="QLabel" name="cameraLocationLabel">
@@ -94,8 +94,18 @@
       </item>
      </widget>
     </item>
-    <item row="2" column="1">
-     <widget class="QLineEdit" name="cameraNameLineEdit"/>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="cameraLocationLineEdit"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="cameraIDLabel">
+      <property name="text">
+       <string>ID</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
     </item>
     <item row="3" column="0">
      <widget class="QLabel" name="cameraTypeLabel">
@@ -114,15 +124,18 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="cameraIDLabel">
+    <item row="4" column="0">
+     <widget class="QLabel" name="cameraKeyLabel">
       <property name="text">
-       <string>ID</string>
+       <string>Key</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QComboBox" name="cameraKeyComboBox"/>
     </item>
    </layout>
   </widget>

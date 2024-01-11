@@ -18,13 +18,10 @@ public:
 	void OpenCameraManagementWindow(const CameraManagementWindowController::CameraManagementMode mode);
 
 	void ChangeCameraKey(const DatabaseEntity::Camera& camera, const QtKeyEnum key);
-
-	void TakeEntranceFrame();
-	void TakeExitFrame();
-
+	void ChangeCameraOnSlot(const DatabaseEntity::Camera& camera, bool isSlotOne);
+	
 	void SetupCameras();
 
-	void ChangeCameraOnSlot(const DatabaseEntity::Camera& camera, bool isSlotOne);
 	void Refresh();
 
 	void Close();

@@ -35,15 +35,9 @@ private:
 
 private slots:
 
-    // TODO: Accept different keys in case of multiple entrances/exits
-
-    void GetEntranceFrame(); // when key E is pressed.
-    void GetExitFrame(); // when key Q is pressed.
     void GetFrame(const uint32_t cameraID);
 
     void OnViewSpecificCameraButtonClick();
-    void OnSetSpecificKeyForCameraButtonClick();
-    void OnChangeVideoSourceButtonClick();
     void OnRefreshButtonClicked();
 
     void OnCameraManagementAddButtonClick();

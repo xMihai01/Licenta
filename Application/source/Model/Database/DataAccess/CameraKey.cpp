@@ -60,6 +60,27 @@ DatabaseEntity::CameraKey DatabaseDataAccess::CameraKey::FindByID(const uint32_t
     return camera;
 }
 
+DatabaseEntity::CameraKey DatabaseDataAccess::CameraKey::FindByKey(const QtKeyEnum key)
+{
+    QSqlQuery query;
+    query.prepare("SELECT * FROM camera_key WHERE key = :key");
+    query.bindValue(":key", static_cast<int>(key));
+    query.exec();
+
+    if (!query.isActive())
+        throw std::runtime_error(query.lastError().text().toStdString());
+
+    DatabaseEntity::CameraKey camera;
+
+    while (query.next()) {
+        uint32_t id = query.value("camera_id").toInt();
+        QtKeyEnum key = m_businessLogic.ConvertIntToKeyEnum(query.value("key").toInt());
+
+        camera = DatabaseEntity::CameraKey(id, key);
+    }
+    return camera;
+}
+
 std::vector<DatabaseEntity::CameraKey> DatabaseDataAccess::CameraKey::FindAll()
 {
     std::vector<DatabaseEntity::CameraKey> entries;
@@ -75,4 +96,9 @@ std::vector<DatabaseEntity::CameraKey> DatabaseDataAccess::CameraKey::FindAll()
         entries.push_back(DatabaseEntity::CameraKey(id, key));
     }
     return entries;
+}
+
+bool DatabaseDataAccess::CameraKey::IsKeyUsed(const QtKeyEnum key)
+{
+    return FindByKey(key).GetID() != 0;
 }

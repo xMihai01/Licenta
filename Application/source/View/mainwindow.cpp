@@ -17,9 +17,7 @@ MainWindow::MainWindow(QWidget* parent)
     ReloadKeys();
 
     // Button for changing video source for parking lot cameras
-    connect(ui->changeVideoSourceAction, SIGNAL(triggered()), this, SLOT(OnChangeVideoSourceButtonClick()));
     connect(ui->viewSpecificCameraAction, SIGNAL(triggered()), this, SLOT(OnViewSpecificCameraButtonClick()));
-    connect(ui->setSpecificKeyForCameraAction, SIGNAL(triggered()), this, SLOT(OnSetSpecificKeyForCameraButtonClick()));
     connect(ui->systemTurnButton, SIGNAL(clicked()), this, SLOT(OnRefreshButtonClicked()));
 
     // Camera management buttons (add, remove, update etc(
@@ -27,24 +25,6 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->removeCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementRemoveButtonClick()));
     connect(ui->updateCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementUpdateButtonClick()));
 
-}
-
-void MainWindow::GetEntranceFrame() {
-    try {
-        windowController->TakeEntranceFrame();
-    }
-    catch (const std::exception& exception) {
-        QMessageBox::critical(this, "Error", exception.what());
-    }
-}
-
-void MainWindow::GetExitFrame() {
-    try {
-        windowController->TakeExitFrame();
-    }
-    catch (const std::exception& exception) {
-        QMessageBox::critical(this, "Error", exception.what());
-    }
 }
 
 void MainWindow::GetFrame(const uint32_t cameraID)
@@ -71,32 +51,11 @@ void MainWindow::OnViewSpecificCameraButtonClick()
     }
 }
 
-void MainWindow::OnSetSpecificKeyForCameraButtonClick()
-{
-    try {
-        CameraComboBoxDialog dialog(CameraComboBoxDialog::CameraComboBoxDialogType::KEY_SELECTION, this);
-        if (dialog.exec() == QDialog::Accepted) {
-            DatabaseEntity::Camera chosenCamera = dialog.GetChosenCamera();
-            windowController->ChangeCameraKey(chosenCamera, QtKeyEnum(dialog.GetChosenKey()));
-            QMessageBox::about(this, "Success!", "Key changed successfully!");
-            ReloadKeys();
-        }
-    }
-    catch (const std::exception& exception) {
-        QMessageBox::critical(this, "Error", exception.what());
-    }
-}
-
-void MainWindow::OnChangeVideoSourceButtonClick() {
-    
-    // TODO: Allow user to change video sources
-    qDebug() << "button press";
-}
-
 void MainWindow::OnRefreshButtonClicked()
 {
     try {
         windowController->Refresh();
+        ReloadKeys();
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());

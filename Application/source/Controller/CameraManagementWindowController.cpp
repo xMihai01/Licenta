@@ -16,20 +16,34 @@ void CameraManagementWindowController::GetAllCamerasFromDatabaseInAMap(QHash<QLi
 
 void CameraManagementWindowController::DoAction(const DatabaseEntity::Camera& camera)
 {
-	switch (m_currentMode)
-	{
-	case CameraManagementWindowController::CameraManagementMode::ADD:
-		m_database.ToCamera().Add(camera);
-		break;
-	case CameraManagementWindowController::CameraManagementMode::REMOVE:
-		m_database.ToCamera().Remove(camera);
-		break;
-	case CameraManagementWindowController::CameraManagementMode::UPDATE:
-		m_database.ToCamera().Update(camera);
-		break;
-	default:
-		break;
+	try {
+		switch (m_currentMode)
+		{
+		case CameraManagementWindowController::CameraManagementMode::ADD:
+			m_database.ToCamera().Add(camera);
+			break;
+		case CameraManagementWindowController::CameraManagementMode::REMOVE:
+			m_database.ToCamera().Remove(camera);
+			break;
+		case CameraManagementWindowController::CameraManagementMode::UPDATE:
+			m_database.ToCamera().Update(camera);
+			break;
+		default:
+			break;
+		}
 	}
+	catch (const std::exception& exception) {
+		throw exception;
+	}
+}
+
+void CameraManagementWindowController::AddOrUpdateKey(const uint32_t id, const QtKeyEnum key)
+{
+	DatabaseEntity::CameraKey cameraKey = m_database.ToCameraKey().FindByID(id);
+	if (cameraKey.GetID() == 0)
+		m_database.ToCameraKey().Add(DatabaseEntity::CameraKey(id, key));
+	else if (cameraKey.GetID() != 0)
+		m_database.ToCameraKey().Update(DatabaseEntity::CameraKey(id, key));
 }
 
 void CameraManagementWindowController::UpdateDefaultCamera(const DatabaseEntity::Camera& camera, const bool isSlotOne)

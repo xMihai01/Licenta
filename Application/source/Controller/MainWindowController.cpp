@@ -48,22 +48,6 @@ void MainWindowController::ChangeCameraKey(const DatabaseEntity::Camera& camera,
         m_database.ToCameraKey().Add(DatabaseEntity::CameraKey(camera.GetID(), key));
 }
 
-void MainWindowController::TakeEntranceFrame()
-{
-    //cv::Mat frame = m_entranceVideoCameras->GetCurrentFrame();
-    static int index = 0;
-    //cv::imwrite("C:/Users/mihai/Desktop/Products/img/" + std::to_string(index) + "_entrance.jpg", frame);
-    index++;
-}
-
-void MainWindowController::TakeExitFrame()
-{
-    //cv::Mat frame = m_exitVideoCameras->GetCurrentFrame();
-    static int index2 = 0;
-    //cv::imwrite("C:/Users/mihai/Desktop/Products/img/" + std::to_string(index2) + "_exit.jpg", frame);
-    index2++;
-}
-
 void MainWindowController::SetupCameras()
 {
     VideoCamera* currentCamera;

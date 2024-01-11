@@ -48,9 +48,11 @@ void CameraManagementWindow::ChangeMode(const CameraManagementWindowController::
         break;
     }
     m_windowController->SetCurrentMode(mode);
-    ui->cameraLocationLineEdit->setReadOnly(mode == CameraManagementWindowController::CameraManagementMode::REMOVE);
-    ui->cameraNameLineEdit->setReadOnly(mode == CameraManagementWindowController::CameraManagementMode::REMOVE);
-    ui->cameraTypeComboBox->setEnabled(!(mode == CameraManagementWindowController::CameraManagementMode::REMOVE));
+    ui->cameraLocationLineEdit->setReadOnly(mode == CameraManagementWindowController::CameraManagementMode::REMOVE || mode == CameraManagementWindowController::CameraManagementMode::LIST);
+    ui->cameraNameLineEdit->setReadOnly(mode == CameraManagementWindowController::CameraManagementMode::REMOVE || mode == CameraManagementWindowController::CameraManagementMode::LIST);
+    ui->cameraTypeComboBox->setEnabled(!(mode == CameraManagementWindowController::CameraManagementMode::REMOVE || mode == CameraManagementWindowController::CameraManagementMode::LIST));
+    ui->cameraKeyComboBox->setEnabled(mode == CameraManagementWindowController::CameraManagementMode::UPDATE);
+    ui->actionButton->setVisible(mode != CameraManagementWindowController::CameraManagementMode::LIST);
 }
 
 void CameraManagementWindow::OnActionButtonClick()
@@ -58,7 +60,10 @@ void CameraManagementWindow::OnActionButtonClick()
     try {
         if (ui->cameraLocationLineEdit->text() == "" && ui->cameraNameLineEdit->text() == "")
             throw std::runtime_error("All fields are required!");
-        
+        // If key is not available, throw exception. Two cameras can't share the same key! Should only happen during "ADD"
+        if (m_windowController->GetCurrentMode() == CameraManagementWindowController::CameraManagementMode::UPDATE && m_windowController->GetDatabase().ToCameraKey().FindByKey(m_keysMap[ui->cameraKeyComboBox->currentText()]).GetID() != 0)
+            throw std::runtime_error("Key is already in use!");
+            
         auto mode = m_windowController->GetCurrentMode();
         m_windowController->GetCurrentMode() == CameraManagementWindowController::CameraManagementMode::ADD
 
@@ -75,8 +80,16 @@ void CameraManagementWindow::OnActionButtonClick()
                     , ui->cameraLocationLineEdit->text().toStdString()
                     , ui->cameraNameLineEdit->text().toStdString()));
 
+        if (m_windowController->GetCurrentMode() == CameraManagementWindowController::CameraManagementMode::UPDATE)
+            m_windowController->AddOrUpdateKey(ui->cameraIDLineEdit->text().toInt(), m_keysMap[ui->cameraKeyComboBox->currentText()]);
+        
         ReloadCameras();
-        QMessageBox::about(this, "Warning", "Cameras have been updated. Refresh cameras when going back to main window.");
+        
+        if (m_windowController->GetCurrentMode() == CameraManagementWindowController::CameraManagementMode::ADD)
+            QMessageBox::about(this, "Warning", "Camera was added. Refresh cameras when going back to main window.\n\nKey must be set on the UPDATE window!");
+        else
+            QMessageBox::about(this, "Warning", "Cameras have been updated. Refresh cameras when going back to main window.");
+
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
@@ -121,6 +134,7 @@ void CameraManagementWindow::ReloadCameras()
             ui->cameraWidgetList->addItem(camera.first);
             camera.first->setText(QString::fromStdString(camera.second.GetName()));
         }
+        SetComboBoxForKeys();
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
@@ -133,4 +147,22 @@ void CameraManagementWindow::OnCameraClick(QListWidgetItem* camera) {
     ui->cameraLocationLineEdit->setText(QString::fromStdString(m_camerasMap[camera].GetLocation()));
     ui->cameraNameLineEdit->setText(QString::fromStdString(m_camerasMap[camera].GetName()));
     ui->cameraTypeComboBox->setCurrentText(m_windowController->GetDatabase().ToCameraType().ToBusinessLogic().ConvertTypeToQString(m_camerasMap[camera].GetCameraType().GetType()));
+    ui->cameraKeyComboBox->setCurrentIndex((static_cast<int>(m_windowController->GetDatabase().ToCameraKey().FindByID(m_camerasMap[camera].GetID()).GetKey()) - static_cast<int>(QtKeyEnum::A)));
+}
+
+void CameraManagementWindow::SetComboBoxForKeys()
+{
+    try {
+        ui->cameraKeyComboBox->clear();
+        for (uint32_t currentKey = static_cast<uint32_t>(QtKeyEnum::A); currentKey <= static_cast<uint32_t>(QtKeyEnum::Z); currentKey++) {
+            QString comboBoxString = QString::fromStdString(QtEnumToString(QtKeyEnum(currentKey)))
+                + (m_windowController->GetDatabase().ToCameraKey().IsKeyUsed(QtKeyEnum(currentKey)) ? " (USED)" : "");
+
+            ui->cameraKeyComboBox->addItem(comboBoxString);
+            m_keysMap[comboBoxString] = QtKeyEnum(currentKey);
+        }
+    }
+    catch (const std::exception& exception) {
+        throw exception;
+    }
 }

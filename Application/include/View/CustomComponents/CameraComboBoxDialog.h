@@ -17,8 +17,7 @@ class CameraComboBoxDialog : public QDialog {
 public:
 
     enum class CameraComboBoxDialogType {
-        SLOT_SELECTION,
-        KEY_SELECTION // TODO: let user choose a desired key for each camera
+        SLOT_SELECTION
     };
 
 public:
@@ -32,7 +31,6 @@ public:
 private:
 
     void GetComboBoxMapForCameras();
-    void SetComboBoxForKeys();
 
 private:
     QComboBox* cameraComboBox;
@@ -41,7 +39,6 @@ private:
     QVBoxLayout* layout;
 
     QHash<QString, DatabaseEntity::Camera> map;
-    QHash<QString, QtKeyEnum> keysMap;
 
 private slots:
     void onOkButtonClicked();
