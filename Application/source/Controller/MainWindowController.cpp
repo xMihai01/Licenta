@@ -7,20 +7,9 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
     try {
         m_database.Connect("main");
 
-        // currently hardcoded \/
+        // Since there are only 2 slots, there will be 2 listeners.
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForEntranceCameraFrame));
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForExitCameraFrame));
-        //m_entranceVideoCameras = new VideoCamera();
-        //m_exitVideoCameras = new VideoCamera();
-        //m_entranceVideoCameras->AddListener(m_videoListeners[0]);
-        //m_exitVideoCameras->AddListener(m_videoListeners[1]);
-
-        //m_exitVideoCameras->OpenCamera("C:/Users/mihai/Desktop/Products/testVideo3.mp4");
-        //m_entranceVideoCameras->OpenCamera("C:/Users/mihai/Desktop/Products/testVideo3.mp4");
-        //std::thread([&]() { m_exitVideoCameras->ReadFrames(); }).detach();
-
-        //std::thread([&]() { m_entranceVideoCameras->ReadFrames(); }).detach();
-        // /\
         
         SetupCameras();
         
@@ -92,7 +81,9 @@ void MainWindowController::SetupCameras()
             std::thread([&]() { camera->ReadFrames(); }).detach();
     }
     catch (const std::exception& exception) {
-        throw exception;
+        Close();
+        std::string exception_message = "\nGo to Camera Management and review your video cameras to continue using the application!";
+        throw std::runtime_error(exception.what() + exception_message);
     }
 }
 
