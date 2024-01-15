@@ -17,6 +17,7 @@ public:
 	void StopCamera();
 
 	cv::Mat GetCurrentFrame();
+	cv::Mat ReadNextFrame();
 
 	bool IsCameraOpened();
 	int GetFrameHeight() const;

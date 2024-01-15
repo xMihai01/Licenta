@@ -1,6 +1,7 @@
 #pragma once
 
 #include <View/cameramanagementwindow.h>
+#include <View/parkingsetupwindow.h>
 
 #include <Model/Utils/QtKeysEnum.h>
 #include <Model/Detection/LicensePlateDetection/Workflow.h>
@@ -17,6 +18,7 @@ public:
 	void GetFrameAndStartAction(const uint32_t cameraID);
 
 	void OpenCameraManagementWindow(const CameraManagementWindowController::CameraManagementMode mode);
+	void OpenParkingManagementWindow();
 
 	void ChangeCameraOnSlot(const DatabaseEntity::Camera& camera, bool isSlotOne);
 	
@@ -47,6 +49,7 @@ private:
 	std::vector<std::shared_ptr<InterfaceVideoListener>> m_videoListeners;
 
 	CameraManagementWindow* m_cameraManagementWindow;
+	ParkingSetupWindow* m_parkingSetupWindow;
 
 	LicensePlateDetection::Workflow m_licenseWorkflow;
 

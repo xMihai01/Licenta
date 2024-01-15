@@ -1029,6 +1029,7 @@
     <addaction name="removeCameraAction"/>
     <addaction name="updateCameraAction"/>
     <addaction name="listCameraAction"/>
+    <addaction name="manageParkingAction"/>
    </widget>
    <addaction name="settingsMenu"/>
    <addaction name="manageCameraMenu"/>
@@ -1067,6 +1068,11 @@
   <action name="setSpecificKeyForCameraAction">
    <property name="text">
     <string>Set Specific Key for Camera</string>
+   </property>
+  </action>
+  <action name="manageParkingAction">
+   <property name="text">
+    <string>Manage Parking Spaces</string>
    </property>
   </action>
  </widget>

@@ -44,4 +44,7 @@ public:
 	static bool pointComparatorByX(cv::Point& a, cv::Point& b);
 	static bool areaComparatorForContours(std::vector<cv::Point>& a, std::vector<cv::Point>& b);
 
+	// Other
+
+	static void ShowRectangleOnImage(const cv::Mat& inputImage, cv::Mat& outputImage, const cv::Point2d& first, const cv::Point2d& second);
 };

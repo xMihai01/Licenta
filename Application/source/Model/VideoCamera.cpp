@@ -72,6 +72,15 @@ cv::Mat VideoCamera::GetCurrentFrame()
 	return frame;
 }
 
+cv::Mat VideoCamera::ReadNextFrame()
+{
+	if (!m_videoCapture->isOpened())
+		throw std::runtime_error("Tried taking the next frame on video camera but it is not opened!");
+	std::lock_guard<std::mutex> lock(frameMutex);
+	m_videoCapture->read(m_frame);
+	return m_frame.clone();
+}
+
 bool VideoCamera::IsCameraOpened()
 {
 	return m_videoCapture->isOpened();

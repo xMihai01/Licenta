@@ -61,7 +61,9 @@ void CameraManagementWindow::OnActionButtonClick()
         if (ui->cameraLocationLineEdit->text() == "" && ui->cameraNameLineEdit->text() == "")
             throw std::runtime_error("All fields are required!");
         // If key is not available, throw exception. Two cameras can't share the same key! Should only happen during "ADD"
-        if (m_windowController->GetCurrentMode() == CameraManagementWindowController::CameraManagementMode::UPDATE && m_windowController->GetDatabase().ToCameraKey().FindByKey(m_keysMap[ui->cameraKeyComboBox->currentText()]).GetID() != 0)
+        if (m_windowController->GetCurrentMode() == CameraManagementWindowController::CameraManagementMode::UPDATE 
+            && m_windowController->GetDatabase().ToCameraKey().FindByKey(m_keysMap[ui->cameraKeyComboBox->currentText()]).GetID() != 0
+            && m_windowController->GetDatabase().ToCameraKey().FindByKey(m_keysMap[ui->cameraKeyComboBox->currentText()]).GetKey() != m_keysMap[ui->cameraKeyComboBox->currentText()])
             throw std::runtime_error("Key is already in use!");
             
         auto mode = m_windowController->GetCurrentMode();

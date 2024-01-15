@@ -43,6 +43,7 @@ private slots:
     void OnCameraManagementAddButtonClick();
     void OnCameraManagementRemoveButtonClick();
     void OnCameraManagementUpdateButtonClick();
+    void OnCameraManagementParkingButtonClick();
 
 private:
     Ui::MainWindow *ui;

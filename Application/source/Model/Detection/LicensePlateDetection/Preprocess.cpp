@@ -71,7 +71,6 @@ void LicensePlateDetection::Preprocess::AdaptiveHistogramEqualization(const cv::
 {
 	cv::Ptr<cv::CLAHE> adaptiveHE = cv::createCLAHE();
 	adaptiveHE->apply(inputImage, outputImage);
-
 }
 
 void LicensePlateDetection::Preprocess::PreProcessForHaarCascade(const cv::Mat& inputImage, cv::Mat& outputImage)
@@ -126,6 +125,7 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 	cv::Mat licensePlate;
 
 	ConvertImageToGray(inputImage, inputImage);
+	NoiseReduction(inputImage, inputImage, SmoothingAlgorithm::Gaussian);
 	ResizeImage(inputImage, inputImage, Utils::PLATE_WIDTH, Utils::PLATE_HEIGHT);
 	cv::threshold(inputImage, inputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
 	licensePlate = inputImage.clone();

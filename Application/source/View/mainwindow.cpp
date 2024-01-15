@@ -26,13 +26,14 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->addCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementAddButtonClick()));
     connect(ui->removeCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementRemoveButtonClick()));
     connect(ui->updateCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementUpdateButtonClick()));
+    connect(ui->manageParkingAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementParkingButtonClick()));
 
 }
 
 void MainWindow::GetFrame(const uint32_t cameraID)
 {
     try {
-        qDebug() << cameraID;
+        //qDebug() << cameraID;
         windowController->GetFrameAndStartAction(cameraID);
     }
     catch (const std::exception& exception) {
@@ -101,6 +102,15 @@ void MainWindow::OnCameraManagementUpdateButtonClick()
         return;
     }
     windowController->OpenCameraManagementWindow(CameraManagementWindowController::CameraManagementMode::UPDATE);
+}
+
+void MainWindow::OnCameraManagementParkingButtonClick()
+{
+    if (repairMode) {
+        QMessageBox::critical(this, "Error", "Can't use this while in repair mode!\n\nReview Camera Management and refresh!");
+        return;
+    }
+    windowController->OpenParkingManagementWindow();
 }
 
 void MainWindow::ReloadKeys()

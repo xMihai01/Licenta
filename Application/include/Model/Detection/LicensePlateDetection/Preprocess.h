@@ -15,7 +15,7 @@ namespace LicensePlateDetection {
 		static const uint8_t NUMBER_OF_CORNERS_IN_LICENSE_PLATE = 4;
 
 		const int INTEGER_KERNEL_SIZE = 7;
-		const cv::Size BLUR_KERNEL_SIZE = cv::Size(3, 3);
+		const cv::Size BLUR_KERNEL_SIZE = cv::Size(7, 7);
 		
 	public:
 

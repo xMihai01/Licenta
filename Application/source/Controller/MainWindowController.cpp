@@ -8,6 +8,7 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
         m_database.Connect("main");
 
         m_cameraManagementWindow = new CameraManagementWindow();
+        m_parkingSetupWindow = new ParkingSetupWindow();
 
         // Since there are only 2 slots, there will be 2 listeners.
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForEntranceCameraFrame));
@@ -24,8 +25,11 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
 
 void MainWindowController::GetFrameAndStartAction(const uint32_t cameraID)
 {
+    static int index = 0;
+
     const DatabaseEntity::Camera camera = m_database.ToCamera().FindByID(cameraID);
     cv::Mat inputFrame = m_cameraIDToVideoCameraMap[cameraID]->GetCurrentFrame();
+    cv::imwrite("C:/Users/mihai/Desktop/Products/img/original_" + std::to_string(index) + ".jpg", inputFrame);
 
     std::string plateText;
     cv::Mat outputPlateImage;
@@ -33,17 +37,20 @@ void MainWindowController::GetFrameAndStartAction(const uint32_t cameraID)
     switch (camera.GetCameraType().GetType())
     {
     case DatabaseEntity::CameraType::Type::ENTRANCE:
-        std::cout << "Entered: " << plateText;
+        std::cout << "\nEntered: " << plateText;
         break;
     case DatabaseEntity::CameraType::Type::EXIT:
-        std::cout << "Exited: " << plateText;
+        std::cout << "\nExited: " << plateText;
         break;
     case DatabaseEntity::CameraType::Type::PARKING:
-        std::cout << "Parked: " << plateText;
+        std::cout << "\nParked: " << plateText;
         break;
     default:
         break;
     }
+    cv::imwrite("C:/Users/mihai/Desktop/Products/img/input_" + std::to_string(index) + ".jpg", inputFrame);
+    cv::imwrite("C:/Users/mihai/Desktop/Products/img/" + std::to_string(index) + ".jpg", outputPlateImage);
+    index++;
 }
 
 void MainWindowController::OpenCameraManagementWindow(const CameraManagementWindowController::CameraManagementMode mode)
@@ -52,6 +59,14 @@ void MainWindowController::OpenCameraManagementWindow(const CameraManagementWind
         m_cameraManagementWindow->hide();
     m_cameraManagementWindow->ChangeMode(mode);
     m_cameraManagementWindow->show();
+}
+
+void MainWindowController::OpenParkingManagementWindow()
+{
+    if (m_parkingSetupWindow->isVisible())
+        m_parkingSetupWindow->hide();
+    m_parkingSetupWindow->show();
+    m_parkingSetupWindow->ReloadCameras();
 }
 
 void MainWindowController::SetupCameras()

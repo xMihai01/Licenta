@@ -175,6 +175,26 @@ bool Utils::areaComparatorForContours(std::vector<cv::Point>& a, std::vector<cv:
 	return cv::contourArea(a) < cv::contourArea(b);
 }
 
+void Utils::ShowRectangleOnImage(const cv::Mat& inputImage, cv::Mat& outputImage, const cv::Point2d& first, const cv::Point2d& second)
+{
+	const cv::Vec3b red = cv::Vec3b(0, 0, 255);
+	outputImage = inputImage.clone();
+	cv::Point2d max = cv::Point2d(std::max(first.x, second.x), std::max(first.y, second.y));
+	cv::Point2d min = cv::Point2d(std::min(first.x, second.x), std::min(first.y, second.y));
+
+	for (int row = static_cast<int>(min.y); row <= static_cast<int>(max.y); row++) {
+		for (int col = static_cast<int>(min.x); col <= static_cast<int>(max.x); col++) {
+			if ((row == min.y || row == max.y) && (col > min.x && col < max.x)) {
+				outputImage.at<cv::Vec3b>(row, col) = red;
+			}
+			if ((col == min.x || col == max.x) && (row > min.y && row < max.y)) {
+				outputImage.at<cv::Vec3b>(row, col) = red;
+			}
+		}
+	}
+
+}
+
 std::vector<std::string> Utils::GetImageNamesFromFile(const std::string& path)
 {
 	std::vector<std::string> imageNames;

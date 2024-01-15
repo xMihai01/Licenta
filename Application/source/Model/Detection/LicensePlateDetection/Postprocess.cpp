@@ -331,7 +331,7 @@ void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv
 	for (size_t index = 0; index < lettersBox.size(); index++) {
 		if (index > 0 && Utils::IsRectangleInsideAnotherRectangle(lettersBox[index].second, lettersBox[index - 1].second))
 			continue;
-
+		//cv::morphologyEx(lettersBox[index].first, lettersBox[index].first, cv::MORPH_OPEN, kernel);
 		lettersBox[index].first.copyTo(whiteImage(cv::Rect(lettersBox[index].second)));
 		//Utils::SkeletonizeImage(lettersBox[index].first, lettersBox[index].first);
 		//cv::threshold(lettersBox[index].first, lettersBox[index].first, 128, 256, cv::THRESH_BINARY);
