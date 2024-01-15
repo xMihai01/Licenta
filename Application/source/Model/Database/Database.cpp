@@ -48,6 +48,11 @@ DatabaseDataAccess::Camera Database::ToCamera() const
 	return m_camera;
 }
 
+DatabaseDataAccess::ParkingSpace Database::ToParkingSpace() const
+{
+	return m_parkingSpace;
+}
+
 void Database::Validations()
 {
 	try {

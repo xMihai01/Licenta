@@ -30,6 +30,7 @@ namespace DatabaseDataAccess {
 		DatabaseBusinessLogic::Camera m_businessLogic;
 
 		DatabaseDataAccess::CameraKey m_cameraKeyDataAccess;
+		//DatabaseDataAccess::ParkingSpace m_parkingSpaceDataAccess;
 
 	};
 

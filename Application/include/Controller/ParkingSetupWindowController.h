@@ -22,11 +22,16 @@ public:
 	ParkingSetupWindowController(ClickableLabel* label);
 
 	void GetAllParkingCamerasInMap(QHash<QListWidgetItem*, DatabaseEntity::Camera>& map);
-	void GetAllSpacesForParkingCamera(const DatabaseEntity::Camera& camera);
+	void GetAllSpacesForParkingCamera(QHash<QListWidgetItem*, DatabaseEntity::ParkingSpace>& map, const DatabaseEntity::Camera& camera);
 
 	void ShowParkingSpace(const QPoint& first, const QPoint& second);
+	void ShowParkingSpace(const DatabaseEntity::ParkingSpace& parkingSpace);
 
 	void TakeSingleFrameFromCamera(const DatabaseEntity::Camera& camera);
+
+	void AddParkingSpace(const DatabaseEntity::Camera& camera, const QPoint& first, const QPoint& second, const QString& name);
+	void UpdateParkingSpace(const DatabaseEntity::ParkingSpace& parkingSpace, const QPoint& first, const QPoint& second, const QString& name);
+	void RemoveParkingSpace(const DatabaseEntity::ParkingSpace& parkingSpace);
 
 	void Reset();
 

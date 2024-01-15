@@ -37,7 +37,7 @@
     <item row="2" column="0">
      <widget class="QPushButton" name="confirmButton">
       <property name="text">
-       <string>Confirm</string>
+       <string>Confirm (Add)</string>
       </property>
      </widget>
     </item>
@@ -98,6 +98,13 @@
      <widget class="QPushButton" name="removeButton">
       <property name="text">
        <string>Remove</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="updateButton">
+      <property name="text">
+       <string>Update</string>
       </property>
      </widget>
     </item>

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Model/Database/BusinessLogic/Camera.h>
 #include <Model/Database/BusinessLogic/ParkingSpace.h>
 
 #include <Model/Database/DataAccess/Camera.h>

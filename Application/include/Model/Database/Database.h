@@ -4,6 +4,7 @@
 #include <Model/Database/DataAccess/CameraKey.h>
 #include <Model/Database/DataAccess/CameraType.h>
 #include <Model/Database/DataAccess/Camera.h>
+#include <Model/Database/DataAccess/ParkingSpace.h>
 
 #include <QSql>
 #include <QSqlDriver>
@@ -24,6 +25,7 @@ public:
 	DatabaseDataAccess::CameraKey ToCameraKey() const;
     DatabaseDataAccess::CameraType ToCameraType() const;
 	DatabaseDataAccess::Camera ToCamera() const;
+	DatabaseDataAccess::ParkingSpace ToParkingSpace() const;
 
 private:
 
@@ -36,6 +38,8 @@ private:
 	DatabaseDataAccess::CameraKey m_cameraKey;
     DatabaseDataAccess::CameraType m_cameraType;
 	DatabaseDataAccess::Camera m_camera;
+
+	DatabaseDataAccess::ParkingSpace m_parkingSpace;
 
 	bool isConncted = false;
 };

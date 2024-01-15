@@ -1,5 +1,9 @@
 #include <Model/Database/DataAccess/ParkingSpace.h>
 
+DatabaseDataAccess::ParkingSpace::ParkingSpace() {
+
+}
+
 void DatabaseDataAccess::ParkingSpace::Add(const DatabaseEntity::ParkingSpace& parkingSpace)
 {
     QSqlQuery query;

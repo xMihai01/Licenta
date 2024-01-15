@@ -7,6 +7,11 @@ CameraManagementWindowController::CameraManagementWindowController()
 
 void CameraManagementWindowController::GetAllCamerasFromDatabaseInAMap(QHash<QListWidgetItem*, DatabaseEntity::Camera>& map)
 {
+	if (map.size() > 0) {
+		for (const auto& item : map.asKeyValueRange()) {
+			delete item.first;
+		}
+	} // if it crashes here, remove everything above
 	std::vector<DatabaseEntity::Camera> cameras = m_database.ToCamera().FindAll();
 
 	for (const auto& camera : cameras) {

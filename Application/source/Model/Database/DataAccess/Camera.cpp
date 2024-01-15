@@ -1,4 +1,5 @@
 #include <Model/Database/DataAccess/Camera.h>
+#include <Model/Database/DataAccess/ParkingSpace.h>
 
 DatabaseDataAccess::Camera::Camera() {
 
@@ -24,6 +25,8 @@ void DatabaseDataAccess::Camera::Remove(const DatabaseEntity::Camera& camera)
 
     if (m_cameraKeyDataAccess.FindByID(camera.GetID()).GetID() != 0)
         m_cameraKeyDataAccess.Remove(m_cameraKeyDataAccess.FindByID(camera.GetID()));
+    DatabaseDataAccess::ParkingSpace parkingSpaceDataAccess;
+    parkingSpaceDataAccess.RemoveAllFromCamera(camera);
 
     if (query.exec()) {
         std::cout << "Camera with ID " << camera.GetID() << " removed successfully";
