@@ -47,4 +47,5 @@ public:
 	// Other
 
 	static void ShowRectangleOnImage(const cv::Mat& inputImage, cv::Mat& outputImage, const cv::Point2d& first, const cv::Point2d& second);
+	static void CropImageFromRectangle(const cv::Mat& inputImage, cv::Mat& outputImage, const cv::Point2d& first, const cv::Point2d& second);
 };

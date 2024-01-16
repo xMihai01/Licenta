@@ -35,6 +35,8 @@ private:
 	std::string TakePlateFromFrame(const cv::Mat& frame);
 	void GetDefaultCameras();
 
+	void CheckAllParkingSpaces(const DatabaseEntity::Camera& camera, const cv::Mat& inputFrame);
+
 
 private:
 

@@ -14,6 +14,7 @@ void DatabaseDataAccess::ParkingSpace::Add(const DatabaseEntity::ParkingSpace& p
     query.bindValue(":y1", parkingSpace.GetY1());
     query.bindValue(":y2", parkingSpace.GetY2());
     query.bindValue(":name", QString::fromStdString(parkingSpace.GetName()));
+
     if (query.exec())
         qDebug() << "ParkingSpace entry added successfully";
     else throw std::runtime_error(query.lastError().text().toStdString());

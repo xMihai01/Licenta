@@ -195,6 +195,23 @@ void Utils::ShowRectangleOnImage(const cv::Mat& inputImage, cv::Mat& outputImage
 
 }
 
+void Utils::CropImageFromRectangle(const cv::Mat& inputImage, cv::Mat& outputImage, const cv::Point2d& first, const cv::Point2d& second)
+{
+	cv::Point2d max = cv::Point2d(std::max(first.x, second.x), std::max(first.y, second.y));
+	cv::Point2d min = cv::Point2d(std::min(first.x, second.x), std::min(first.y, second.y));
+
+	min.x = std::max(0.0, min.x);
+	min.y = std::max(0.0, min.y);
+	max.x = std::min(static_cast<double>(inputImage.cols - 1), max.x);
+	max.y = std::min(static_cast<double>(inputImage.rows - 1), max.y);
+	
+	outputImage = cv::Mat(cv::Size(max.x - min.x + 1, max.y - min.y + 1), CV_8UC3);
+
+	cv::Rect rectangle(min.x, min.y, outputImage.size().width, outputImage.size().height);
+
+	inputImage(rectangle).copyTo(outputImage);
+}
+
 std::vector<std::string> Utils::GetImageNamesFromFile(const std::string& path)
 {
 	std::vector<std::string> imageNames;

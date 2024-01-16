@@ -67,6 +67,8 @@ void ParkingSetupWindow::OnResetButtonClick()
 void ParkingSetupWindow::OnConfirmButtonClick()
 {
     try {
+        if (m_selectedCamera == nullptr)
+            throw std::runtime_error("No parking camera selected!");
         bool passed;
         QString parkingSpaceName = QInputDialog::getText(this, tr("Enter parking space name"), tr("Parking space name"), QLineEdit::Normal, "A2");
         if (parkingSpaceName.isEmpty())
@@ -136,3 +138,4 @@ void ParkingSetupWindow::ReloadSpaces()
         QMessageBox::critical(this, "Error", exception.what());
     }
 }
+
