@@ -34,6 +34,7 @@ void ParkingSetupWindow::OnCameraClick(QListWidgetItem* camera) {
     m_selectedCamera = camera;
     m_windowController->TakeSingleFrameFromCamera(m_parkingCamerasMap[camera]);
     ReloadSpaces();
+    m_label->ResetPoints();
 }
 
 void ParkingSetupWindow::ReloadCameras()
@@ -69,6 +70,8 @@ void ParkingSetupWindow::OnConfirmButtonClick()
     try {
         if (m_selectedCamera == nullptr)
             throw std::runtime_error("No parking camera selected!");
+        if (m_label->GetFirstPoint().x() == -1 || m_label->GetSecondPoint().x() == -1)
+            throw std::runtime_error("Bounding box has not been set!");
         bool passed;
         QString parkingSpaceName = QInputDialog::getText(this, tr("Enter parking space name"), tr("Parking space name"), QLineEdit::Normal, "A2");
         if (parkingSpaceName.isEmpty())
@@ -88,6 +91,8 @@ void ParkingSetupWindow::OnUpdateButtonClick()
     try {
         if (m_selectedSpace == nullptr)
             throw std::runtime_error("No parking space selected to update!");
+        if (m_label->GetFirstPoint().x() == -1 || m_label->GetSecondPoint().x() == -1)
+            throw std::runtime_error("Bounding box has not been set!");
         bool passed;
         QString parkingSpaceName = QInputDialog::getText(this, tr("Enter new parking space name"), tr("New parking space name"), QLineEdit::Normal, "A2");
         if (parkingSpaceName.isEmpty())
@@ -107,11 +112,12 @@ void ParkingSetupWindow::OnRemoveButtonClick()
     try {
         if (m_selectedSpace == nullptr)
             throw std::runtime_error("No parking space selected to remove!");
-   
 
         m_windowController->RemoveParkingSpace(m_parkingSpacesMap[m_selectedSpace]);
-        ReloadSpaces();
         QMessageBox::about(this, "Success", "Parking space removed: " + QString::fromStdString(m_parkingSpacesMap[m_selectedSpace].GetName()) + "!");
+        ReloadSpaces();
+        m_label->ResetPoints();
+        m_selectedSpace = nullptr;
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
@@ -137,5 +143,15 @@ void ParkingSetupWindow::ReloadSpaces()
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
     }
+}
+
+void ParkingSetupWindow::closeEvent(QCloseEvent* event)
+{
+    m_selectedCamera = nullptr;
+    m_selectedSpace = nullptr;
+    m_label->ResetPoints(); 
+    ReloadSpaces();
+    m_label->setPixmap(QPixmap());
+    event->accept();
 }
 

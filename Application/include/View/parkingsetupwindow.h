@@ -35,6 +35,7 @@ private slots:
 private:
 
     void ReloadSpaces();
+    void closeEvent(QCloseEvent* event);
 
 private:
     Ui::ParkingSetupWindow *ui;

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include <QCloseEvent>
 #include <Controller/CameraManagementWindowController.h>
 
 namespace Ui {
@@ -33,6 +34,8 @@ private:
     void ReloadCameras();
 
     void SetComboBoxForKeys();
+
+    void closeEvent(QCloseEvent* event);
 
 private:
     Ui::CameraManagementWindow *ui;
