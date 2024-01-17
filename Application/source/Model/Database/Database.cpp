@@ -48,9 +48,14 @@ DatabaseDataAccess::Camera Database::ToCamera() const
 	return m_camera;
 }
 
-DatabaseDataAccess::ParkingSpace Database::ToParkingSpace() const
+DatabaseBusinessLogic::ParkingSpace Database::ToParkingSpace() const
 {
 	return m_parkingSpace;
+}
+
+DatabaseBusinessLogic::Session Database::ToSession() const
+{
+	return m_session;
 }
 
 void Database::Validations()

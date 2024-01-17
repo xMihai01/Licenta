@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Model/Database/BusinessLogic/ParkingSpace.h>
+#include <Model/Database/Entities/ParkingSpace.h>
 
 #include <Model/Database/DataAccess/Camera.h>
 
@@ -26,10 +26,6 @@ namespace DatabaseDataAccess {
 		std::vector<DatabaseEntity::ParkingSpace> FindAll();
 		std::vector<DatabaseEntity::ParkingSpace> FindAllByCamera(const DatabaseEntity::Camera& camera);
 		DatabaseEntity::ParkingSpace FindByID(const uint32_t id);
-
-	private:
-
-		// bl
 
 	};
 

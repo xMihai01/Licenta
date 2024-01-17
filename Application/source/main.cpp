@@ -1,4 +1,5 @@
 #include <View/mainwindow.h>
+#include <Model/Database/BusinessLogic/Session.h>
 
 int main(int argc, char* argv[]) {
 	

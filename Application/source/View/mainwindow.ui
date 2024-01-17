@@ -981,7 +981,7 @@
     </property>
     <layout class="QGridLayout" name="cameraSlotsLabelsGrid">
      <item row="0" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="cameraSlotOneLabel">
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:700;&quot;&gt;Camera Slot 1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
@@ -991,7 +991,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="cameraSlotTwoLabel">
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:700;&quot;&gt;Camera Slot 2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>

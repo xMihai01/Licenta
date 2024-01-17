@@ -1,0 +1,47 @@
+#include "Model/Database/BusinessLogic/Session.h"
+
+void DatabaseBusinessLogic::Session::Add(DatabaseEntity::Session& session)
+{
+	session.SetSecretID(GenerateSecretID(session));
+	m_dataAccess.Add(session);
+}
+
+void DatabaseBusinessLogic::Session::Remove(const DatabaseEntity::Session& session)
+{
+	m_dataAccess.Remove(session);
+}
+
+void DatabaseBusinessLogic::Session::Update(const DatabaseEntity::Session& session)
+{
+	m_dataAccess.Update(session);
+}
+
+std::vector<DatabaseEntity::Session> DatabaseBusinessLogic::Session::FindAll()
+{
+	return m_dataAccess.FindAll();
+}
+
+DatabaseEntity::Session DatabaseBusinessLogic::Session::FindByID(const uint32_t id)
+{
+	return m_dataAccess.FindByID(id);
+}
+
+std::vector<DatabaseEntity::Session> DatabaseBusinessLogic::Session::FindByLicensePlate(const std::string& licensePlate)
+{
+	return m_dataAccess.FindByLicensePlate(licensePlate);
+}
+
+DatabaseEntity::Session DatabaseBusinessLogic::Session::FindBySecretID(const std::string& secretID)
+{
+	return m_dataAccess.FindBySecretID(secretID);
+}
+
+std::string DatabaseBusinessLogic::Session::GenerateSecretID(const DatabaseEntity::Session& session)
+{
+	QString timeInSecs = QString::number(session.GetEntranceTime().toSecsSinceEpoch());
+	QString timeInMSecs = QString::number(session.GetEntranceTime().toMSecsSinceEpoch());
+	std::string secretID = timeInSecs.toStdString();
+	for (size_t index = timeInMSecs.length(); index >= timeInMSecs.length() - 3; index--)
+		secretID += std::to_string(timeInMSecs[index].toLatin1());
+	return secretID + session.GetLicensePlate();
+}
