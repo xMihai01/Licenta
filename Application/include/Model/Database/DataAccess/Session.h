@@ -19,6 +19,7 @@ namespace DatabaseDataAccess {
 		DatabaseEntity::Session FindByID(const uint32_t id);
 		std::vector<DatabaseEntity::Session> FindByLicensePlate(const std::string& licensePlate);
 		DatabaseEntity::Session FindBySecretID(const std::string& secretID);
+		std::vector<DatabaseEntity::Session> FindAllOngoingSessions();
 
 	};
 

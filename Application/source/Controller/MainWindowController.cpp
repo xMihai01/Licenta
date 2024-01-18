@@ -25,37 +25,10 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
 
 void MainWindowController::GetFrameAndStartAction(const uint32_t cameraID)
 {
-    static int index = 0;
-
     const DatabaseEntity::Camera camera = m_database.ToCamera().FindByID(cameraID);
     cv::Mat inputFrame = m_cameraIDToVideoCameraMap[cameraID]->GetCurrentFrame();
-    //cv::imwrite("C:/Users/mihai/Desktop/Products/img/original_" + std::to_string(index) + ".jpg", inputFrame);
 
-    std::string plateText;
-    std::string plateTextIP;
-    cv::Mat outputPlateImage;
-    switch (camera.GetCameraType().GetType())
-    {
-    case DatabaseEntity::CameraType::Type::ENTRANCE:
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::DNN);
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateTextIP, LicensePlateDetection::DetectionType::IMAGE_PROCESSING);
-        std::cout << "\nEntered: " << plateText << " | IP: " << plateTextIP;
-        break;
-    case DatabaseEntity::CameraType::Type::EXIT:
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::DNN);
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateTextIP, LicensePlateDetection::DetectionType::IMAGE_PROCESSING);
-        std::cout << "\nExited: " << plateText << " | IP: " << plateTextIP;
-        break;
-    case DatabaseEntity::CameraType::Type::PARKING:
-        std::cout << "\nParked: " << plateText;
-        CheckAllParkingSpaces(camera, inputFrame);
-        break;
-    default:
-        break;
-    }
-    //cv::imwrite("C:/Users/mihai/Desktop/Products/img/input_" + std::to_string(index) + ".jpg", inputFrame);
-    //cv::imwrite("C:/Users/mihai/Desktop/Products/img/" + std::to_string(index) + ".jpg", outputPlateImage);
-    index++;
+    m_actionManagement.StartAction(inputFrame, camera);
 }
 
 void MainWindowController::OpenCameraManagementWindow(const CameraManagementWindowController::CameraManagementMode mode)
@@ -138,6 +111,11 @@ void MainWindowController::ChangeCameraOnSlot(const DatabaseEntity::Camera& came
     }
 }
 
+void MainWindowController::ForceExitAction(const DatabaseEntity::Camera& camera, const DatabaseEntity::Session& session)
+{
+    m_database.ToSession().ForceExitForSessionID(session.GetID());
+}
+
 void MainWindowController::Refresh()
 {
     try {
@@ -173,11 +151,6 @@ void MainWindowController::Close()
     m_cameraIDToVideoCameraMap.clear();
 }
 
-std::string MainWindowController::TakePlateFromFrame(const cv::Mat& frame)
-{
-    return std::string();
-}
-
 void MainWindowController::GetDefaultCameras()
 {
     JsonFile defaultCameras = JsonFileUtils::GetDefaultCamerasJsonFile();
@@ -196,23 +169,6 @@ void MainWindowController::GetDefaultCameras()
     std::pair < DatabaseEntity::Camera, VideoCamera*> firstSlot = std::make_pair(m_database.ToCamera().FindByID(cameraOne[1].toInt()), nullptr);
     std::pair<DatabaseEntity::Camera, VideoCamera*> secondSlot = std::make_pair(m_database.ToCamera().FindByID(cameraTwo[1].toInt()), nullptr);
     m_cameraSlot = std::make_pair(firstSlot, secondSlot);
-}
-
-void MainWindowController::CheckAllParkingSpaces(const DatabaseEntity::Camera& camera, const cv::Mat& inputFrame)
-{
-    static int index = 0;
-    std::string text = "";
-    std::string ipText = "";
-    cv::Mat inputFrameCropped;
-    cv::Mat outputImage;
-    for (const auto& space : m_database.ToParkingSpace().FindAllByCamera(camera)) {
-        Utils::CropImageFromRectangle(inputFrame, inputFrameCropped, cv::Point2d(space.GetX1(), space.GetY1()), cv::Point2d(space.GetX2(), space.GetY2()));
-        cv::imwrite("C:/Users/mihai/Desktop/Products/parking_spaces/" + std::to_string(index) + ".jpg", inputFrameCropped);
-        index++;
-        m_licenseWorkflow.Detect(inputFrameCropped, outputImage, text, LicensePlateDetection::DetectionType::DNN);
-        m_licenseWorkflow.Detect(inputFrameCropped, outputImage, ipText, LicensePlateDetection::DetectionType::IMAGE_PROCESSING);
-        std::cout << space.GetName() << ": IP: " << ipText << " | DNN: " << text << "\n";
-    }
 }
 
 MainWindowController::~MainWindowController()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Model/Database/DataAccess/Session.h>
+#include <Model/Database/BusinessLogic/ParkingSession.h>
 
 namespace DatabaseBusinessLogic {
 
@@ -12,7 +13,9 @@ namespace DatabaseBusinessLogic {
 	public:
 
 		// TODO: Add other functions for calculating number of hours stayed in the parking lot, valid parking in valid spaces, etc
-
+		
+		void ForceExitForSessionID(const uint32_t sessionID);
+		std::vector<DatabaseEntity::Session> FindAllOngoingSessions();
 		DatabaseEntity::Session FindValidSessionByLicensePlate(const std::string& licensePlate);
 
 		void Add(DatabaseEntity::Session& session);
@@ -31,6 +34,7 @@ namespace DatabaseBusinessLogic {
 	private:
 
 		DatabaseDataAccess::Session m_dataAccess;
+		DatabaseBusinessLogic::ParkingSession m_parkingSessionBL;
 
 	};
 

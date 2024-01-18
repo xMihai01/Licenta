@@ -1,5 +1,24 @@
 #include "Model/Database/BusinessLogic/Session.h"
 
+void DatabaseBusinessLogic::Session::ForceExitForSessionID(const uint32_t sessionID)
+{
+	DatabaseEntity::ParkingSession parkingSession = m_parkingSessionBL.FindOngoingParkingSessionBySessionID(sessionID);
+	if (parkingSession.GetID() != 0) {
+		parkingSession.SetEndTime(QDateTime::currentDateTime());
+		m_parkingSessionBL.Update(parkingSession);
+	}
+	DatabaseEntity::Session session = m_dataAccess.FindByID(sessionID);
+	if (session.GetID() != 0) {
+		session.SetExitTime(QDateTime::currentDateTime());
+		m_dataAccess.Update(session);
+	}
+}
+
+std::vector<DatabaseEntity::Session> DatabaseBusinessLogic::Session::FindAllOngoingSessions()
+{
+	return m_dataAccess.FindAllOngoingSessions();
+}
+
 DatabaseEntity::Session DatabaseBusinessLogic::Session::FindValidSessionByLicensePlate(const std::string& licensePlate)
 {
 	std::vector<DatabaseEntity::Session> sessions = m_dataAccess.FindByLicensePlate(licensePlate);

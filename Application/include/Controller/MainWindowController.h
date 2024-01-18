@@ -4,7 +4,7 @@
 #include <View/parkingsetupwindow.h>
 
 #include <Model/Utils/QtKeysEnum.h>
-#include <Model/Detection/LicensePlateDetection/Workflow.h>
+#include <Model/ActionManagement.h>
 
 #include <QApplication>
 #include <QLabel>
@@ -21,6 +21,7 @@ public:
 	void OpenParkingManagementWindow();
 
 	void ChangeCameraOnSlot(const DatabaseEntity::Camera& camera, bool isSlotOne);
+	void ForceExitAction(const DatabaseEntity::Camera& camera, const DatabaseEntity::Session& session);
 	
 	void SetupCameras();
 
@@ -32,11 +33,7 @@ public:
 
 private:
 
-	std::string TakePlateFromFrame(const cv::Mat& frame);
 	void GetDefaultCameras();
-
-	void CheckAllParkingSpaces(const DatabaseEntity::Camera& camera, const cv::Mat& inputFrame);
-
 
 private:
 
@@ -53,7 +50,7 @@ private:
 	CameraManagementWindow* m_cameraManagementWindow;
 	ParkingSetupWindow* m_parkingSetupWindow;
 
-	LicensePlateDetection::Workflow m_licenseWorkflow;
+	ActionManagement m_actionManagement;
 
 	QLabel* m_labelForEntranceCameraFrame;
 	QLabel* m_labelForExitCameraFrame;

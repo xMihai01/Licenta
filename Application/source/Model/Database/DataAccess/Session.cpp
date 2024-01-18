@@ -128,3 +128,25 @@ DatabaseEntity::Session DatabaseDataAccess::Session::FindBySecretID(const std::s
     }
     return session;
 }
+
+std::vector<DatabaseEntity::Session> DatabaseDataAccess::Session::FindAllOngoingSessions() {
+    std::vector<DatabaseEntity::Session> entries;
+    QSqlQuery query;
+    query.prepare("SELECT * FROM session WHERE exit_time = :exit_time");
+    query.bindValue(":exit_time", QDateTime::fromSecsSinceEpoch(0));
+    query.exec();
+
+    if (!query.isActive())
+        throw std::runtime_error(query.lastError().text().toStdString());
+
+    while (query.next()) {
+        uint32_t id = query.value("id").toInt();
+        QDateTime entranceTime = query.value("entrance_time").toDateTime();
+        QDateTime exitTime = query.value("exit_time").toDateTime();
+        std::string licensePlate = query.value("license_plate").toString().toStdString();
+        std::string secretID = query.value("secret_id").toString().toStdString();
+
+        entries.push_back(DatabaseEntity::Session(id, licensePlate, entranceTime, exitTime, secretID));
+    }
+    return entries;
+}

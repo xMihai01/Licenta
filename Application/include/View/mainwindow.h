@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include <QShortcut>
 
-#include <View/CustomComponents/CameraComboBoxDialog.h>
+#include <View/CustomComponents/CustomComboBoxDialog.h>
 #include <Model/Utils/Interfaces/InterfaceVideoListener.h>
 #include <Controller/MainWindowController.h>
 
@@ -44,6 +44,7 @@ private slots:
     void OnCameraManagementRemoveButtonClick();
     void OnCameraManagementUpdateButtonClick();
     void OnCameraManagementParkingButtonClick();
+    void OnForceExitForEntryButtonClicked();
 
 private:
     Ui::MainWindow *ui;

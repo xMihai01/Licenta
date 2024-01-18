@@ -31,10 +31,15 @@ ParkingSetupWindow::~ParkingSetupWindow()
 }
 
 void ParkingSetupWindow::OnCameraClick(QListWidgetItem* camera) {
-    m_selectedCamera = camera;
-    m_windowController->TakeSingleFrameFromCamera(m_parkingCamerasMap[camera]);
-    ReloadSpaces();
-    m_label->ResetPoints();
+    try {
+        m_selectedCamera = camera;
+        m_windowController->TakeSingleFrameFromCamera(m_parkingCamerasMap[camera]);
+        ReloadSpaces();
+        m_label->ResetPoints();
+    }
+    catch (const std::exception& exception) {
+        QMessageBox::critical(this, "Error", exception.what());
+    }
 }
 
 void ParkingSetupWindow::ReloadCameras()
@@ -55,9 +60,13 @@ void ParkingSetupWindow::ReloadCameras()
 
 void ParkingSetupWindow::OnSpaceClick(QListWidgetItem* space)
 {
-    m_selectedSpace = space;
-    m_windowController->ShowParkingSpace(m_parkingSpacesMap[space]);
-
+    try {
+        m_selectedSpace = space;
+        m_windowController->ShowParkingSpace(m_parkingSpacesMap[space]);
+    }
+    catch (const std::exception& exception) {
+        QMessageBox::critical(this, "Error", exception.what());
+    }
 }
 
 void ParkingSetupWindow::OnResetButtonClick()

@@ -1031,8 +1031,15 @@
     <addaction name="listCameraAction"/>
     <addaction name="manageParkingAction"/>
    </widget>
+   <widget class="QMenu" name="manageEntriesMenu">
+    <property name="title">
+     <string>Manage Entries</string>
+    </property>
+    <addaction name="forceExitForEntryAction"/>
+   </widget>
    <addaction name="settingsMenu"/>
    <addaction name="manageCameraMenu"/>
+   <addaction name="manageEntriesMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="changeVideoSourceAction">
@@ -1073,6 +1080,11 @@
   <action name="manageParkingAction">
    <property name="text">
     <string>Manage Parking Spaces</string>
+   </property>
+  </action>
+  <action name="forceExitForEntryAction">
+   <property name="text">
+    <string>Force exit for an entry</string>
    </property>
   </action>
  </widget>

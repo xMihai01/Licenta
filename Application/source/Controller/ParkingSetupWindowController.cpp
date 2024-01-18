@@ -46,26 +46,36 @@ void ParkingSetupWindowController::ShowParkingSpace(const QPoint& first, const Q
 
 void ParkingSetupWindowController::ShowParkingSpace(const DatabaseEntity::ParkingSpace& parkingSpace)
 {
-	cv::Mat originalImage = ImageConversion::QImageToMat(ImageConversion::QPixmapToQImage(m_label->GetOriginalImage()));
-	cv::Mat imageWithDrawnParkingSpace;
-	Utils::ShowRectangleOnImage(originalImage, imageWithDrawnParkingSpace, cv::Point2d(parkingSpace.GetX1(), parkingSpace.GetY1())
-		, cv::Point2d(parkingSpace.GetX2(), parkingSpace.GetY2()));
-	cv::resize(imageWithDrawnParkingSpace, imageWithDrawnParkingSpace, cv::Size(WIDTH, HEIGHT));
-	m_label->ChangeImageOnLabel(ImageConversion::QImageToQPixmap(ImageConversion::MatToQImage(imageWithDrawnParkingSpace)));
+	try {
+		cv::Mat originalImage = ImageConversion::QImageToMat(ImageConversion::QPixmapToQImage(m_label->GetOriginalImage()));
+		cv::Mat imageWithDrawnParkingSpace;
+		Utils::ShowRectangleOnImage(originalImage, imageWithDrawnParkingSpace, cv::Point2d(parkingSpace.GetX1(), parkingSpace.GetY1())
+			, cv::Point2d(parkingSpace.GetX2(), parkingSpace.GetY2()));
+		cv::resize(imageWithDrawnParkingSpace, imageWithDrawnParkingSpace, cv::Size(WIDTH, HEIGHT));
+		m_label->ChangeImageOnLabel(ImageConversion::QImageToQPixmap(ImageConversion::MatToQImage(imageWithDrawnParkingSpace)));
+	}
+	catch (const std::exception& exception) {
+		throw exception;
+	}
 }
 
 void ParkingSetupWindowController::TakeSingleFrameFromCamera(const DatabaseEntity::Camera& camera)
 {
-	VideoCamera* videoCamera = new VideoCamera();
-	camera.IsLocationAnIndex() ? videoCamera->OpenCamera(std::stoi(camera.GetLocation())) : videoCamera->OpenCamera(camera.GetLocation());
-	cv::Mat firstFrame = videoCamera->ReadNextFrame();
-	videoCamera->StopCamera();
-	delete videoCamera;
-	scaleFactorX = (double)firstFrame.size().width / (double)WIDTH;
-	scaleFactorY = (double)firstFrame.size().height / (double)HEIGHT;
-	m_label->ChangeOriginalImage(ImageConversion::QImageToQPixmap(ImageConversion::MatToQImage(firstFrame)));
-	cv::resize(firstFrame, firstFrame, cv::Size(WIDTH, HEIGHT));
-	m_label->ChangeImageOnLabel(ImageConversion::QImageToQPixmap(ImageConversion::MatToQImage(firstFrame)));
+	try {
+		VideoCamera* videoCamera = new VideoCamera();
+		camera.IsLocationAnIndex() ? videoCamera->OpenCamera(std::stoi(camera.GetLocation())) : videoCamera->OpenCamera(camera.GetLocation());
+		cv::Mat firstFrame = videoCamera->ReadNextFrame();
+		videoCamera->StopCamera();
+		delete videoCamera;
+		scaleFactorX = (double)firstFrame.size().width / (double)WIDTH;
+		scaleFactorY = (double)firstFrame.size().height / (double)HEIGHT;
+		m_label->ChangeOriginalImage(ImageConversion::QImageToQPixmap(ImageConversion::MatToQImage(firstFrame)));
+		cv::resize(firstFrame, firstFrame, cv::Size(WIDTH, HEIGHT));
+		m_label->ChangeImageOnLabel(ImageConversion::QImageToQPixmap(ImageConversion::MatToQImage(firstFrame)));
+	}
+	catch (const std::exception& exception) {
+		throw exception;
+	}
 }
 
 void ParkingSetupWindowController::AddParkingSpace(const DatabaseEntity::Camera& camera, const QPoint& first, const QPoint& second, const QString& name)

@@ -1,6 +1,15 @@
 #include "Model/Database/BusinessLogic/ParkingSession.h"
 
 
+DatabaseEntity::ParkingSession DatabaseBusinessLogic::ParkingSession::FindOngoingParkingSessionBySessionID(const uint32_t sessionID)
+{
+	std::vector<DatabaseEntity::ParkingSession> parkingSessions = FindBySessionID(sessionID);
+	for (const auto& parkingSession : parkingSessions)
+		if (parkingSession.GetEndTime() == NOTIME)
+			return parkingSession;
+	return DatabaseEntity::ParkingSession();
+}
+
 void DatabaseBusinessLogic::ParkingSession::Add(DatabaseEntity::ParkingSession& parkingSession)
 {
 	m_dataAccess.Add(parkingSession);

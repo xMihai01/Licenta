@@ -28,6 +28,9 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->updateCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementUpdateButtonClick()));
     connect(ui->manageParkingAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementParkingButtonClick()));
 
+    // Manage entries buttons
+    connect(ui->forceExitForEntryAction, SIGNAL(triggered()), this, SLOT(OnForceExitForEntryButtonClicked()));
+
 }
 
 void MainWindow::GetFrame(const uint32_t cameraID)
@@ -47,7 +50,7 @@ void MainWindow::OnViewSpecificCameraButtonClick()
         QMessageBox::critical(this, "Error", "Can't use this while in repair mode!\n\nReview Camera Management and refresh!");
         return;
     }
-    CameraComboBoxDialog dialog(CameraComboBoxDialog::CameraComboBoxDialogType::SLOT_SELECTION, this);
+    CustomComboBoxDialog dialog(CustomComboBoxDialog::CustomComboBoxDialogType::SLOT_SELECTION, this);
     if (dialog.exec() == QDialog::Accepted) {
         DatabaseEntity::Camera chosenCamera = dialog.GetChosenCamera();
         if (dialog.GetSecondComboBoxText() == "Slot1") {
@@ -71,6 +74,7 @@ void MainWindow::OnRefreshButtonClicked()
     }
     catch (const std::exception& exception) {
         QMessageBox::critical(this, "Error", exception.what());
+        repairMode = true;
     }
 }
 
@@ -111,6 +115,24 @@ void MainWindow::OnCameraManagementParkingButtonClick()
         return;
     }
     windowController->OpenParkingManagementWindow();
+}
+
+void MainWindow::OnForceExitForEntryButtonClicked()
+{
+    if (repairMode) {
+        QMessageBox::critical(this, "Error", "Can't use this while in repair mode!\n\nReview Camera Management and refresh!");
+        return;
+    }
+    CustomComboBoxDialog dialog(CustomComboBoxDialog::CustomComboBoxDialogType::ONGOING_SESSION_SELECTION, this);
+    if (dialog.exec() == QDialog::Accepted) {
+        DatabaseEntity::Camera chosenCamera = dialog.GetChosenCamera();
+        DatabaseEntity::Session chosenSession = dialog.GetChosenSession();
+        if (chosenSession.GetID() == 0) {
+            QMessageBox::warning(this, "Warning", "No session selected. Skipping...");
+            return;
+        }
+        windowController->ForceExitAction(chosenCamera, chosenSession);
+    }
 }
 
 void MainWindow::ReloadKeys()
