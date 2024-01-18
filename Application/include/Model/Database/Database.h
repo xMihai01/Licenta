@@ -5,6 +5,7 @@
 #include <Model/Database/DataAccess/CameraType.h>
 #include <Model/Database/DataAccess/Camera.h>
 #include <Model/Database/BusinessLogic/ParkingSpace.h>
+#include <Model/Database/BusinessLogic/ParkingSession.h>
 #include <Model/Database/BusinessLogic/Session.h>
 
 #include <QSql>
@@ -28,6 +29,7 @@ public:
 	DatabaseDataAccess::Camera ToCamera() const;
 	DatabaseBusinessLogic::ParkingSpace ToParkingSpace() const;
 	DatabaseBusinessLogic::Session ToSession() const;
+	DatabaseBusinessLogic::ParkingSession ToParkingSession() const;
 
 private:
 
@@ -42,6 +44,7 @@ private:
 	DatabaseDataAccess::Camera m_camera;
 
 	DatabaseBusinessLogic::ParkingSpace m_parkingSpace;
+	DatabaseBusinessLogic::ParkingSession m_parkingSession;
 	DatabaseBusinessLogic::Session m_session;
 
 	bool isConncted = false;

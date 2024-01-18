@@ -58,6 +58,11 @@ DatabaseBusinessLogic::Session Database::ToSession() const
 	return m_session;
 }
 
+DatabaseBusinessLogic::ParkingSession Database::ToParkingSession() const
+{
+	return m_parkingSession;
+}
+
 void Database::Validations()
 {
 	try {

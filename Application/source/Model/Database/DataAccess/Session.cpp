@@ -53,7 +53,7 @@ std::vector<DatabaseEntity::Session> DatabaseDataAccess::Session::FindAll()
         QDateTime entranceTime = query.value("entrance_time").toDateTime();
         QDateTime exitTime = query.value("exit_time").toDateTime();
         std::string licensePlate = query.value("license_plate").toString().toStdString();
-        std::string secretID = query.value("secretID").toString().toStdString();
+        std::string secretID = query.value("secret_id").toString().toStdString();
 
         entries.push_back(DatabaseEntity::Session(id, licensePlate, entranceTime, exitTime, secretID));
     }
@@ -77,7 +77,7 @@ DatabaseEntity::Session DatabaseDataAccess::Session::FindByID(const uint32_t id)
         QDateTime entranceTime = query.value("entrance_time").toDateTime();
         QDateTime exitTime = query.value("exit_time").toDateTime();
         std::string licensePlate = query.value("license_plate").toString().toStdString();
-        std::string secretID = query.value("secretID").toString().toStdString();
+        std::string secretID = query.value("secret_id").toString().toStdString();
         session = DatabaseEntity::Session(id, licensePlate, entranceTime, exitTime, secretID);
     }
     return session;
@@ -99,7 +99,7 @@ std::vector<DatabaseEntity::Session> DatabaseDataAccess::Session::FindByLicenseP
         QDateTime entranceTime = query.value("entrance_time").toDateTime();
         QDateTime exitTime = query.value("exit_time").toDateTime();
         std::string licensePlate = query.value("license_plate").toString().toStdString();
-        std::string secretID = query.value("secretID").toString().toStdString();
+        std::string secretID = query.value("secret_id").toString().toStdString();
 
         entries.push_back(DatabaseEntity::Session(id, licensePlate, entranceTime, exitTime, secretID));
     }
@@ -123,7 +123,7 @@ DatabaseEntity::Session DatabaseDataAccess::Session::FindBySecretID(const std::s
         QDateTime entranceTime = query.value("entrance_time").toDateTime();
         QDateTime exitTime = query.value("exit_time").toDateTime();
         std::string licensePlate = query.value("license_plate").toString().toStdString();
-        std::string secretID = query.value("secretID").toString().toStdString();
+        std::string secretID = query.value("secret_id").toString().toStdString();
         session = DatabaseEntity::Session(id, licensePlate, entranceTime, exitTime, secretID);
     }
     return session;

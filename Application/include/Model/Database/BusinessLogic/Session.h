@@ -5,9 +5,15 @@
 namespace DatabaseBusinessLogic {
 
 	class Session {
+	private:
+
+		inline static const QDateTime NOTIME = QDateTime::fromSecsSinceEpoch(0);
+
 	public:
 
 		// TODO: Add other functions for calculating number of hours stayed in the parking lot, valid parking in valid spaces, etc
+
+		DatabaseEntity::Session FindValidSessionByLicensePlate(const std::string& licensePlate);
 
 		void Add(DatabaseEntity::Session& session);
 		void Remove(const DatabaseEntity::Session& session);

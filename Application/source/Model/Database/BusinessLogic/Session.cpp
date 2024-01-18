@@ -1,5 +1,14 @@
 #include "Model/Database/BusinessLogic/Session.h"
 
+DatabaseEntity::Session DatabaseBusinessLogic::Session::FindValidSessionByLicensePlate(const std::string& licensePlate)
+{
+	std::vector<DatabaseEntity::Session> sessions = m_dataAccess.FindByLicensePlate(licensePlate);
+	for (const auto& session : sessions)
+		if (session.GetExitTime() == NOTIME)
+			return session;
+	return DatabaseEntity::Session();
+}
+
 void DatabaseBusinessLogic::Session::Add(DatabaseEntity::Session& session)
 {
 	session.SetSecretID(GenerateSecretID(session));
