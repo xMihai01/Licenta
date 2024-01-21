@@ -52,7 +52,11 @@ void Utils::GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputI
 		throw std::runtime_error("Can't crop given images. They are empty!");
 
 	std::vector<std::vector<cv::Point>> contours;
-	customContours.size() == 0 ? cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE) : contours = customContours;
+	//customContours.size() == 0 ? cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE) : contours = customContours;
+	if (customContours.size() == 0)
+		cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+	else
+		contours = customContours;
 
 	std::vector<double> areas;
 	for (const auto& contour : contours) {
@@ -117,9 +121,7 @@ void Utils::BitwiseLicensePlateImage(const cv::Mat& blankLicensePlate, const cv:
 			uchar* pixelOutputPlate = outputPtr + j;
 
 			(pixelValueBlankPlate == 255 && pixelValueThreshPlate == 0) ? pixelOutputPlate[0] = 0 : pixelOutputPlate[0] = 255;
-
 		}
-
 	}
 }
 
@@ -171,6 +173,43 @@ bool Utils::pointComparatorByX(cv::Point& a, cv::Point& b) {
 bool Utils::areaComparatorForContours(std::vector<cv::Point>& a, std::vector<cv::Point>& b)
 {
 	return cv::contourArea(a) < cv::contourArea(b);
+}
+
+void Utils::ShowRectangleOnImage(const cv::Mat& inputImage, cv::Mat& outputImage, const cv::Point2d& first, const cv::Point2d& second)
+{
+	const cv::Vec3b red = cv::Vec3b(0, 0, 255);
+	outputImage = inputImage.clone();
+	cv::Point2d max = cv::Point2d(std::max(first.x, second.x), std::max(first.y, second.y));
+	cv::Point2d min = cv::Point2d(std::min(first.x, second.x), std::min(first.y, second.y));
+
+	for (int row = static_cast<int>(min.y); row <= static_cast<int>(max.y); row++) {
+		for (int col = static_cast<int>(min.x); col <= static_cast<int>(max.x); col++) {
+			if ((row == min.y || row == max.y) && (col > min.x && col < max.x)) {
+				outputImage.at<cv::Vec3b>(row, col) = red;
+			}
+			if ((col == min.x || col == max.x) && (row > min.y && row < max.y)) {
+				outputImage.at<cv::Vec3b>(row, col) = red;
+			}
+		}
+	}
+
+}
+
+void Utils::CropImageFromRectangle(const cv::Mat& inputImage, cv::Mat& outputImage, const cv::Point2d& first, const cv::Point2d& second)
+{
+	cv::Point2d max = cv::Point2d(std::max(first.x, second.x), std::max(first.y, second.y));
+	cv::Point2d min = cv::Point2d(std::min(first.x, second.x), std::min(first.y, second.y));
+
+	min.x = std::max(0.0, min.x);
+	min.y = std::max(0.0, min.y);
+	max.x = std::min(static_cast<double>(inputImage.cols - 1), max.x);
+	max.y = std::min(static_cast<double>(inputImage.rows - 1), max.y);
+	
+	outputImage = cv::Mat(cv::Size(max.x - min.x + 1, max.y - min.y + 1), CV_8UC3);
+
+	cv::Rect rectangle(min.x, min.y, outputImage.size().width, outputImage.size().height);
+
+	inputImage(rectangle).copyTo(outputImage);
 }
 
 std::vector<std::string> Utils::GetImageNamesFromFile(const std::string& path)

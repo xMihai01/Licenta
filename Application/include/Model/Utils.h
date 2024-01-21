@@ -1,8 +1,12 @@
 #pragma once
 
+#include <Model/Database/Database.h>
+
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <fstream>
+
+#include <QListWidgetItem>
 
 class Utils {
 
@@ -40,4 +44,8 @@ public:
 	static bool pointComparatorByX(cv::Point& a, cv::Point& b);
 	static bool areaComparatorForContours(std::vector<cv::Point>& a, std::vector<cv::Point>& b);
 
+	// Other
+
+	static void ShowRectangleOnImage(const cv::Mat& inputImage, cv::Mat& outputImage, const cv::Point2d& first, const cv::Point2d& second);
+	static void CropImageFromRectangle(const cv::Mat& inputImage, cv::Mat& outputImage, const cv::Point2d& first, const cv::Point2d& second);
 };

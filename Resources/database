@@ -1,0 +1,449 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 14.5
+-- Dumped by pg_dump version 14.5
+
+-- Started on 2024-01-18 02:13:12
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 211 (class 1259 OID 50037)
+-- Name: camera; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.camera (
+    id integer NOT NULL,
+    camera_type_id integer NOT NULL,
+    location character varying NOT NULL,
+    name character varying NOT NULL
+);
+
+
+ALTER TABLE public.camera OWNER TO postgres;
+
+--
+-- TOC entry 210 (class 1259 OID 50036)
+-- Name: camera_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.camera ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.camera_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 214 (class 1259 OID 50057)
+-- Name: camera_key; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.camera_key (
+    camera_id integer NOT NULL,
+    key integer NOT NULL
+);
+
+
+ALTER TABLE public.camera_key OWNER TO postgres;
+
+--
+-- TOC entry 209 (class 1259 OID 50029)
+-- Name: camera_type; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.camera_type (
+    id integer NOT NULL,
+    type character varying NOT NULL
+);
+
+
+ALTER TABLE public.camera_type OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 50088)
+-- Name: parking_session; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.parking_session (
+    id integer NOT NULL,
+    session_id integer NOT NULL,
+    parking_camera_id integer NOT NULL,
+    parking_space_id integer NOT NULL,
+    start_time timestamp without time zone NOT NULL,
+    end_time timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.parking_session OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 50096)
+-- Name: parking_session_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.parking_session ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.parking_session_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 216 (class 1259 OID 50068)
+-- Name: parking_space; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.parking_space (
+    id integer NOT NULL,
+    camera_id integer NOT NULL,
+    x1 integer NOT NULL,
+    x2 integer NOT NULL,
+    y1 integer NOT NULL,
+    y2 integer NOT NULL,
+    name character varying NOT NULL
+);
+
+
+ALTER TABLE public.parking_space OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 50067)
+-- Name: parking_space_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.parking_space ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.parking_space_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 217 (class 1259 OID 50080)
+-- Name: session; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.session (
+    id integer NOT NULL,
+    entrance_time timestamp without time zone NOT NULL,
+    exit_time timestamp without time zone NOT NULL,
+    license_plate character varying NOT NULL,
+    secret_id character varying NOT NULL
+);
+
+
+ALTER TABLE public.session OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 50087)
+-- Name: session_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.session ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.session_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 213 (class 1259 OID 50045)
+-- Name: test; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.test (
+    id integer NOT NULL,
+    name character varying NOT NULL
+);
+
+
+ALTER TABLE public.test OWNER TO postgres;
+
+--
+-- TOC entry 212 (class 1259 OID 50044)
+-- Name: test_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.test ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.test_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 3349 (class 0 OID 50037)
+-- Dependencies: 211
+-- Data for Name: camera; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.camera (id, camera_type_id, location, name) FROM stdin;
+23	1	C:\\Users\\mihai\\Desktop\\Products\\11.MP4	11
+25	3	C:\\Users\\mihai\\Desktop\\Products\\11.MP4	11_PARKING
+28	3	C:\\Users\\mihai\\Desktop\\Products\\2.MP4	2_PARKING
+27	3	C:\\Users\\mihai\\Desktop\\Products\\testVideo3.mp4	PARKING_TEST
+5	1	C:\\Users\\mihai\\Desktop\\Products\\testVideo3.mp4	TestEntrance1
+4	1	C:\\Users\\mihai\\Desktop\\Products\\test2.mp4	TestExit1
+24	2	C:\\Users\\mihai\\Desktop\\Products\\test.mp4	10
+\.
+
+
+--
+-- TOC entry 3352 (class 0 OID 50057)
+-- Dependencies: 214
+-- Data for Name: camera_key; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.camera_key (camera_id, key) FROM stdin;
+27	67
+4	81
+24	83
+5	69
+23	65
+25	66
+28	68
+\.
+
+
+--
+-- TOC entry 3347 (class 0 OID 50029)
+-- Dependencies: 209
+-- Data for Name: camera_type; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.camera_type (id, type) FROM stdin;
+1	ENTRANCE
+2	EXIT
+3	PARKING
+\.
+
+
+--
+-- TOC entry 3357 (class 0 OID 50088)
+-- Dependencies: 219
+-- Data for Name: parking_session; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.parking_session (id, session_id, parking_camera_id, parking_space_id, start_time, end_time) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3354 (class 0 OID 50068)
+-- Dependencies: 216
+-- Data for Name: parking_space; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.parking_space (id, camera_id, x1, x2, y1, y2, name) FROM stdin;
+1	25	636	678	144	217	OM1_TEST
+2	25	110	174	36	103	P1_TEST
+3	25	144	214	280	301	M1_TEST
+4	25	414	480	157	195	GEAM1_TESTUPDATE
+8	27	404	592	429	588	A1_TEsT
+9	28	412	880	150	459	1_TEST
+10	25	400	682	108	325	REAL_TEST
+11	4	674	1132	45	396	test1
+12	4	486	1012	64	423	test2
+13	27	652	916	250	400	random_test1
+14	27	470	728	186	330	rad
+15	25	198	532	127	304	A1
+16	28	602	706	343	376	al1
+\.
+
+
+--
+-- TOC entry 3355 (class 0 OID 50080)
+-- Dependencies: 217
+-- Data for Name: session; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.session (id, entrance_time, exit_time, license_plate, secret_id) FROM stdin;
+1	2024-01-18 01:16:28.172	1970-01-01 02:00:00	UN00TST	17055333880505549UN00TST
+\.
+
+
+--
+-- TOC entry 3351 (class 0 OID 50045)
+-- Dependencies: 213
+-- Data for Name: test; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.test (id, name) FROM stdin;
+1	test1
+2	test2
+3	test3
+\.
+
+
+--
+-- TOC entry 3364 (class 0 OID 0)
+-- Dependencies: 210
+-- Name: camera_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.camera_id_seq', 30, true);
+
+
+--
+-- TOC entry 3365 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: parking_session_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.parking_session_id_seq', 1, false);
+
+
+--
+-- TOC entry 3366 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: parking_space_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.parking_space_id_seq', 21, true);
+
+
+--
+-- TOC entry 3367 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: session_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.session_id_seq', 1, true);
+
+
+--
+-- TOC entry 3368 (class 0 OID 0)
+-- Dependencies: 212
+-- Name: test_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.test_id_seq', 3, true);
+
+
+--
+-- TOC entry 3199 (class 2606 OID 50061)
+-- Name: camera_key camera_key_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.camera_key
+    ADD CONSTRAINT camera_key_pkey PRIMARY KEY (camera_id);
+
+
+--
+-- TOC entry 3195 (class 2606 OID 50043)
+-- Name: camera camera_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.camera
+    ADD CONSTRAINT camera_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3193 (class 2606 OID 50035)
+-- Name: camera_type camera_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.camera_type
+    ADD CONSTRAINT camera_type_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3201 (class 2606 OID 50074)
+-- Name: parking_space parking_space_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.parking_space
+    ADD CONSTRAINT parking_space_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3203 (class 2606 OID 50086)
+-- Name: session session_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.session
+    ADD CONSTRAINT session_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3197 (class 2606 OID 50051)
+-- Name: test test_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.test
+    ADD CONSTRAINT test_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3204 (class 2606 OID 50052)
+-- Name: camera Camera2CameraType; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.camera
+    ADD CONSTRAINT "Camera2CameraType" FOREIGN KEY (camera_type_id) REFERENCES public.camera_type(id) NOT VALID;
+
+
+--
+-- TOC entry 3207 (class 2606 OID 50091)
+-- Name: parking_session ParkingSession2Session; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.parking_session
+    ADD CONSTRAINT "ParkingSession2Session" FOREIGN KEY (session_id) REFERENCES public.session(id);
+
+
+--
+-- TOC entry 3206 (class 2606 OID 50075)
+-- Name: parking_space ParkingSpace2CameraID; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.parking_space
+    ADD CONSTRAINT "ParkingSpace2CameraID" FOREIGN KEY (camera_id) REFERENCES public.camera(id);
+
+
+--
+-- TOC entry 3205 (class 2606 OID 50062)
+-- Name: camera_key camera_key_camera_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.camera_key
+    ADD CONSTRAINT camera_key_camera_id_fkey FOREIGN KEY (camera_id) REFERENCES public.camera(id);
+
+
+-- Completed on 2024-01-18 02:13:12
+
+--
+-- PostgreSQL database dump complete
+--
+

@@ -40,7 +40,8 @@ void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingImageProcessi
 	}
 
 	std::vector<cv::Point> max_cnt;
-	Utils::GetImageByHighestContour(cv::Mat(), cv::Mat(), max_cnt, false, validContours);
+	cv::Mat someImage;
+	Utils::GetImageByHighestContour(cv::Mat(), someImage, max_cnt, false, validContours);
 	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
 
 	detectedPlate = outImage(cv::Rect(contourRectangle.x, contourRectangle.y, contourRectangle.width, contourRectangle.height));
@@ -330,7 +331,7 @@ void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv
 	for (size_t index = 0; index < lettersBox.size(); index++) {
 		if (index > 0 && Utils::IsRectangleInsideAnotherRectangle(lettersBox[index].second, lettersBox[index - 1].second))
 			continue;
-
+		//cv::morphologyEx(lettersBox[index].first, lettersBox[index].first, cv::MORPH_OPEN, kernel);
 		lettersBox[index].first.copyTo(whiteImage(cv::Rect(lettersBox[index].second)));
 		//Utils::SkeletonizeImage(lettersBox[index].first, lettersBox[index].first);
 		//cv::threshold(lettersBox[index].first, lettersBox[index].first, 128, 256, cv::THRESH_BINARY);
