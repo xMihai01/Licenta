@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>PMS - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+    <style th:replace="fragments/homeStyle"></style>
+</head>
+
+<body class="bg-gray-200 font-sans leading-normal tracking-normal">
+<nav class="relative bg-white border-b-2 border-gray-300 text-gray-900">
+    <div th:replace="fragments/homeHeader"></div>
+    <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-md overflow-hidden">
+        <thead>
+        <tr class="bg-indigo-500 text-white">
+            <th class="py-2 px-4">ID</th>
+            <th class="py-2 px-4">Entrance Date</th>
+            <th class="py-2 px-4">Exit Date</th>
+            <th class="py-2 px-4">Time Spent (m)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="sessionItem : ${sessions}" class="even:bg-gray-50 odd:bg-white">
+            <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
+            <td class="py-2 px-4" th:text="${sessionItem.id}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${sessionItem.getEntranceTimeAsString()}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${sessionItem.didItExit() ? sessionItem.getExitTimeAsString() : 'Still in parking!'}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${sessionItem.getTimeSpent()}" style="text-align: center;"></td>
+        </tr>
+        </tbody>
+    </table>
+</nav>
+</body>
+</html>

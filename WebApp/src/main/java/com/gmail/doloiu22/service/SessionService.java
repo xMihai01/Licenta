@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,11 +22,15 @@ public class SessionService {
         this.sessionRepository = sessionRepository;
     }
 
-    Optional<SessionEntity> findBySecretID(String secretID) {
+    public Optional<SessionEntity> findBySecretID(String secretID) {
         return sessionRepository.findBySecretID(secretID);
     }
 
-    boolean isSecretIDValid(SessionEntity sessionEntity) {
+    public List<SessionEntity> findAllByLicensePlate(String licensePlate) {
+        return sessionRepository.findAllByLicensePlate(licensePlate);
+    }
+
+    public boolean isSecretIDValid(SessionEntity sessionEntity) {
         return sessionEntity.getExitTime().isEqual(NOTIME) && sessionEntity.getLicensePlate().length() > MINIMUM_LICENSE_PLATE_LENGTH;
     }
 }

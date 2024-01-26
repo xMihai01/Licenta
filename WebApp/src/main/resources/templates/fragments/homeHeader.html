@@ -1,0 +1,53 @@
+<div class="container mx-auto flex justify-between">
+  <div class="relative block p-4 lg:p-6 text-xl text-blue-600 font-bold">Parking Management System</div>
+  <ul class="flex">
+
+    <li class="hover:bg-blue-800 hover:text-white">
+      <a th:href="@{/home}" class="relative block py-6 px-2 lg:p-6 text-sm lg:text-base font-bold">Home</a>
+    </li>
+    <!--Regular Link-->
+    <li class="hover:bg-blue-800 hover:text-white">
+      <a href="#" class="relative block py-6 px-2 lg:p-6 text-sm lg:text-base font-bold">Normal</a>
+    </li>
+
+    <!--Hoverable Link-->
+    <li class="hoverable hover:bg-blue-800 hover:text-white">
+      <a href="#" class="relative block py-6 px-4 lg:p-6 text-sm lg:text-base font-bold hover:bg-blue-800 hover:text-white">Parking History</a>
+      <div class="p-6 mega-menu mb-16 sm:mb-0 shadow-xl bg-blue-800">
+        <div class="container mx-auto w-full flex flex-wrap justify-between mx-2">
+          <div class="w-full text-white mb-8">
+            <h2 class="font-bold text-2xl">Your whole parking history, here!</h2>
+            <p>Click on a certain session id to see the parking history for that specific session.</p>
+          </div>
+          <tr th:each="sessionItem : ${sessions}" class="even:bg-gray-50 odd:bg-white">
+            <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
+            <ul class="px-4 w-full sm:w-1/2 lg:w-1/4 border-gray-600 border-b sm:border-r lg:border-b-0 pb-6 pt-6 lg:pt-3">
+              <div class="flex items-center">
+                <svg class="h-8 mb-3 mr-3 fill-current text-white" th:src="@{'fragments/licensePlate.svg'}"
+                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+
+                </svg>
+                <h3 class="font-bold text-xl text-white text-bold mb-2" th:text="${sessionItem.id}">Heading for session ID</h3>
+              </div>
+              <div class="flex items-center py-3">
+                <svg class="h-6 pr-3 fill-current text-blue-300"
+                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M20 10a10 10 0 1 1-20 0 10 10 0 0 1 20 0zm-2 0a8 8 0 1 0-16 0 8 8 0 0 0 16 0zm-8 2H5V8h5V5l5 5-5 5v-3z"/>
+                </svg>
+                <a th:href="@{'/home/spaces/' + ${sessionItem.id}}" class="text-white bold border-b-2 border-blue-300 hover:text-blue-300">Search this session...</a>
+              </div>
+            </ul>
+          </tr>
+        </div>
+      </div>
+    </li>
+
+    <!-- ## Hoverable Link Template ##
+
+    <li class="hoverable hover:bg-blue-800 hover:text-white"><a href="#" class="relative block">x</a><div class="mega-menu">
+      Add your mega menu content
+      </div></li>
+
+    -->
+  </ul>
+</div>
