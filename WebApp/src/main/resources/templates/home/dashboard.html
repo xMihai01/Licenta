@@ -16,15 +16,29 @@
             <th class="py-2 px-4">Entrance Date</th>
             <th class="py-2 px-4">Exit Date</th>
             <th class="py-2 px-4">Time Spent (m)</th>
+            <th class="py-2 px-4">Parking History</th>
+            <th class="py-2 px-4">Payment</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="sessionItem : ${sessions}" class="even:bg-gray-50 odd:bg-white">
-            <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
+        <tr th:each="sessionItem : ${sessions}" class="even:bg-gray-50 odd:bg-white hover-row">
+            <input th:type="hidden" th:id="sessionID" th:name="sessionID" th:value="${sessionItem.id}" />
             <td class="py-2 px-4" th:text="${sessionItem.id}" style="text-align: center;"></td>
             <td class="py-2 px-4" th:text="${sessionItem.getEntranceTimeAsString()}" style="text-align: center;"></td>
             <td class="py-2 px-4" th:text="${sessionItem.didItExit() ? sessionItem.getExitTimeAsString() : 'Still in parking!'}" style="text-align: center;"></td>
             <td class="py-2 px-4" th:text="${sessionItem.getTimeSpent()}" style="text-align: center;"></td>
+            <form th:action="@{/home/viewSpaceHistory}" th:method="post">
+                <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
+                <td class="py-2 px-4" style="text-align: center;">
+                    <button class="bg-indigo-500 text-white py-1 px-3 rounded hover:bg-indigo-600 focus:outline-none" type="submit">View</button>
+                </td>
+            </form>
+            <form th:action="@{/home/viewPayment}" th:method="post">
+                <td class="py-2 px-4" style="text-align: center;">
+                    <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
+                    <button class="bg-indigo-500 text-white py-1 px-3 rounded hover:bg-indigo-600 focus:outline-none" type="submit">Pay</button>
+                </td>
+            </form>
         </tr>
         </tbody>
     </table>

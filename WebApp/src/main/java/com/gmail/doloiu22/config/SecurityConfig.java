@@ -29,6 +29,7 @@ public class SecurityConfig{
                         .permitAll()
                         .requestMatchers("/admin/**").hasAuthority("MANAGE_ACCOUNTS")
                         .requestMatchers("/home/**").hasAuthority("AUTH")
+                        .requestMatchers("/chat/**").hasAuthority("AUTH")
                         .requestMatchers("/images/public/**").permitAll()
                         .requestMatchers("/*")
                         .authenticated()

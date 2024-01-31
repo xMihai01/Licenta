@@ -34,3 +34,4 @@ build/
 
 log*
 .mvn
+globalMessage.json

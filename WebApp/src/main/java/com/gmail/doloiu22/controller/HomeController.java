@@ -38,4 +38,15 @@ public class HomeController {
         return "home/spaces";
     }
 
+    @PostMapping("/viewSpaceHistory")
+    public String viewParkingHistoryForSessionIDClick(@RequestParam("sessionID") Long sessionID) {
+
+        return "redirect:/home/spaces/" + sessionID.toString();
+    }
+    @PostMapping("/viewPayment")
+    public String viewPaymentForSessionIDClick(@RequestParam("sessionID") Long sessionID) {
+
+        return "redirect:/home/spaces/" + "222";
+    }
+
 }
