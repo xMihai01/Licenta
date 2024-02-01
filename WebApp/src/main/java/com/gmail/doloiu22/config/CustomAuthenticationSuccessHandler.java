@@ -22,7 +22,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        if (authorities.contains(new SimpleGrantedAuthority(Role.MANAGE_ACCOUNTS.name()))) {
+        if (authorities.contains(new SimpleGrantedAuthority(Role.ADMIN.name()))) {
             logger.info("redirecting to admin endpoint");
             response.sendRedirect("/admin");
         } else if (authorities.contains(new SimpleGrantedAuthority(Role.AUTH.name()))) {

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>PMS - Report List</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+    <style th:replace="fragments/homeStyle"></style>
+</head>
+
+<body class="bg-gray-200 font-sans leading-normal tracking-normal">
+<nav class="relative bg-white border-b-2 border-gray-300 text-gray-900">
+    <div th:replace="fragments/adminHeader"></div>
+
+    <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-md overflow-hidden">
+        <thead>
+        <tr class="bg-red-500 text-white">
+            <th class="py-2 px-4">ID</th>
+            <th class="py-2 px-4">Session ID</th>
+            <th class="py-2 px-4">Reporter</th>
+            <th class="py-2 px-4">Suspect</th>
+            <th class="py-2 px-4">Open</th>
+            <th class="py-2 px-4">View</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="report : ${reports}" class="even:bg-gray-50 odd:bg-white hover-row">
+            <input th:type="hidden" th:id="reportID" th:name="reportID" th:value="${report.id}" />
+            <td class="py-2 px-4" th:text="${report.id}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${report.sessionID}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${report.reporterLicensePlate}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${report.suspectLicensePlate}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${report.opened}" style="text-align: center;"></td>
+            <form th:action="@{/report/viewReport}" th:method="post">
+                <input type="hidden" name="reportID" th:value="${report.id}" />
+                <td class="py-2 px-4" style="text-align: center;">
+                    <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 focus:outline-none" type="submit">View</button>
+                </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+
+</nav>
+</body>
+</html>

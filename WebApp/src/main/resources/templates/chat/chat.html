@@ -36,7 +36,7 @@
                 >Timestamp</span>
             </div>
 
-            <div class="direct-chat-text" th:text="${message.getMessage()}">Message</div>
+            <div class="direct-chat-text" th:text="${message.getMessage()}" th:style="${message.getSender().equals('ADMIN')} ? 'color: white; background-color: red' : ''">Message</div>
             <br>
         </div>
 

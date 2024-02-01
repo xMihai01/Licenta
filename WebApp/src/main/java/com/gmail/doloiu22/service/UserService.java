@@ -35,7 +35,10 @@ public class UserService implements UserDetailsService {
         Optional<UserEntity> optUser = userRepository.findByLicensePlate(licensePlate);
         if(optUser.isPresent()){
             UserEntity appUser = optUser.get();
-            return new User(appUser.getLicensePlate(), appUser.getPassword(), true, true, true
+            if (appUser.getLicensePlate().equals("ADMIN")) {
+                return new User(appUser.getLicensePlate(), appUser.getPassword(), true, true, true
+                        , true, new ArrayList<>(List.of(new SimpleGrantedAuthority("ADMIN"),new SimpleGrantedAuthority("AUTH"))));
+            } else return new User(appUser.getLicensePlate(), appUser.getPassword(), true, true, true
                     , true, new ArrayList<>(List.of(new SimpleGrantedAuthority("AUTH")))
             );
         }

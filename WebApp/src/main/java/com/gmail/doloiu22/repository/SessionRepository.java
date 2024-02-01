@@ -11,5 +11,6 @@ import java.util.Optional;
 @Repository
 public interface SessionRepository extends JpaRepository<SessionEntity, Long> {
     Optional<SessionEntity> findBySecretID(String secretID);
+    Optional<SessionEntity> findById(Long id);
     List<SessionEntity> findAllByLicensePlate(String licensePlate);
 }

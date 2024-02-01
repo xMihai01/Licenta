@@ -18,6 +18,7 @@
             <th class="py-2 px-4">Time Spent (m)</th>
             <th class="py-2 px-4">Parking History</th>
             <th class="py-2 px-4">Payment</th>
+            <th class="py-2 px-4">Report</th>
         </tr>
         </thead>
         <tbody>
@@ -37,6 +38,12 @@
                 <td class="py-2 px-4" style="text-align: center;">
                     <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
                     <button class="bg-indigo-500 text-white py-1 px-3 rounded hover:bg-indigo-600 focus:outline-none" type="submit">Pay</button>
+                </td>
+            </form>
+            <form th:action="@{/home/createReport}" th:method="post">
+                <td class="py-2 px-4" style="text-align: center;">
+                    <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
+                    <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 focus:outline-none" type="submit">Create Report</button>
                 </td>
             </form>
         </tr>

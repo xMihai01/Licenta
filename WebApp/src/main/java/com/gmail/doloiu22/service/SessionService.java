@@ -25,6 +25,9 @@ public class SessionService {
     public Optional<SessionEntity> findBySecretID(String secretID) {
         return sessionRepository.findBySecretID(secretID);
     }
+    public Optional<SessionEntity> findById(Long id) {
+        return sessionRepository.findById(id);
+    }
 
     public List<SessionEntity> findAllByLicensePlate(String licensePlate) {
         return sessionRepository.findAllByLicensePlate(licensePlate);

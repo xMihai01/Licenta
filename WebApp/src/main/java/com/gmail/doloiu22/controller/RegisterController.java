@@ -40,10 +40,10 @@ public class RegisterController {
         userValidatorService.validate(user, bindingResult);
 
         if(bindingResult.hasErrors())
-            return "register";
+            return "other_errors/register_invalid_details";
 
         if (userService.register(user, secretID))
             return "/login";
-        else return "register";
+        else return "other_errors/register_invalid_details";
     }
 }

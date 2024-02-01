@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PMS - Reporting Form</title>
+    <meta name="description" content="">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .body-bg {
+            background-color: red;
+            background-image: linear-gradient(315deg, red 12%, #d2222e 74%);
+        }
+    </style>
+</head>
+<body class="body-bg min-h-screen pt-12 md:pt-20 pb-6 px-2 md:px-0" style="font-family:'Lato',sans-serif;">
+<header class="max-w-lg mx-auto">
+    <a href="#">
+        <h1 class="text-4xl font-bold text-white text-center">PMS - Reporting Form</h1>
+    </a>
+</header>
+
+<main class="bg-white max-w-lg mx-auto p-8 md:p-12 my-10 rounded-lg shadow-2xl">
+    <section>
+        <h3 class="font-bold text-2xl" th:text="'Report for session: ' + ${sessionID}">Report</h3>
+        <p class="text-gray-600 pt-2">You are about to submit a report for this session. Try to provide as many details as you can. Make sure you are reporting on the right session!</p>
+    </section>
+
+    <section class="mt-10">
+        <form class="flex flex-col" th:method="post" th:action="@{/report/createReport}">
+            <input th:type="hidden" th:id="sessionID" th:name="sessionID" th:value="${sessionID}" />
+            <div class="mb-6 pt-3 rounded bg-gray-200">
+                <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="yourLicensePlate">Your License Plate (if detected)</label>
+                <input type="text" id="yourLicensePlate" name="yourLicensePlate" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-red-600 transition duration-500 px-3 pb-3"
+                       th:placeholder="${session.licensePlate}">
+            </div>
+            <div class="mb-6 pt-3 rounded bg-gray-200">
+                <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="suspectLicensePlate">Suspect License Plate (if applicable)</label>
+                <input type="text" id="suspectLicensePlate" name="suspectLicensePlate" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-red-600 transition duration-500 px-3 pb-3"
+                       placeholder="BV01ABC">
+            </div>
+
+            <div class="mb-6 pt-3 rounded bg-gray-200">
+                <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="timePeriod">Time period (if known)</label>
+                <input type="text" id="timePeriod" name="timePeriod" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-red-600 transition duration-500 px-3 pb-3"
+                       placeholder="10:25 - 13:40">
+            </div>
+            <div class="mb-6 pt-3 rounded bg-gray-200">
+                <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="details">Details</label>
+                <input type="text" id="details" name="details" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-red-600 transition duration-500 px-3 pb-3"
+                       placeholder="He hit my door on the driver's side and ran away. Please check the cams!">
+            </div>
+
+            <div class="mb-6 pt-3 rounded bg-gray-200">
+                <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="contact">Contact (email/phone)</label>
+                <input type="text" id="contact" name="contact" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-red-600 transition duration-500 px-3 pb-3"
+                       placeholder="email@email.com/0763 123 456">
+            </div>
+
+            <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded shadow-lg hover:shadow-xl transition duration-200" type="submit">Submit report</button>
+        </form>
+    </section>
+</main>
+
+<div class="max-w-lg mx-auto text-center mt-12 mb-6">
+    <p class="text-white">Changed your mind? <a th:href="@{/home}" class="font-bold hover:underline">Go back!</a>.</p>
+</div>
+</body>
+</html>

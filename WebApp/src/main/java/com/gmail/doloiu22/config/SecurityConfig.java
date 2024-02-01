@@ -27,9 +27,15 @@ public class SecurityConfig{
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/register", "/test")
                         .permitAll()
-                        .requestMatchers("/admin/**").hasAuthority("MANAGE_ACCOUNTS")
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/report/list").hasAuthority("ADMIN")
+                        .requestMatchers("/report/view/*").hasAuthority("ADMIN")
+                        .requestMatchers("/report/viewReport").hasAuthority("ADMIN")
+                        .requestMatchers("/report/actionReport").hasAuthority("ADMIN")
                         .requestMatchers("/home/**").hasAuthority("AUTH")
                         .requestMatchers("/chat/**").hasAuthority("AUTH")
+                        .requestMatchers("/report/create/**").hasAuthority("AUTH")
+                        .requestMatchers("/report/createReport").hasAuthority("AUTH")
                         .requestMatchers("/images/public/**").permitAll()
                         .requestMatchers("/*")
                         .authenticated()
@@ -41,6 +47,7 @@ public class SecurityConfig{
                         .loginProcessingUrl("/login")
                         .usernameParameter("licensePlate")
                         .successHandler(customAuthenticationSuccessHandler) /* https://www.baeldung.com/spring-redirect-after-login */
+                        .failureUrl("/login/error")
                         .permitAll())
                 // Logout configuration
                 .logout(logout -> logout
