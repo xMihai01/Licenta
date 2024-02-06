@@ -9,7 +9,8 @@ ActionManagement::ActionManagement()
 void ActionManagement::StartAction(const cv::Mat& frame, const DatabaseEntity::Camera& camera)
 {
     static int index = 0;
-    //cv::imwrite("C:/Users/mihai/Desktop/Products/img/original_" + std::to_string(index) + ".jpg", inputFrame);
+    cv::imwrite("C:/Users/mihai/Desktop/Products/img/test" + std::to_string(index) + ".jpg", frame);
+    index++;
     cv::Mat inputFrame = frame.clone();
     std::string plateText;
     std::string plateTextIP;

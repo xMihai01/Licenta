@@ -44,6 +44,34 @@ std::pair<cv::Mat, cv::Mat> Utils::GetHistograms(const cv::Mat grayImage)
 	return std::make_pair(histogramImage, cumulativeHistogramImage);
 }
 
+bool Utils::DoesImageNeedCLAHE(const cv::Mat grayImage)
+{
+
+	if (grayImage.channels() != 1)
+		throw std::runtime_error("DoesImageNeedCLAHE() requires a gray image, but it has been given a color image");
+
+	double whites = 0;
+	double blacks = 0;
+
+	for (int i = 0; i < grayImage.rows; i++) {
+		const uchar* grayImagePtr = grayImage.ptr<uchar>(i);
+
+		for (int j = 0; j < grayImage.cols; j++)
+		{
+			const uchar* pixelValue = grayImagePtr + j;
+			if (pixelValue[0] > 128)
+				whites += pixelValue[0];
+			else
+				blacks += pixelValue[0];
+		}
+
+		
+	}
+	std::cout << "\n\n";
+	std::cout << whites << " " << blacks;
+	return blacks > whites;
+}
+
 void Utils::GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour
 	, const bool crop, const std::vector<std::vector<cv::Point>>& customContours)
 {

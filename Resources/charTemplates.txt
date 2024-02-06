@@ -1,7 +1,6 @@
 Aro.jpg
 Bro.jpg
 C1.jpg
-Dro.jpg
 Ero.jpg
 Fro.jpg
 Gro.jpg
@@ -45,3 +44,4 @@ I2.jpg
 T1.jpg
 W1.jpg
 B2.jpg
+02.jpg
