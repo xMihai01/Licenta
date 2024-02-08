@@ -9,23 +9,21 @@
 <body class="bg-gray-200 font-sans leading-normal tracking-normal">
 <nav class="relative bg-white border-b-2 border-gray-300 text-gray-900">
     <div th:replace="fragments/homeHeader"></div>
-    <h5 th:text="${sessionID}"></h5>
+
     <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-md overflow-hidden">
         <thead>
         <tr class="bg-indigo-500 text-white">
-            <th class="py-2 px-4">ID</th>
-            <th class="py-2 px-4">Entrance Date</th>
-            <th class="py-2 px-4">Exit Date</th>
-            <th class="py-2 px-4">Time Spent (m)</th>
+            <th class="py-2 px-4">Name</th>
+            <th class="py-2 px-4">Start Time</th>
+            <th class="py-2 px-4">End Time</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="sessionItem : ${sessions}" class="even:bg-gray-50 odd:bg-white">
-            <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
-            <td class="py-2 px-4" th:text="${sessionItem.id}" style="text-align: center;"></td>
-            <td class="py-2 px-4" th:text="${sessionItem.getEntranceTimeAsString()}" style="text-align: center;"></td>
-            <td class="py-2 px-4" th:text="${sessionItem.didItExit() ? sessionItem.getExitTimeAsString() : 'Still in parking!'}" style="text-align: center;"></td>
-            <td class="py-2 px-4" th:text="${sessionItem.getTimeSpent()}" style="text-align: center;"></td>
+            <input type="hidden" name="parkingSessionID" th:value="${sessionItem.id}" />
+            <td class="py-2 px-4" th:text="${parkingSessionService.getNameOfParkingSpaceInParkingSession(sessionItem)}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${sessionItem.getStartTimeAsString()}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${sessionItem.didItExit() ? sessionItem.getEndTimeAsString() : 'Still parked here!'}" style="text-align: center;"></td>
         </tr>
         </tbody>
     </table>

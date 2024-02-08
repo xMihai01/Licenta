@@ -67,8 +67,6 @@ bool Utils::DoesImageNeedCLAHE(const cv::Mat grayImage)
 
 		
 	}
-	std::cout << "\n\n";
-	std::cout << whites << " " << blacks;
 	return blacks > whites;
 }
 
