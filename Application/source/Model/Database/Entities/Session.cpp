@@ -36,6 +36,11 @@ DatabaseEntity::Session::Session(const std::string& licensePlate, const QDateTim
 {
 }
 
+DatabaseEntity::Session::Session(const std::string& licensePlate)
+	: m_licensePlate(licensePlate)
+{
+}
+
 void DatabaseEntity::Session::SetLicensePlate(const std::string& licensePlate)
 {
 	m_licensePlate = licensePlate;

@@ -10,6 +10,8 @@ namespace DatabaseEntity {
 		ParkingSession();
 		ParkingSession(const uint32_t id, const uint32_t sessionID, const uint32_t parkingCameraID, const uint32_t parkingSpaceID, const QDateTime& startTime, const QDateTime& endTime);
 		ParkingSession(const uint32_t sessionID, const uint32_t parkingCameraID, const uint32_t parkingSpaceID, const QDateTime& startTime, const QDateTime& endTime);
+		ParkingSession(const uint32_t sessionID, const uint32_t parkingCameraID, const uint32_t parkingSpaceID, const QDateTime& startTime);
+
 
 		uint32_t GetID() const;
 		uint32_t GetSessionID() const;

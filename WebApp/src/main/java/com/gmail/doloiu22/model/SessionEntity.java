@@ -53,4 +53,11 @@ public class SessionEntity {
         long minutesDifference = Duration.between(entranceTime, currentDateTime).toMinutes();
         return Long.toString(minutesDifference);
     }
+    public long getTimeSpentAsLong() {
+        if (didItExit())
+            return Duration.between(entranceTime, exitTime).toMinutes();
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        return Duration.between(entranceTime, currentDateTime).toMinutes();
+    }
 }

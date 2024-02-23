@@ -3,6 +3,7 @@
 DatabaseEntity::ParkingSession::ParkingSession()
 {
 	m_id = 0;
+	m_parkingSpaceID = 0;
 }
 
 DatabaseEntity::ParkingSession::ParkingSession(const uint32_t id, const uint32_t sessionID, const uint32_t parkingCameraID, const uint32_t parkingSpaceID, const QDateTime& startTime, const QDateTime& endTime)
@@ -21,6 +22,15 @@ DatabaseEntity::ParkingSession::ParkingSession(const uint32_t sessionID, const u
 	, m_parkingSpaceID(parkingSpaceID)
 	, m_startTime(startTime)
 	, m_endTime(endTime)
+{
+	m_id = 0;
+}
+
+DatabaseEntity::ParkingSession::ParkingSession(const uint32_t sessionID, const uint32_t parkingCameraID, const uint32_t parkingSpaceID, const QDateTime& startTime)
+	: m_sessionID(sessionID)
+	, m_parkingCameraID(parkingCameraID)
+	, m_parkingSpaceID(parkingSpaceID)
+	, m_startTime(startTime)
 {
 	m_id = 0;
 }

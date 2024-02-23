@@ -23,6 +23,24 @@ public class DataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         boolean adminExists = userService.findByLicensePlate(adminName).isPresent();
 
+/*        UserEntity user1 = new UserEntity();
+        user1.setLicensePlate("delete");
+        user1.setPassword("pass");
+
+        userService.save(user1);*/
+
+/*        UserEntity user2 = new UserEntity();
+        user2.setLicensePlate("suspend");
+        user2.setPassword("pass");
+
+        userService.save(user2);*/
+
+  /*      UserEntity user3 = new UserEntity();
+        user3.setLicensePlate("change");
+        user3.setPassword("pass");*/
+
+/*        userService.save(user3);*/
+
         if(adminExists)
             return;
 
@@ -31,5 +49,6 @@ public class DataInitializer implements ApplicationRunner {
         admin.setPassword("pass");
 
         userService.save(admin);
+
     }
 }

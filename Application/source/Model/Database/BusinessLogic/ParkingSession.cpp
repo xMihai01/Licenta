@@ -12,6 +12,7 @@ DatabaseEntity::ParkingSession DatabaseBusinessLogic::ParkingSession::FindOngoin
 
 void DatabaseBusinessLogic::ParkingSession::Add(DatabaseEntity::ParkingSession& parkingSession)
 {
+	parkingSession.SetEndTime(NOTIME);
 	m_dataAccess.Add(parkingSession);
 }
 
