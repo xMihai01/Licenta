@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>PMS - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+    <style th:replace="fragments/homeStyle"></style>
+</head>
+
+<body class="bg-gray-200 font-sans leading-normal tracking-normal">
+<nav class="relative bg-white border-b-2 border-gray-300 text-gray-900">
+    <div th:replace="fragments/adminHeader"></div>
+
+    <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-md overflow-hidden">
+        <thead>
+        <tr class="bg-indigo-500 text-white">
+            <th class="py-2 px-4">ID</th>
+            <th class="py-2 px-4">License Plate</th>
+            <th class="py-2 px-4"></th>
+            <th class="py-2 px-4"></th>
+            <th class="py-2 px-4"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="userAccount : ${userAccounts}" class="even:bg-gray-50 odd:bg-white hover-row">
+            <input th:type="hidden" th:id="userID" th:name="userID" th:value="${userAccount.id}" />
+            <td class="py-2 px-4" th:text="${userAccount.id}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${userAccount.licensePlate}" style="text-align: center;"></td>
+            <form th:action="@{/admin/changePassword}" th:method="post">
+                <input type="hidden" name="userID" th:value="${userAccount.id}" />
+                <td class="py-2 px-4" style="text-align: center;">
+                    <input type="text" name="newPassword" placeholder="New Password" class="py-1 px-2 border rounded mt-2" />
+                    <button class="bg-indigo-500 text-white py-1 px-3 rounded hover:bg-indigo-600 focus:outline-none" type="submit">Change Password</button>
+                </td>
+            </form>
+            <form th:action="@{/admin/suspendAccount}" th:method="post">
+                <td class="py-2 px-4" style="text-align: center;">
+                    <input type="hidden" name="userID" th:value="${userAccount.id}" />
+                    <input type="date" id="suspensionDate" name="suspensionDate" class="py-1 px-2 border rounded" />
+                    <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 focus:outline-none" type="submit">Suspend Account</button>
+                </td>
+            </form>
+            <form th:action="@{/admin/deleteAccount}" th:method="post">
+                <td class="py-2 px-4" style="text-align: center;">
+                    <input type="hidden" name="userID" th:value="${userAccount.id}" />
+                    <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 focus:outline-none" type="submit">Delete Account</button>
+                </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+
+</nav>
+</body>
+</html>

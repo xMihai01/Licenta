@@ -30,6 +30,7 @@ public:
 public:
 
 	static std::pair<cv::Mat, cv::Mat> GetHistograms(const cv::Mat grayImage);
+	static bool DoesImageNeedCLAHE(const cv::Mat grayImage);
 	static std::vector<std::string> GetImageNamesFromFile(const std::string& path);
 	static void GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour
 		, const bool crop = false, const std::vector<std::vector<cv::Point>>& customContours = std::vector<std::vector<cv::Point>>{});

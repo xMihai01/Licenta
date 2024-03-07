@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>PMS - Global Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style th:replace="~{fragments/homeStyle}"></style>
+    <style th:replace="~{fragments/chatStyle}"></style>
+    <style>
+        .body-bg {
+            background-color: #9921e8;
+            background-image: linear-gradient(315deg, #9921e8 0%, #5f72be 74%);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-200 font-sans leading-normal tracking-normal">
+<nav class="relative bg-white border-b-2 border-gray-300 text-gray-900">
+    <div th:replace="~{fragments/homeHeader}"></div>
+    <div class="max-w-lg mx-auto text-center mt-12 mb-6">
+        <p class="text-blue">Have any questions? <a th:href="@{/chat/send}" class="font-bold hover:underline">Post them here!</a>.</p>
+    </div>
+    <br>
+    <div class="direct-chat-messages">
+
+        <div th:each="message : ${messages}"
+             class="direct-char-msg">
+
+            <div class="direct-chat-info clearfix">
+                <span class="direct-chat-name pull-left chat-name-bold"
+                th:text="${message.getSender()}"
+                >Receiver</span>
+                <span class="direct-chat-timestamp pull-right"
+                th:text="${message.getCleanTimeWhenMessageWasSent()}"
+                >Timestamp</span>
+            </div>
+
+            <div class="direct-chat-text" th:text="${message.getMessage()}" th:style="${message.getSender().equals('ADMIN')} ? 'color: white; background-color: red' : ''">Message</div>
+            <br>
+        </div>
+
+    </div>
+
+</nav>
+</body>
+</html>

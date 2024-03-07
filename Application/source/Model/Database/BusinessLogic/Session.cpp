@@ -31,6 +31,7 @@ DatabaseEntity::Session DatabaseBusinessLogic::Session::FindValidSessionByLicens
 void DatabaseBusinessLogic::Session::Add(DatabaseEntity::Session& session)
 {
 	session.SetSecretID(GenerateSecretID(session));
+	session.SetExitTime(NOTIME);
 	m_dataAccess.Add(session);
 }
 

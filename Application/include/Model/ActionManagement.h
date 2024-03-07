@@ -18,7 +18,7 @@ private:
 
 	void CheckAllParkingSpaces(const DatabaseEntity::Camera& camera, const cv::Mat& inputFrame);
 
-	void NotifyListeners(const DatabaseEntity::CameraType::Type type);
+	void NotifyListeners(const DatabaseEntity::Camera& camera, const std::string& detectedLicensePlate, const DatabaseEntity::ParkingSpace& parkingSpace = DatabaseEntity::ParkingSpace());
 
 private:
 

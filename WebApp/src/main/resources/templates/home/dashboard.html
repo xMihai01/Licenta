@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>PMS - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+    <style th:replace="fragments/homeStyle"></style>
+</head>
+
+<body class="bg-gray-200 font-sans leading-normal tracking-normal">
+<nav class="relative bg-white border-b-2 border-gray-300 text-gray-900">
+    <div th:replace="fragments/homeHeader"></div>
+    <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-md overflow-hidden">
+        <thead>
+        <tr class="bg-indigo-500 text-white">
+            <th class="py-2 px-4">ID</th>
+            <th class="py-2 px-4">Entrance Date</th>
+            <th class="py-2 px-4">Exit Date</th>
+            <th class="py-2 px-4">Time Spent (min)</th>
+            <th class="py-2 px-4">Parking History</th>
+            <th class="py-2 px-4">Payment</th>
+            <th class="py-2 px-4">Report</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="sessionItem : ${sessions}" class="even:bg-gray-50 odd:bg-white hover-row">
+            <input th:type="hidden" th:id="sessionID" th:name="sessionID" th:value="${sessionItem.id}" />
+            <td class="py-2 px-4" th:text="${sessionItem.id}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${sessionItem.getEntranceTimeAsString()}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${sessionItem.didItExit() ? sessionItem.getExitTimeAsString() : 'Still in parking!'}" style="text-align: center;"></td>
+            <td class="py-2 px-4" th:text="${sessionItem.getTimeSpent()}" style="text-align: center;"></td>
+            <form th:action="@{/home/viewSpaceHistory}" th:method="post">
+                <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
+                <td class="py-2 px-4" style="text-align: center;">
+                    <button class="bg-indigo-500 text-white py-1 px-3 rounded hover:bg-indigo-600 focus:outline-none" type="submit">View</button>
+                </td>
+            </form>
+            <form th:action="@{/home/viewPayment}" th:method="post">
+                <td class="py-2 px-4" style="text-align: center;">
+                    <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
+                    <button th:class="${paymentService.isSessionPaid(sessionItem.id) ? 'bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600 focus:outline-none'
+ : 'bg-indigo-500 text-white py-1 px-3 rounded hover:bg-indigo-600 focus:outline-none'}" type="submit"
+                    th:text="${paymentService.isSessionPaid(sessionItem.id) ? 'PAID' : 'Pay'}">Pay</button>
+                </td>
+            </form>
+            <form th:action="@{/home/createReport}" th:method="post">
+                <td class="py-2 px-4" style="text-align: center;">
+                    <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
+                    <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 focus:outline-none" type="submit">Create Report</button>
+                </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+</nav>
+</body>
+</html>

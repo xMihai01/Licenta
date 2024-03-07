@@ -8,9 +8,9 @@ public:
 
 	DefaultCameraTypeAction();
 
-	void DoEntrance(const DatabaseEntity::Camera& camera);
-	void DoExit(const DatabaseEntity::Camera& camera, const DatabaseEntity::Session& session);
-	void DoParking(const DatabaseEntity::Camera& camera, const DatabaseEntity::Session& session);
+	void DoEntrance(const DatabaseEntity::Camera& camera, DatabaseEntity::Session& session);
+	void DoExit(const DatabaseEntity::Camera& camera, DatabaseEntity::Session& session);
+	void DoParking(const DatabaseEntity::Camera& camera, DatabaseEntity::Session& session, const DatabaseEntity::ParkingSpace& parkingSpace);
 
 private:
 

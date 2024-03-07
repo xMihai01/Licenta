@@ -14,6 +14,7 @@ namespace DatabaseEntity {
 		Session(const std::string& licensePlate, const QDateTime& entranceTime, const QDateTime& exitTime, const std::string& secretID);
 		Session(const std::string& licensePlate, const QDateTime& entranceTime, const QDateTime& exitTime);
 		Session(const std::string& licensePlate, const QDateTime& entranceTime);
+		Session(const std::string& licensePlate);
 
 		void SetLicensePlate(const std::string& licensePlate);
 		void SetEntranceTime(const QDateTime& entranceTime);

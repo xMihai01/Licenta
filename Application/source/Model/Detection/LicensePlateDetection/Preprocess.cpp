@@ -69,7 +69,7 @@ void LicensePlateDetection::Preprocess::NoiseReduction(const cv::Mat& inputImage
 }
 void LicensePlateDetection::Preprocess::AdaptiveHistogramEqualization(const cv::Mat& inputImage, cv::Mat& outputImage)
 {
-	cv::Ptr<cv::CLAHE> adaptiveHE = cv::createCLAHE();
+	cv::Ptr<cv::CLAHE> adaptiveHE = cv::createCLAHE(2);
 	adaptiveHE->apply(inputImage, outputImage);
 }
 
@@ -126,21 +126,32 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 
 	ConvertImageToGray(inputImage, inputImage);
 	NoiseReduction(inputImage, inputImage, SmoothingAlgorithm::Gaussian);
+	// TODO: Find a contrast threshold directly from histogram for CLAHE
+	//static int index = 0;
+
+	//cv::imwrite("C:/Users/mihai/Desktop/Products/clahe/" + std::to_string(index) + "_original.jpg", inputImage);
+	//cv::imwrite("C:/Users/mihai/Desktop/Products/clahe/" + std::to_string(index) + "_original_histogram.jpg", Utils::GetHistograms(inputImage).first);
+	if (Utils::DoesImageNeedCLAHE(inputImage)) {
+		AdaptiveHistogramEqualization(inputImage, inputImage);
+	}
+	//cv::imwrite("C:/Users/mihai/Desktop/Products/clahe/" + std::to_string(index) + "_clahe.jpg", inputImage);
+	//cv::imwrite("C:/Users/mihai/Desktop/Products/clahe/" + std::to_string(index) + "_clahe_histogram.jpg", Utils::GetHistograms(inputImage).first);
+	//index++;
 	ResizeImage(inputImage, inputImage, Utils::PLATE_WIDTH, Utils::PLATE_HEIGHT);
 	cv::threshold(inputImage, inputImage, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
 	licensePlate = inputImage.clone();
-	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(6, 6));
 
 	std::vector<cv::Point> max_cnt;
 
 	Utils::GetImageByHighestContour(licensePlate, licensePlate, max_cnt);
-
+	// TODO: try with inv thresh
 	cv::drawContours(licensePlate, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(255), cv::FILLED);
 	cv::erode(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7)));
 	cv::dilate(licensePlate, licensePlate, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));
-
+	//cv::threshold(licensePlate, licensePlate, 0, 255, cv::THRESH_BINARY_INV);
 	Utils::GetImageByHighestContour(licensePlate, licensePlate, max_cnt);
 	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
+	cv::RotatedRect contourRotatedRectangle = cv::minAreaRect(max_cnt);
 	//cv::cvtColor(licensePlate, licensePlate, cv::COLOR_GRAY2BGR);
 
 	double epsilon = 0.02 * cv::arcLength(max_cnt, true);
@@ -186,13 +197,22 @@ void LicensePlateDetection::Preprocess::Undistortion(cv::Mat& inputImage, cv::Ma
 		cv::Point(Utils::PLATE_WIDTH - 1.0f / 3.0f * Utils::PLATE_HEIGHT, 2.0f / 3.0f * Utils::PLATE_HEIGHT), // bottom right
 		cv::Point(1.0f / 8.0f * Utils::PLATE_WIDTH, 2.0f / 3.0f * Utils::PLATE_HEIGHT) // bottom left
 	};
-
+	// TODO: Find a specific angle thresh
 	cv::Mat H = cv::findHomography(srcPoints, dstPoints, cv::RANSAC);
 
 	cv::Mat cleanPlateImage;
 	Utils::BitwiseLicensePlateImage(licensePlate, inputImage, cleanPlateImage);
+	//outputImage = cleanPlateImage;
+	// TODO: try with closing too
+	//cv::dilate(cleanPlateImage, cleanPlateImage, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3)));
+	//cv::erode(cleanPlateImage, cleanPlateImage, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3)));
+	
+	if (contourRotatedRectangle.angle < 85 && contourRotatedRectangle.angle > 5)
+		cv::warpPerspective(cleanPlateImage, outputImage, H, licensePlate.size());
+	else
+		outputImage = cleanPlateImage; // skipping rotation
+	//cv::threshold(outputImage, outputImage, 0, 255, cv::THRESH_BINARY_INV);
 
-	cv::warpPerspective(cleanPlateImage, outputImage, H, licensePlate.size());
 }
 
 std::array<cv::Point, LicensePlateDetection::Preprocess::NUMBER_OF_CORNERS_IN_LICENSE_PLATE> LicensePlateDetection::Preprocess::GetLicensePlateCornersFromApproximatedCurves(std::vector<cv::Point>& approximations)
