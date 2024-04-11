@@ -1028,7 +1028,6 @@
     <addaction name="addCameraAction"/>
     <addaction name="removeCameraAction"/>
     <addaction name="updateCameraAction"/>
-    <addaction name="listCameraAction"/>
     <addaction name="manageParkingAction"/>
    </widget>
    <widget class="QMenu" name="manageEntriesMenu">
@@ -1036,6 +1035,7 @@
      <string>Manage Entries</string>
     </property>
     <addaction name="forceExitForEntryAction"/>
+    <addaction name="forcePhotoEntryAction"/>
    </widget>
    <addaction name="settingsMenu"/>
    <addaction name="manageCameraMenu"/>
@@ -1067,9 +1067,9 @@
     <string>Update</string>
    </property>
   </action>
-  <action name="listCameraAction">
+  <action name="forceActionByPhotoAction">
    <property name="text">
-    <string>List</string>
+    <string>Force action by photo</string>
    </property>
   </action>
   <action name="setSpecificKeyForCameraAction">
@@ -1085,6 +1085,11 @@
   <action name="forceExitForEntryAction">
    <property name="text">
     <string>Force exit for an entry</string>
+   </property>
+  </action>
+  <action name="forcePhotoEntryAction">
+   <property name="text">
+    <string>Force action by photo</string>
    </property>
   </action>
  </widget>

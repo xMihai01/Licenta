@@ -154,11 +154,11 @@ bool LicensePlateDetection::Postprocess::CheckPlate(const cv::Mat& originalImage
 		double width = contourRectangle.width;
 		double height = contourRectangle.height;
 		cv::Mat afterValidationImage = originalImage(cv::Rect(x, y, width, height));
-		if (CleanPlate(afterValidationImage)) {
+		//if (CleanPlate(afterValidationImage)) {
 			//cv::imwrite(std::to_string(contourNumber) + ".jpg", afterValidationImage);
 			//cv::drawContours(outputImage, std::vector<std::vector<cv::Point>>{contour}, -1, cv::Scalar(0, 255, 0), 2);
 			return true;
-		}
+		//}
 	}
 	return false;
 }

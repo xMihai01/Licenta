@@ -22,6 +22,7 @@ public:
 
 	void ChangeCameraOnSlot(const DatabaseEntity::Camera& camera, bool isSlotOne);
 	void ForceExitAction(const DatabaseEntity::Camera& camera, const DatabaseEntity::Session& session);
+	void ForcePhotoAction(const DatabaseEntity::Camera& camera, const QString& photoPath);
 	
 	void SetupCameras();
 

@@ -5,6 +5,8 @@
 #include <QComboBox>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QLineEdit>
+#include <QLabel>
 #include <QHash>
 
 #include <Controller/CustomComboBoxDialogController.h>
@@ -18,6 +20,7 @@ public:
 
     enum class CustomComboBoxDialogType {
         SLOT_SELECTION,
+        PHOTO_ACTION,
         ONGOING_SESSION_SELECTION
     };
 
@@ -28,6 +31,7 @@ public:
     DatabaseEntity::Camera GetChosenCamera();
     DatabaseEntity::Session GetChosenSession();
     QString GetSecondComboBoxText();
+    QString GetLineEditText();
 
 private:
 
@@ -38,7 +42,14 @@ private:
 private:
     QComboBox* cameraComboBox;
     QComboBox* secondComboBox;
+    QLineEdit* lineEdit;
     QPushButton* okButton;
+
+    QLabel* sessionLabel;
+    QLabel* cameraLabel;
+    QLabel* slotLabel;
+    QLabel* pathLabel;
+
     QVBoxLayout* layout;
 
     QHash<QString, DatabaseEntity::Camera> map;

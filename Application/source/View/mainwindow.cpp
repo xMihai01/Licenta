@@ -27,9 +27,11 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->removeCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementRemoveButtonClick()));
     connect(ui->updateCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementUpdateButtonClick()));
     connect(ui->manageParkingAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementParkingButtonClick()));
+   
 
     // Manage entries buttons
     connect(ui->forceExitForEntryAction, SIGNAL(triggered()), this, SLOT(OnForceExitForEntryButtonClicked()));
+    connect(ui->forcePhotoEntryAction, SIGNAL(triggered()), this, SLOT(OnForceActionByPhotoButtonClicked()));
 
 }
 
@@ -132,6 +134,29 @@ void MainWindow::OnForceExitForEntryButtonClicked()
             return;
         }
         windowController->ForceExitAction(chosenCamera, chosenSession);
+    }
+}
+
+void MainWindow::OnForceActionByPhotoButtonClicked()
+{
+    if (repairMode) {
+        QMessageBox::critical(this, "Error", "Can't use this while in repair mode!\n\nReview Camera Management and refresh!");
+        return;
+    }
+    CustomComboBoxDialog dialog(CustomComboBoxDialog::CustomComboBoxDialogType::PHOTO_ACTION, this);
+    if (dialog.exec() == QDialog::Accepted) {
+        DatabaseEntity::Camera chosenCamera = dialog.GetChosenCamera();
+        QString pathToPhoto = dialog.GetLineEditText();
+        if (pathToPhoto == "") {
+            QMessageBox::warning(this, "Warning", "No path for photo given. Skipping...");
+            return;
+        }
+        try {
+            windowController->ForcePhotoAction(chosenCamera, pathToPhoto);
+        }
+        catch (const std::exception& exception) {
+            QMessageBox::critical(this, "Error", exception.what());
+        }
     }
 }
 

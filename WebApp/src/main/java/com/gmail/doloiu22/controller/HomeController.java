@@ -16,6 +16,7 @@ import com.gmail.doloiu22.util.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class HomeController {
     @GetMapping
     public String open(Model model, Authentication authentication){
         List<SessionEntity> sessions = sessionService.findAllByLicensePlate(authentication.getName());
+        Collections.reverse(sessions);
 
         model.addAttribute("isAdmin", authentication.getAuthorities().contains(new SimpleGrantedAuthority(Role.ADMIN.name())));
         model.addAttribute("paymentService", paymentService);

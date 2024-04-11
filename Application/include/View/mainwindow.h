@@ -45,6 +45,7 @@ private slots:
     void OnCameraManagementUpdateButtonClick();
     void OnCameraManagementParkingButtonClick();
     void OnForceExitForEntryButtonClicked();
+    void OnForceActionByPhotoButtonClicked();
 
 private:
     Ui::MainWindow *ui;

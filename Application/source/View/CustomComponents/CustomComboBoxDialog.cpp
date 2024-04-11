@@ -4,10 +4,19 @@ CustomComboBoxDialog::CustomComboBoxDialog(const CustomComboBoxDialogType type, 
 {
     cameraComboBox = new QComboBox;
     secondComboBox = new QComboBox;
+    lineEdit = new QLineEdit();
     okButton = new QPushButton("OK");
     layout = new QVBoxLayout(this);
 
-    layout->addWidget(secondComboBox);
+    cameraLabel = new QLabel("Camera:");
+    sessionLabel = new QLabel("Session:");
+    slotLabel = new QLabel("Slot:");
+    pathLabel = new QLabel("Photo path:");
+    
+    (type == CustomComboBoxDialogType::PHOTO_ACTION ? layout->addWidget(pathLabel)
+        : (type == CustomComboBoxDialogType::SLOT_SELECTION ? layout->addWidget(slotLabel) : layout->addWidget(sessionLabel))); 
+    type == CustomComboBoxDialogType::PHOTO_ACTION ? layout->addWidget(lineEdit) : layout->addWidget(secondComboBox);
+    layout->addWidget(cameraLabel);
     layout->addWidget(cameraComboBox);
     layout->addWidget(okButton);
 
@@ -24,6 +33,9 @@ CustomComboBoxDialog::CustomComboBoxDialog(const CustomComboBoxDialogType type, 
         GetComboBoxMapForExitCameras();
         GetComboBoxMapForOngoingSessions();
         break;
+    case CustomComboBoxDialogType::PHOTO_ACTION:
+        GetComboBoxMapForCameras();
+        break;
     default:
         break;
     }
@@ -33,13 +45,25 @@ CustomComboBoxDialog::~CustomComboBoxDialog()
 {
     delete cameraComboBox;
     delete secondComboBox;
+    delete lineEdit;
     delete okButton;
+
+    delete cameraLabel;
+    delete sessionLabel;
+    delete pathLabel;
+    delete slotLabel;
+
     delete layout;
 }
 
 QString CustomComboBoxDialog::GetSecondComboBoxText()
 {
     return secondComboBox->currentText();
+}
+
+QString CustomComboBoxDialog::GetLineEditText()
+{
+    return lineEdit->text();
 }
 
 void CustomComboBoxDialog::GetComboBoxMapForCameras()

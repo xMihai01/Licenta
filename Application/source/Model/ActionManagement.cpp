@@ -18,14 +18,14 @@ void ActionManagement::StartAction(const cv::Mat& frame, const DatabaseEntity::C
     switch (camera.GetCameraType().GetType())
     {
     case DatabaseEntity::CameraType::Type::ENTRANCE:
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::DNN);
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateTextIP, LicensePlateDetection::DetectionType::IMAGE_PROCESSING);
-        std::cout << "\nEntered: " << plateText << " | IP: " << plateTextIP;
+        //m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::DNN);
+        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::IMAGE_PROCESSING);
+        std::cout << "\nEntered: " << plateText;
         break;
     case DatabaseEntity::CameraType::Type::EXIT:
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::DNN);
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateTextIP, LicensePlateDetection::DetectionType::IMAGE_PROCESSING);
-        std::cout << "\nExited: " << plateText << " | IP: " << plateTextIP;
+        //m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::DNN);
+        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::IMAGE_PROCESSING);
+        std::cout << "\nExited: " << plateText;
         break;
     case DatabaseEntity::CameraType::Type::PARKING:
         std::cout << "\nParked: " << plateText;

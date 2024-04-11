@@ -116,6 +116,13 @@ void MainWindowController::ForceExitAction(const DatabaseEntity::Camera& camera,
     m_database.ToSession().ForceExitForSessionID(session.GetID());
 }
 
+void MainWindowController::ForcePhotoAction(const DatabaseEntity::Camera& camera, const QString& photoPath)
+{
+    cv::Mat inputFrame = cv::imread(cv::String(photoPath.toStdString()));
+
+    m_actionManagement.StartAction(inputFrame, camera);
+}
+
 void MainWindowController::Refresh()
 {
     try {
