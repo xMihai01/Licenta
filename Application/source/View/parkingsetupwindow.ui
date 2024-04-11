@@ -36,6 +36,14 @@
    <layout class="QGridLayout" name="parkingRelatedGrid">
     <item row="2" column="0">
      <widget class="QPushButton" name="confirmButton">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {	border: 2px solid gray; border-radius: 10px; padding: 0 8px; background: lightgray;	} QPushButton:hover { color: white }</string>
+      </property>
       <property name="text">
        <string>Confirm (Add)</string>
       </property>
@@ -43,6 +51,11 @@
     </item>
     <item row="1" column="1">
      <widget class="QListWidget" name="spacesListWidget">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="frameShape">
        <enum>QFrame::WinPanel</enum>
       </property>
@@ -53,6 +66,14 @@
     </item>
     <item row="2" column="1">
      <widget class="QPushButton" name="resetButton">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {	border: 2px solid gray; border-radius: 10px; padding: 0 8px; background: lightgray;	} QPushButton:hover { color: white }</string>
+      </property>
       <property name="text">
        <string>Reset Box</string>
       </property>
@@ -69,10 +90,18 @@
       <property name="text">
        <string>Spaces</string>
       </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
      </widget>
     </item>
     <item row="1" column="0">
      <widget class="QListWidget" name="parkingCamerasListWidget">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="frameShape">
        <enum>QFrame::WinPanel</enum>
       </property>
@@ -92,10 +121,21 @@
       <property name="text">
        <string>Cameras</string>
       </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
      </widget>
     </item>
     <item row="3" column="1">
      <widget class="QPushButton" name="removeButton">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {	border: 2px solid gray; border-radius: 10px; padding: 0 8px; background: lightgray;	} QPushButton:hover { color: white }</string>
+      </property>
       <property name="text">
        <string>Remove</string>
       </property>
@@ -103,6 +143,14 @@
     </item>
     <item row="3" column="0">
      <widget class="QPushButton" name="updateButton">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {	border: 2px solid gray; border-radius: 10px; padding: 0 8px; background: lightgray;	} QPushButton:hover { color: white }</string>
+      </property>
       <property name="text">
        <string>Update</string>
       </property>
