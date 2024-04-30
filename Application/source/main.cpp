@@ -16,9 +16,4 @@ int main(int argc, char* argv[]) {
 	MainWindow window;
 	window.show();
 	return application.exec();
-
-	//cv::imwrite("C:\\Users\\mihai\\Desktop\\Licenta\\Build_Licenta\\Application\\pozeLic\\averageFilter.jpg", filter1);
-	//cv::imwrite("C:\\Users\\mihai\\Desktop\\Licenta\\Build_Licenta\\Application\\pozeLic\\gaussianFilter.jpg", filter2);
-	//cv::imwrite("C:\\Users\\mihai\\Desktop\\Licenta\\Build_Licenta\\Application\\pozeLic\\bilateralFilter.jpg", filter3);
-	//cv::imwrite("C:\\Users\\mihai\\Desktop\\Licenta\\Build_Licenta\\Application\\pozeLic\\medianFilter.jpg", filter4);
 }
