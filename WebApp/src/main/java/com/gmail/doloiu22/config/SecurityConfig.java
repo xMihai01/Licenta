@@ -25,7 +25,7 @@ public class SecurityConfig{
         http
                 /* Unrestricted access */
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/register", "/test")
+                        .requestMatchers("/passwordReset", "/stuck", "/register")
                         .permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/report/list").hasAuthority("ADMIN")

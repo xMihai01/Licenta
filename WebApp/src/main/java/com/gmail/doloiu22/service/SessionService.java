@@ -36,4 +36,7 @@ public class SessionService {
     public boolean isSecretIDValid(SessionEntity sessionEntity) {
         return sessionEntity.getExitTime().isEqual(NOTIME) && sessionEntity.getLicensePlate().length() > MINIMUM_LICENSE_PLATE_LENGTH;
     }
+    public void save (SessionEntity sessionEntity) {
+        sessionRepository.save(sessionEntity);
+    }
 }

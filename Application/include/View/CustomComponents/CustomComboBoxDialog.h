@@ -21,7 +21,8 @@ public:
     enum class CustomComboBoxDialogType {
         SLOT_SELECTION,
         PHOTO_ACTION,
-        ONGOING_SESSION_SELECTION
+        ONGOING_SESSION_SELECTION,
+        DETECTION_TYPE
     };
 
 public:
@@ -30,7 +31,9 @@ public:
 
     DatabaseEntity::Camera GetChosenCamera();
     DatabaseEntity::Session GetChosenSession();
+    DatabaseEntity::CameraType GetChosenCameraType();
     QString GetSecondComboBoxText();
+    QString GetFirstComboBoxText();
     QString GetLineEditText();
 
 private:
@@ -38,6 +41,7 @@ private:
     void GetComboBoxMapForCameras();
     void GetComboBoxMapForOngoingSessions();
     void GetComboBoxMapForExitCameras();
+    void GetComboBoxMapForCameraType();
 
 private:
     QComboBox* cameraComboBox;
@@ -49,11 +53,14 @@ private:
     QLabel* cameraLabel;
     QLabel* slotLabel;
     QLabel* pathLabel;
+    QLabel* cameraTypeLabel;
+    QLabel* detectionTypeLabel;
 
     QVBoxLayout* layout;
 
     QHash<QString, DatabaseEntity::Camera> map;
     QHash<QString, DatabaseEntity::Session> sessionsMap;
+    QHash<QString, DatabaseEntity::CameraType> cameraTypesMap;
 
     CustomComboBoxDialogType m_type;
 

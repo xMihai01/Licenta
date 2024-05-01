@@ -20,9 +20,10 @@ MainWindow::MainWindow(QWidget* parent)
 
     // Button for changing video source for parking lot cameras
     connect(ui->viewSpecificCameraAction, SIGNAL(triggered()), this, SLOT(OnViewSpecificCameraButtonClick()));
+    connect(ui->actionChange_Detection_Type, SIGNAL(triggered()), this, SLOT(OnChangeDetectionTypeButtonClick()));
     connect(ui->systemTurnButton, SIGNAL(clicked()), this, SLOT(OnRefreshButtonClicked()));
 
-    // Camera management buttons (add, remove, update etc(
+    // Camera management buttons (add, remove, update etc)
     connect(ui->addCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementAddButtonClick()));
     connect(ui->removeCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementRemoveButtonClick()));
     connect(ui->updateCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementUpdateButtonClick()));
@@ -60,6 +61,25 @@ void MainWindow::OnViewSpecificCameraButtonClick()
         }
         else {
             windowController->ChangeCameraOnSlot(chosenCamera, false);
+        }
+    }
+}
+
+void MainWindow::OnChangeDetectionTypeButtonClick()
+{
+    if (repairMode) {
+        QMessageBox::critical(this, "Error", "Can't use this while in repair mode!\n\nReview Camera Management and refresh!");
+        return;
+    }
+    CustomComboBoxDialog dialog(CustomComboBoxDialog::CustomComboBoxDialogType::DETECTION_TYPE, this);
+    if (dialog.exec() == QDialog::Accepted) {
+        DatabaseEntity::CameraType chosenCameraType = dialog.GetChosenCameraType();
+        DatabaseBusinessLogic::CameraType cameraTypeBL; // remove this
+        if (dialog.GetFirstComboBoxText() == "DNN") {
+            QMessageBox::critical(this, "Error", "DNN" + cameraTypeBL.ConvertTypeToQString(chosenCameraType.GetType()));
+        }
+        else {
+            QMessageBox::critical(this, "Error", "IMAGE_PROCESSING" + cameraTypeBL.ConvertTypeToQString(chosenCameraType.GetType()));
         }
     }
 }

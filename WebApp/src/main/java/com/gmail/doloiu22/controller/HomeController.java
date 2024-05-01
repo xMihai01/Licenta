@@ -78,6 +78,18 @@ public class HomeController {
         return "home/payment";
     }
 
+    @GetMapping("/viewSecretID/{sessionID}")
+    public String openViewSecretID(@PathVariable int sessionID, Model model, Authentication authentication) {
+
+        Optional<SessionEntity> session = sessionService.findById((long)sessionID);
+
+        model.addAttribute("sessionID", sessionID);
+        model.addAttribute("secretID", session.get().getSecretID());
+        model.addAttribute("isAdmin", authentication.getAuthorities().contains(new SimpleGrantedAuthority(Role.ADMIN.name())));
+
+        return "home/secretIDview";
+    }
+
     @PostMapping("/viewSpaceHistory")
     public String viewParkingHistoryForSessionIDClick(@RequestParam("sessionID") Long sessionID) {
 
@@ -87,6 +99,11 @@ public class HomeController {
     public String viewPaymentForSessionIDClick(@RequestParam("sessionID") Long sessionID) {
 
         return "redirect:/home/payment/" + sessionID.toString();
+    }
+    @PostMapping("/viewSecretID")
+    public String viewSecretIDClick(@RequestParam("sessionID") Long sessionID) {
+
+        return "redirect:/home/viewSecretID/" + sessionID.toString();
     }
     @PostMapping("/createReport")
     public String createReportForSession(@RequestParam("sessionID") Long sessionID) {
