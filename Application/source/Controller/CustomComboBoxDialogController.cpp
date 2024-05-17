@@ -42,7 +42,7 @@ void CustomComboBoxDialogController::GetComboBoxMapForCameraType(QHash<QString, 
 
     for (const auto& cameraType : cameraTypes) {
         DatabaseBusinessLogic::CameraType cameraTypeBL;
-        QString typeText = cameraTypeBL.ConvertTypeToQString(cameraType.GetType());
+        QString typeText = DatabaseEntity::CameraType::ConvertTypeToQString(cameraType.GetType());
         map[typeText] = cameraType;
     }
 }

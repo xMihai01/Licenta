@@ -1,12 +1,6 @@
 #pragma once
 
-#include <Model/Database/Entities/CameraType.h>
-
-#include <stdexcept>
-#include <unordered_set>
-
-#include <QHash>
-#include <QString>
+#include <Model/Database/DataAccess/CameraType.h>
 
 namespace DatabaseBusinessLogic {
 
@@ -15,13 +9,6 @@ namespace DatabaseBusinessLogic {
 	private:
 
 		uint8_t MAXIMUM_NUMBER_OF_ENTRIES = 3;
-		QString INVALID_CAMERA_TYPE = "INVALID";
-
-		QHash<QString, DatabaseEntity::CameraType::Type> qStringToTypesHashmap{
-		{"ENTRANCE", DatabaseEntity::CameraType::Type::ENTRANCE},
-		{"EXIT", DatabaseEntity::CameraType::Type::EXIT},
-		{"PARKING", DatabaseEntity::CameraType::Type::PARKING}
-		};
 
 	public:
 
@@ -30,8 +17,15 @@ namespace DatabaseBusinessLogic {
 		
 		std::vector<DatabaseEntity::CameraType> GetAllValidEntries();
 
-		DatabaseEntity::CameraType::Type ConvertQStringToType(const QString& typeName);
-		QString ConvertTypeToQString(const DatabaseEntity::CameraType::Type type);
+		void CheckTableValidation();
+
+		std::vector<DatabaseEntity::CameraType> FindAll();
+		DatabaseEntity::CameraType FindByID(const uint32_t id);
+		DatabaseEntity::CameraType FindByType(const DatabaseEntity::CameraType::Type type);
+
+	private:
+
+		DatabaseDataAccess::CameraType m_dataAccess;
 
 	};
 

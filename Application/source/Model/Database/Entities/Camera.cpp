@@ -64,3 +64,14 @@ void DatabaseEntity::Camera::SetIsLocationAnIndex(bool isindex)
 {
 	isLocationAnIndex = isindex;
 }
+
+bool DatabaseEntity::Camera::CheckIsLocationAnIndex(const DatabaseEntity::Camera& camera)
+{
+	try {
+		int test = std::stoi(camera.GetLocation());
+		return true;
+	}
+	catch (...) {
+		return false;
+	}
+}

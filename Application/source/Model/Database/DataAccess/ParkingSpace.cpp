@@ -1,4 +1,5 @@
 #include <Model/Database/DataAccess/ParkingSpace.h>
+#include <Model/Database/DataAccess/Camera.h>
 
 DatabaseDataAccess::ParkingSpace::ParkingSpace() {
 

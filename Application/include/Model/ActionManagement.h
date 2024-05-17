@@ -5,6 +5,7 @@
 #include <Model/Database/Database.h>
 
 class ActionManagement {
+
 public:
 
 	ActionManagement();
@@ -16,7 +17,7 @@ public:
 
 private:
 
-	void CheckAllParkingSpaces(const DatabaseEntity::Camera& camera, const cv::Mat& inputFrame);
+	void CheckAllParkingSpaces(const DatabaseEntity::Camera& camera, const cv::Mat& inputFrame, const LicensePlateDetection::DetectionType selectedDetectionType);
 
 	void NotifyListeners(const DatabaseEntity::Camera& camera, const std::string& detectedLicensePlate, const DatabaseEntity::ParkingSpace& parkingSpace = DatabaseEntity::ParkingSpace());
 

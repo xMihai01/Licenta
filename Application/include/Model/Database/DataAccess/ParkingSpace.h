@@ -2,8 +2,6 @@
 
 #include <Model/Database/Entities/ParkingSpace.h>
 
-#include <Model/Database/DataAccess/Camera.h>
-
 #include <QSqlQuery>
 #include <QSqlError>
 

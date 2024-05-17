@@ -21,6 +21,7 @@ public:
 	void OpenParkingManagementWindow();
 
 	void ChangeCameraOnSlot(const DatabaseEntity::Camera& camera, bool isSlotOne);
+	void ChangeDetectionTypeForCameraType(const DatabaseEntity::CameraType& cameraType, const QString& selectedDetectionType);
 	void ForceExitAction(const DatabaseEntity::Camera& camera, const DatabaseEntity::Session& session);
 	void ForcePhotoAction(const DatabaseEntity::Camera& camera, const QString& photoPath);
 	

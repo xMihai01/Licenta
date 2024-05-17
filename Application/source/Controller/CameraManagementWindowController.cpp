@@ -56,7 +56,7 @@ void CameraManagementWindowController::TestCamera(const QString& cameraLocation)
 	try {
 		VideoCamera testVideoCamera;
 		DatabaseEntity::Camera testCamera(-1, DatabaseEntity::CameraType::Type::INVALID, cameraLocation.toStdString(), "");
-		testCamera.SetIsLocationAnIndex(DatabaseBusinessLogic::Camera().IsLocationAnIndex(testCamera));
+		testCamera.SetIsLocationAnIndex(DatabaseEntity::Camera::CheckIsLocationAnIndex(testCamera));
 		testCamera.IsLocationAnIndex() ? testVideoCamera.OpenCamera(cameraLocation.toInt()) : testVideoCamera.OpenCamera(cameraLocation.toStdString());
 		testVideoCamera.StopCamera();
 	}

@@ -15,6 +15,9 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForExitCameraFrame));
         
         SetupCameras();
+
+        // loading detection types for each camera type
+        JsonFileUtils::CheckChosenDetectionTypeFile();
        
     }
     catch (const std::exception& exception) {
@@ -108,6 +111,15 @@ void MainWindowController::ChangeCameraOnSlot(const DatabaseEntity::Camera& came
         m_cameraSlot.second.second->RemoveListener(m_videoListeners[1]);
         m_cameraSlot.second = std::make_pair(camera, m_cameraIDToVideoCameraMap[camera.GetID()]);
         m_cameraSlot.second.second->AddListener(m_videoListeners[1]);
+    }
+}
+
+void MainWindowController::ChangeDetectionTypeForCameraType(const DatabaseEntity::CameraType& cameraType, const QString& selectedDetectionType)
+{
+    try {
+        JsonFileUtils::UpdateDetectionTypeInFile(cameraType.GetType(), selectedDetectionType);
+    } catch (...) {
+        throw std::runtime_error("An error occured while saving the new detection type to the json file! Try deleting detections.json or try again!");
     }
 }
 

@@ -74,13 +74,8 @@ void MainWindow::OnChangeDetectionTypeButtonClick()
     CustomComboBoxDialog dialog(CustomComboBoxDialog::CustomComboBoxDialogType::DETECTION_TYPE, this);
     if (dialog.exec() == QDialog::Accepted) {
         DatabaseEntity::CameraType chosenCameraType = dialog.GetChosenCameraType();
-        DatabaseBusinessLogic::CameraType cameraTypeBL; // remove this
-        if (dialog.GetFirstComboBoxText() == "DNN") {
-            QMessageBox::critical(this, "Error", "DNN" + cameraTypeBL.ConvertTypeToQString(chosenCameraType.GetType()));
-        }
-        else {
-            QMessageBox::critical(this, "Error", "IMAGE_PROCESSING" + cameraTypeBL.ConvertTypeToQString(chosenCameraType.GetType()));
-        }
+        windowController->ChangeDetectionTypeForCameraType(chosenCameraType, dialog.GetFirstComboBoxText());
+        QMessageBox::information(this, "Success", "Detection type changed successfully!");
     }
 }
 

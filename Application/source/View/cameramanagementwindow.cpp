@@ -72,14 +72,14 @@ void CameraManagementWindow::OnActionButtonClick()
 
             ? m_windowController->DoAction(
                 DatabaseEntity::Camera(
-                    m_windowController->GetDatabase().ToCameraType().FindByType(m_windowController->GetDatabase().ToCameraType().ToBusinessLogic().ConvertQStringToType(ui->cameraTypeComboBox->currentText()))
+                    m_windowController->GetDatabase().ToCameraType().FindByType(DatabaseEntity::CameraType::ConvertQStringToType(ui->cameraTypeComboBox->currentText()))
                     , ui->cameraLocationLineEdit->text().toStdString()
                     , ui->cameraNameLineEdit->text().toStdString()))
 
             : m_windowController->DoAction(
                 DatabaseEntity::Camera(
                     ui->cameraIDLineEdit->text().toInt()
-                    , m_windowController->GetDatabase().ToCameraType().FindByType(m_windowController->GetDatabase().ToCameraType().ToBusinessLogic().ConvertQStringToType(ui->cameraTypeComboBox->currentText()))
+                    , m_windowController->GetDatabase().ToCameraType().FindByType(DatabaseEntity::CameraType::ConvertQStringToType(ui->cameraTypeComboBox->currentText()))
                     , ui->cameraLocationLineEdit->text().toStdString()
                     , ui->cameraNameLineEdit->text().toStdString()));
 
@@ -160,7 +160,7 @@ void CameraManagementWindow::OnCameraClick(QListWidgetItem* camera) {
     ui->cameraIDLineEdit->setText(QString::number(m_camerasMap[camera].GetID()));
     ui->cameraLocationLineEdit->setText(QString::fromStdString(m_camerasMap[camera].GetLocation()));
     ui->cameraNameLineEdit->setText(QString::fromStdString(m_camerasMap[camera].GetName()));
-    ui->cameraTypeComboBox->setCurrentText(m_windowController->GetDatabase().ToCameraType().ToBusinessLogic().ConvertTypeToQString(m_camerasMap[camera].GetCameraType().GetType()));
+    ui->cameraTypeComboBox->setCurrentText(DatabaseEntity::CameraType::ConvertTypeToQString(m_camerasMap[camera].GetCameraType().GetType()));
     ui->cameraKeyComboBox->setCurrentIndex((static_cast<int>(m_windowController->GetDatabase().ToCameraKey().FindByID(m_camerasMap[camera].GetID()).GetKey()) - static_cast<int>(QtKeyEnum::A)));
 }
 

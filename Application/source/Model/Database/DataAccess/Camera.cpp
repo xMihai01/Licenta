@@ -1,5 +1,4 @@
 #include <Model/Database/DataAccess/Camera.h>
-#include <Model/Database/DataAccess/ParkingSpace.h>
 
 DatabaseDataAccess::Camera::Camera() {
 
@@ -25,8 +24,8 @@ void DatabaseDataAccess::Camera::Remove(const DatabaseEntity::Camera& camera)
 
     if (m_cameraKeyDataAccess.FindByID(camera.GetID()).GetID() != 0)
         m_cameraKeyDataAccess.Remove(m_cameraKeyDataAccess.FindByID(camera.GetID()));
-    DatabaseDataAccess::ParkingSpace parkingSpaceDataAccess;
-    parkingSpaceDataAccess.RemoveAllFromCamera(camera);
+
+    m_parkingSpaceDataAccess.RemoveAllFromCamera(camera);
 
     if (query.exec()) {
         std::cout << "Camera with ID " << camera.GetID() << " removed successfully";
@@ -53,17 +52,16 @@ std::vector<DatabaseEntity::Camera> DatabaseDataAccess::Camera::FindAll()
 {
     std::vector<DatabaseEntity::Camera> entries;
     QSqlQuery query("SELECT * FROM camera");
-    DatabaseDataAccess::CameraType cameraTypeDataAccess;
     if (!query.isActive())
         throw std::runtime_error(query.lastError().text().toStdString());
 
     while (query.next()) {
         uint32_t id = query.value("id").toInt();
-        DatabaseEntity::CameraType cameraType = cameraTypeDataAccess.FindByID(query.value("camera_type_id").toInt());
+        DatabaseEntity::CameraType cameraType = m_cameraTypeDataAccess.FindByID(query.value("camera_type_id").toInt());
         std::string location = query.value("location").toString().toStdString();
         std::string name = query.value("name").toString().toStdString();
         DatabaseEntity::Camera camera(id, cameraType, location, name);
-        camera.SetIsLocationAnIndex(m_businessLogic.IsLocationAnIndex(camera));
+        camera.SetIsLocationAnIndex(DatabaseEntity::Camera::CheckIsLocationAnIndex(camera));
 
         entries.push_back(camera);
     }
@@ -76,7 +74,6 @@ DatabaseEntity::Camera DatabaseDataAccess::Camera::FindByID(const uint32_t id)
     query.prepare("SELECT * FROM camera WHERE id = :id");
     query.bindValue(":id", id);
     query.exec();
-    DatabaseDataAccess::CameraType cameraTypeDataAccess;
     if (!query.isActive())
         throw std::runtime_error(query.lastError().text().toStdString());
 
@@ -84,11 +81,11 @@ DatabaseEntity::Camera DatabaseDataAccess::Camera::FindByID(const uint32_t id)
 
     while (query.next()) {
         uint32_t id = query.value("id").toInt();
-        DatabaseEntity::CameraType cameraType = cameraTypeDataAccess.FindByID(query.value("camera_type_id").toInt());
+        DatabaseEntity::CameraType cameraType = m_cameraTypeDataAccess.FindByID(query.value("camera_type_id").toInt());
         std::string location = query.value("location").toString().toStdString();
         std::string name = query.value("name").toString().toStdString();
         camera = DatabaseEntity::Camera(id, cameraType, location, name);
-        camera.SetIsLocationAnIndex(m_businessLogic.IsLocationAnIndex(camera));
+        camera.SetIsLocationAnIndex(DatabaseEntity::Camera::CheckIsLocationAnIndex(camera));
 
     }
     return camera;

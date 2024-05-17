@@ -1,14 +1,17 @@
 #pragma once
 
-#include <Model/Database/BusinessLogic/Camera.h>
+#include <Model/Database/Entities/Camera.h>
 #include <Model/Database/DataAccess/CameraType.h>
 #include <Model/Database/DataAccess/CameraKey.h>
+#include <Model/Database/DataAccess/ParkingSpace.h>
 
 #include <QSqlQuery>
 #include <QSqlError>
 
 #include <iostream>
 #include <vector>
+
+class DatabaseDataAccess::ParkingSpace;
 
 namespace DatabaseDataAccess {
 
@@ -27,10 +30,9 @@ namespace DatabaseDataAccess {
 
 	private:
 
-		DatabaseBusinessLogic::Camera m_businessLogic;
-
 		DatabaseDataAccess::CameraKey m_cameraKeyDataAccess;
-		//DatabaseDataAccess::ParkingSpace m_parkingSpaceDataAccess;
+		DatabaseDataAccess::ParkingSpace m_parkingSpaceDataAccess;
+		DatabaseDataAccess::CameraType m_cameraTypeDataAccess;
 
 	};
 

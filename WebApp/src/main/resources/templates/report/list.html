@@ -17,8 +17,8 @@
             <th class="py-2 px-4">Session ID</th>
             <th class="py-2 px-4">Reporter</th>
             <th class="py-2 px-4">Suspect</th>
-            <th class="py-2 px-4">Open</th>
-            <th class="py-2 px-4">View</th>
+            <th class="py-2 px-4">Status</th>
+            <th class="py-2 px-4"></th>
         </tr>
         </thead>
         <tbody>
@@ -28,11 +28,14 @@
             <td class="py-2 px-4" th:text="${report.sessionID}" style="text-align: center;"></td>
             <td class="py-2 px-4" th:text="${report.reporterLicensePlate}" style="text-align: center;"></td>
             <td class="py-2 px-4" th:text="${report.suspectLicensePlate}" style="text-align: center;"></td>
-            <td class="py-2 px-4" th:text="${report.opened}" style="text-align: center;"></td>
+            <td class="py-2 px-4" style="text-align: center;">
+                <button th:class="${report.opened ? 'bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600 focus:outline-none'
+ : 'bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 focus:outline-none'}" type="submit" th:text="${report.opened ? 'OPEN' : 'CLOSED'}">Status</button>
+            </td>
             <form th:action="@{/report/viewReport}" th:method="post">
                 <input type="hidden" name="reportID" th:value="${report.id}" />
                 <td class="py-2 px-4" style="text-align: center;">
-                    <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 focus:outline-none" type="submit">View</button>
+                    <button class="bg-indigo-500 text-white py-1 px-3 rounded hover:bg-indigo-600 focus:outline-none" type="submit">View</button>
                 </td>
             </form>
         </tr>

@@ -81,7 +81,10 @@ public class HomeController {
     @GetMapping("/viewSecretID/{sessionID}")
     public String openViewSecretID(@PathVariable int sessionID, Model model, Authentication authentication) {
 
+        List<ParkingSessionEntity> sessions = parkingSessionService.findAllBySessionID((long) sessionID);
         Optional<SessionEntity> session = sessionService.findById((long)sessionID);
+        if (session.isEmpty() || !session.get().getLicensePlate().equals(authentication.getName()))
+            return "other_errors/missing_permission";
 
         model.addAttribute("sessionID", sessionID);
         model.addAttribute("secretID", session.get().getSecretID());

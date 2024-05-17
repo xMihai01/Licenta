@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Model/Utils/JsonFileUtils.h>
-#include <Model/Database/DataAccess/CameraKey.h>
-#include <Model/Database/DataAccess/CameraType.h>
-#include <Model/Database/DataAccess/Camera.h>
+#include <Model/Database/BusinessLogic/CameraKey.h>
+#include <Model/Database/BusinessLogic/CameraType.h>
+#include <Model/Database/BusinessLogic/Camera.h>
 #include <Model/Database/BusinessLogic/ParkingSpace.h>
 #include <Model/Database/BusinessLogic/ParkingSession.h>
 #include <Model/Database/BusinessLogic/Session.h>
@@ -24,9 +24,9 @@ public:
 
 	QSqlDatabase GetDatabase() const;
 
-	DatabaseDataAccess::CameraKey ToCameraKey() const;
-    DatabaseDataAccess::CameraType ToCameraType() const;
-	DatabaseDataAccess::Camera ToCamera() const;
+	DatabaseBusinessLogic::CameraKey ToCameraKey() const;
+    DatabaseBusinessLogic::CameraType ToCameraType() const;
+	DatabaseBusinessLogic::Camera ToCamera() const;
 	DatabaseBusinessLogic::ParkingSpace ToParkingSpace() const;
 	DatabaseBusinessLogic::Session ToSession() const;
 	DatabaseBusinessLogic::ParkingSession ToParkingSession() const;
@@ -39,9 +39,9 @@ private:
 
 	QSqlDatabase m_database;
 
-	DatabaseDataAccess::CameraKey m_cameraKey;
-    DatabaseDataAccess::CameraType m_cameraType;
-	DatabaseDataAccess::Camera m_camera;
+	DatabaseBusinessLogic::CameraKey m_cameraKey;
+    DatabaseBusinessLogic::CameraType m_cameraType;
+	DatabaseBusinessLogic::Camera m_camera;
 
 	DatabaseBusinessLogic::ParkingSpace m_parkingSpace;
 	DatabaseBusinessLogic::ParkingSession m_parkingSession;

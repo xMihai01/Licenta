@@ -9,7 +9,7 @@ void DatabaseDataAccess::CameraKey::Add(const DatabaseEntity::CameraKey& cameraK
     QSqlQuery query;
     query.prepare("INSERT INTO camera_key (camera_id, key) VALUES (:id, :key)");
     query.bindValue(":id", cameraKey.GetID());
-    query.bindValue(":key", m_businessLogic.ConvertKeyEnumToInt(cameraKey.GetKey()));
+    query.bindValue(":key", DatabaseEntity::CameraKey::ConvertKeyEnumToInt(cameraKey.GetKey()));
     if (query.exec())
         qDebug() << "CameraKey entry added successfully";
     else throw std::runtime_error(query.lastError().text().toStdString());
@@ -31,7 +31,7 @@ void DatabaseDataAccess::CameraKey::Update(const DatabaseEntity::CameraKey& came
     QSqlQuery query;
     query.prepare("UPDATE camera_key SET key = :key WHERE camera_id = :id; ");
     query.bindValue(":id", cameraKey.GetID());
-    query.bindValue(":key", m_businessLogic.ConvertKeyEnumToInt(cameraKey.GetKey()));
+    query.bindValue(":key", DatabaseEntity::CameraKey::ConvertKeyEnumToInt(cameraKey.GetKey()));
 
     if (query.exec())
         std::cout << "CameraKey with ID " << cameraKey.GetID() << " updated successfully";
@@ -53,7 +53,7 @@ DatabaseEntity::CameraKey DatabaseDataAccess::CameraKey::FindByID(const uint32_t
 
     while (query.next()) {
         uint32_t id = query.value("camera_id").toInt();
-        QtKeyEnum key = m_businessLogic.ConvertIntToKeyEnum(query.value("key").toInt());
+        QtKeyEnum key = DatabaseEntity::CameraKey::ConvertIntToKeyEnum(query.value("key").toInt());
 
         camera = DatabaseEntity::CameraKey(id, key);
     }
@@ -74,7 +74,7 @@ DatabaseEntity::CameraKey DatabaseDataAccess::CameraKey::FindByKey(const QtKeyEn
 
     while (query.next()) {
         uint32_t id = query.value("camera_id").toInt();
-        QtKeyEnum key = m_businessLogic.ConvertIntToKeyEnum(query.value("key").toInt());
+        QtKeyEnum key = DatabaseEntity::CameraKey::ConvertIntToKeyEnum(query.value("key").toInt());
 
         camera = DatabaseEntity::CameraKey(id, key);
     }
@@ -91,14 +91,9 @@ std::vector<DatabaseEntity::CameraKey> DatabaseDataAccess::CameraKey::FindAll()
 
     while (query.next()) {
         uint32_t id = query.value("camera_id").toInt();
-        QtKeyEnum key = m_businessLogic.ConvertIntToKeyEnum(query.value("key").toInt());
+        QtKeyEnum key = DatabaseEntity::CameraKey::ConvertIntToKeyEnum(query.value("key").toInt());
 
         entries.push_back(DatabaseEntity::CameraKey(id, key));
     }
     return entries;
-}
-
-bool DatabaseDataAccess::CameraKey::IsKeyUsed(const QtKeyEnum key)
-{
-    return FindByKey(key).GetID() != 0;
 }

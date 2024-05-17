@@ -23,6 +23,11 @@ namespace DatabaseEntity {
 		uint32_t m_id;
 		QtKeyEnum m_key;
 
+	public:
+
+		static QtKeyEnum ConvertIntToKeyEnum(const int key);
+		static int ConvertKeyEnumToInt(const QtKeyEnum key);
+
 	};
 
 }

@@ -7,12 +7,12 @@ bool DatabaseBusinessLogic::CameraType::areTableEntriesValid(const std::vector<D
 
 	std::unordered_set<DatabaseEntity::CameraType::Type> allTypes;
 	for (const auto& entry : entries) {
-		if (ConvertTypeToQString(entry.GetType()) == INVALID_CAMERA_TYPE)
+		if (DatabaseEntity::CameraType::ConvertTypeToQString(entry.GetType()) == DatabaseEntity::CameraType::INVALID_CAMERA_TYPE)
 			return false;
 
 		allTypes.insert(entry.GetType());
 	}
-	if (allTypes.size() != this->qStringToTypesHashmap.size())
+	if (allTypes.size() != DatabaseEntity::CameraType::qStringToTypesHashmap.size())
 		return false;
 	return true;
 }
@@ -27,24 +27,35 @@ std::vector<DatabaseEntity::CameraType> DatabaseBusinessLogic::CameraType::GetAl
 	return entries;
 }
 
-DatabaseEntity::CameraType::Type DatabaseBusinessLogic::CameraType::ConvertQStringToType(const QString& typeName)
+void DatabaseBusinessLogic::CameraType::CheckTableValidation()
 {
-	if (this->qStringToTypesHashmap.find(typeName) == this->qStringToTypesHashmap.end())
-		return DatabaseEntity::CameraType::Type::INVALID;
-    return this->qStringToTypesHashmap.value(typeName);
+    try {
+        if (!areTableEntriesValid(FindAll())) {
+            std::cout << "Detected invalid table entries! If this is the first time running the application, ignore this!";
+            m_dataAccess.RemoveAll();
+            for (const auto& entry : GetAllValidEntries())
+                m_dataAccess.Add(entry, false);
+        }
+        std::cout << "CameraType table was successfully validated!";
+    }
+    catch (const std::exception& exception) {
+        throw exception;
+    }
 }
 
-QString DatabaseBusinessLogic::CameraType::ConvertTypeToQString(const DatabaseEntity::CameraType::Type type)
+std::vector<DatabaseEntity::CameraType> DatabaseBusinessLogic::CameraType::FindAll()
 {
-	switch (type)
-	{
-	case DatabaseEntity::CameraType::Type::ENTRANCE:
-		return "ENTRANCE";
-	case DatabaseEntity::CameraType::Type::EXIT:
-		return "EXIT";
-	case DatabaseEntity::CameraType::Type::PARKING:
-		return "PARKING";
-	default:
-		return INVALID_CAMERA_TYPE;
-	}
+	return m_dataAccess.FindAll();
 }
+
+DatabaseEntity::CameraType DatabaseBusinessLogic::CameraType::FindByID(const uint32_t id)
+{
+    return m_dataAccess.FindByID(id);
+}
+
+DatabaseEntity::CameraType DatabaseBusinessLogic::CameraType::FindByType(const DatabaseEntity::CameraType::Type type)
+{
+	return m_dataAccess.FindByID(static_cast<int>(type));
+}
+
+

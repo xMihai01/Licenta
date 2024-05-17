@@ -34,5 +34,9 @@ namespace DatabaseEntity {
 		std::string m_name;
 
 		bool isLocationAnIndex = false; // not actually present in db table
+
+	public:
+
+		static bool CheckIsLocationAnIndex(const DatabaseEntity::Camera& camera);
 	};
 }

@@ -47,6 +47,8 @@ CustomComboBoxDialog::CustomComboBoxDialog(const CustomComboBoxDialogType type, 
     default:
         break;
     }
+
+    this->setWindowTitle("Parking Management System: Dialog");
 }
 
 CustomComboBoxDialog::~CustomComboBoxDialog()

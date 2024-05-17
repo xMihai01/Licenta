@@ -1,17 +1,12 @@
 #include <Model/Detection/LicensePlateDetection/Postprocess.h>
 #include <Model/Detection/LicensePlateDetection/Preprocess.h>
+#include <Model/Detection/LicensePlateDetection/DetectionType.h>
 #include <Model/Detection/ObjectDetector.h>
 #include <Model/Utils.h>
 
 #include <map>
 
 namespace LicensePlateDetection {
-
-	enum class DetectionType {
-		IMAGE_PROCESSING = 0,
-		HAAR_CASCADE = 1,
-		DNN = 2
-	};
 
 	class Workflow {
 

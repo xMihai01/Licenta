@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Parking Management System: Camera Management</string>
   </property>
   <widget class="QListWidget" name="cameraWidgetList">
    <property name="geometry">

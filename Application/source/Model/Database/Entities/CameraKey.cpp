@@ -31,3 +31,13 @@ uint32_t DatabaseEntity::CameraKey::GetID() const
 {
 	return m_id;
 }
+
+QtKeyEnum DatabaseEntity::CameraKey::ConvertIntToKeyEnum(const int key)
+{
+	return QtKeyEnum(key);
+}
+
+int DatabaseEntity::CameraKey::ConvertKeyEnumToInt(const QtKeyEnum key)
+{
+	return static_cast<int>(key);
+}
