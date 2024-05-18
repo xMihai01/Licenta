@@ -1,5 +1,15 @@
 #include "Model/Database/BusinessLogic/Camera.h"
 
+DatabaseBusinessLogic::Camera::Camera()
+    : m_dataAccess(DatabaseDataAccess::Camera("main"))
+{
+}
+
+DatabaseBusinessLogic::Camera::Camera(const QString& usedDatabase)
+    : m_dataAccess(DatabaseDataAccess::Camera(usedDatabase))
+{
+}
+
 void DatabaseBusinessLogic::Camera::Add(const DatabaseEntity::Camera& camera)
 {
     m_dataAccess.Add(camera);

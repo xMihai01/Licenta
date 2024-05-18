@@ -1,6 +1,7 @@
 #include "Model/Utils/Interfaces/DefaultCameraTypeAction.h"
 
-DefaultCameraTypeAction::DefaultCameraTypeAction()
+DefaultCameraTypeAction::DefaultCameraTypeAction(const Database& database)
+	: m_database(database)
 {
 }
 
@@ -14,7 +15,7 @@ void DefaultCameraTypeAction::DoEntrance(const DatabaseEntity::Camera& camera, D
 
 	session.SetEntranceTime(QDateTime::currentDateTime());
 	m_database.ToSession().Add(session);
-	qDebug() << "\nCreated new session: " << session.GetID() << "\nLicense plate: " << QString::fromStdString(session.GetLicensePlate())
+	qDebug() << "\nCreated new session" << "\nLicense plate: " << QString::fromStdString(session.GetLicensePlate())
 		<< "\nSecret ID: " << QString::fromStdString(session.GetSecretID());
 }
 
@@ -41,7 +42,10 @@ void DefaultCameraTypeAction::DoParking(const DatabaseEntity::Camera& camera, Da
 	DatabaseEntity::ParkingSession parkingSession = m_database.ToParkingSession().FindOngoingParkingSessionBySessionID(session.GetID());
 
 	// Driver is already parked here/license plate was not found in any ongoing sessions.
-	if (session.GetID() == 0 || parkingSession.GetParkingSpaceID() == parkingSpace.GetID()) {
+	if (session.GetID() == 0 || session.GetLicensePlate() == "") {
+		return;
+	}
+	if (parkingSession.GetParkingSpaceID() == parkingSpace.GetID()) {
 		return;
 	}
 

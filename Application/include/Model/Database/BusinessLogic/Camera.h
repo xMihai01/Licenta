@@ -8,6 +8,9 @@ namespace DatabaseBusinessLogic {
 
 	public:
 
+		Camera();
+		Camera(const QString& usedDatabase);
+
 		bool IsLocationAnIndex(const DatabaseEntity::Camera& camera);
 
 		void Add(const DatabaseEntity::Camera& camera);

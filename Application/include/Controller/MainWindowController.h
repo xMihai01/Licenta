@@ -8,6 +8,7 @@
 
 #include <QApplication>
 #include <QLabel>
+#include <QThread>
 
 class MainWindowController {
 
@@ -46,6 +47,7 @@ private:
 	std::pair<std::pair<DatabaseEntity::Camera, VideoCamera*>, std::pair<DatabaseEntity::Camera, VideoCamera*>> m_cameraSlot;
 
 	std::unordered_map<uint32_t, VideoCamera*> m_cameraIDToVideoCameraMap;
+	std::unordered_map<VideoCamera*, DatabaseEntity::Camera> m_videoCameraToCameraMap;
 
 	std::vector<std::shared_ptr<InterfaceVideoListener>> m_videoListeners;
 

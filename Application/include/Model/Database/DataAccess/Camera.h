@@ -19,7 +19,7 @@ namespace DatabaseDataAccess {
 
 	public:
 
-		Camera();
+		Camera(const QString& usedDatabase);
 
 		void Add(const DatabaseEntity::Camera& camera);
 		void Remove(const DatabaseEntity::Camera& camera);
@@ -30,9 +30,11 @@ namespace DatabaseDataAccess {
 
 	private:
 
-		DatabaseDataAccess::CameraKey m_cameraKeyDataAccess;
-		DatabaseDataAccess::ParkingSpace m_parkingSpaceDataAccess;
-		DatabaseDataAccess::CameraType m_cameraTypeDataAccess;
+		DatabaseDataAccess::CameraKey m_cameraKeyDataAccess = DatabaseDataAccess::CameraKey("main");
+		DatabaseDataAccess::ParkingSpace m_parkingSpaceDataAccess = DatabaseDataAccess::ParkingSpace("main");
+		DatabaseDataAccess::CameraType m_cameraTypeDataAccess = DatabaseDataAccess::CameraType("main");
+
+		QString m_usedDatabase;
 
 	};
 

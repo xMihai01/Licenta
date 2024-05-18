@@ -11,6 +11,8 @@ namespace DatabaseDataAccess {
 	class Session {
 	public:
 
+		Session(const QString& usedDatabase);
+
 		void Add(const DatabaseEntity::Session& session);
 		void Remove(const DatabaseEntity::Session& session);
 		void Update(const DatabaseEntity::Session& session);
@@ -21,6 +23,9 @@ namespace DatabaseDataAccess {
 		DatabaseEntity::Session FindBySecretID(const std::string& secretID);
 		std::vector<DatabaseEntity::Session> FindAllOngoingSessions();
 
+	private:
+
+		QString m_usedDatabase;
 	};
 
 }

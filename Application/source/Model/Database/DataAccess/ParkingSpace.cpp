@@ -1,13 +1,14 @@
 #include <Model/Database/DataAccess/ParkingSpace.h>
 #include <Model/Database/DataAccess/Camera.h>
 
-DatabaseDataAccess::ParkingSpace::ParkingSpace() {
-
+DatabaseDataAccess::ParkingSpace::ParkingSpace(const QString& usedDatabase)
+    : m_usedDatabase(usedDatabase)
+{
 }
 
 void DatabaseDataAccess::ParkingSpace::Add(const DatabaseEntity::ParkingSpace& parkingSpace)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("INSERT INTO parking_space (camera_id, x1, x2, y1, y2, name) VALUES (:camera_id, :x1, :x2, :y1, :y2, :name)");
     query.bindValue(":camera_id", parkingSpace.GetCamera().GetID());
     query.bindValue(":x1", parkingSpace.GetX1());
@@ -23,7 +24,7 @@ void DatabaseDataAccess::ParkingSpace::Add(const DatabaseEntity::ParkingSpace& p
 
 void DatabaseDataAccess::ParkingSpace::Remove(const DatabaseEntity::ParkingSpace& parkingSpace)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("DELETE FROM parking_space WHERE parking_space.id = :id");
     query.bindValue(":id", parkingSpace.GetID());
 
@@ -42,7 +43,7 @@ void DatabaseDataAccess::ParkingSpace::RemoveAllFromCamera(const DatabaseEntity:
 
 void DatabaseDataAccess::ParkingSpace::Update(const DatabaseEntity::ParkingSpace& parkingSpace)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("UPDATE parking_space SET x1 = :x1, x2 = :x2, y1 = :y1, y2 = :y2, name = :name WHERE id = :id; ");
     query.bindValue(":id", parkingSpace.GetID());
     query.bindValue(":x1", parkingSpace.GetX1());
@@ -59,8 +60,8 @@ void DatabaseDataAccess::ParkingSpace::Update(const DatabaseEntity::ParkingSpace
 std::vector<DatabaseEntity::ParkingSpace> DatabaseDataAccess::ParkingSpace::FindAll()
 {
     std::vector<DatabaseEntity::ParkingSpace> entries;
-    QSqlQuery query("SELECT * FROM parking_space");
-    DatabaseDataAccess::Camera cameraDataAccess;
+    QSqlQuery query("SELECT * FROM parking_space", QSqlDatabase::database(m_usedDatabase));
+    DatabaseDataAccess::Camera cameraDataAccess = DatabaseDataAccess::Camera(m_usedDatabase);
     if (!query.isActive())
         throw std::runtime_error(query.lastError().text().toStdString());
 
@@ -82,7 +83,7 @@ std::vector<DatabaseEntity::ParkingSpace> DatabaseDataAccess::ParkingSpace::Find
 std::vector<DatabaseEntity::ParkingSpace> DatabaseDataAccess::ParkingSpace::FindAllByCamera(const DatabaseEntity::Camera& camera)
 {
     std::vector<DatabaseEntity::ParkingSpace> entries;
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("SELECT * FROM parking_space WHERE parking_space.camera_id = :camera_id");
     query.bindValue(":camera_id", camera.GetID());
     query.exec();
@@ -106,11 +107,11 @@ std::vector<DatabaseEntity::ParkingSpace> DatabaseDataAccess::ParkingSpace::Find
 
 DatabaseEntity::ParkingSpace DatabaseDataAccess::ParkingSpace::FindByID(const uint32_t id)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("SELECT * FROM parking_space WHERE id = :id");
     query.bindValue(":id", id);
     query.exec();
-    DatabaseDataAccess::Camera cameraDataAccess;
+    DatabaseDataAccess::Camera cameraDataAccess = DatabaseDataAccess::Camera(m_usedDatabase);
     if (!query.isActive())
         throw std::runtime_error(query.lastError().text().toStdString());
 

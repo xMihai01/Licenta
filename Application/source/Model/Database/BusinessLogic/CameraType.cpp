@@ -1,5 +1,15 @@
 #include "Model/Database/BusinessLogic/CameraType.h"
 
+DatabaseBusinessLogic::CameraType::CameraType()
+	: m_dataAccess(DatabaseDataAccess::CameraType("main"))
+{
+}
+
+DatabaseBusinessLogic::CameraType::CameraType(const QString& usedDatabase)
+	: m_dataAccess(DatabaseDataAccess::CameraType(usedDatabase))
+{
+}
+
 bool DatabaseBusinessLogic::CameraType::areTableEntriesValid(const std::vector<DatabaseEntity::CameraType>& entries)
 {
 	if (entries.size() != MAXIMUM_NUMBER_OF_ENTRIES)

@@ -184,8 +184,8 @@ void MainWindow::ReloadKeys()
     m_keyConnections.clear();
     m_keyShortcuts.clear();
 
-    DatabaseDataAccess::CameraKey cameraKeyDataAccess;
-    std::vector<DatabaseEntity::CameraKey> allKeys = cameraKeyDataAccess.FindAll();
+    DatabaseBusinessLogic::CameraKey cameraKeyBusinessLogic = DatabaseBusinessLogic::CameraKey();
+    std::vector<DatabaseEntity::CameraKey> allKeys = cameraKeyBusinessLogic.FindAll();
 
     for (auto& key : allKeys) {
         const uint32_t cameraIDForKey = key.GetID();

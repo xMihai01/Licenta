@@ -41,7 +41,7 @@ void CustomComboBoxDialogController::GetComboBoxMapForCameraType(QHash<QString, 
     std::vector<DatabaseEntity::CameraType> cameraTypes = m_database.ToCameraType().FindAll();
 
     for (const auto& cameraType : cameraTypes) {
-        DatabaseBusinessLogic::CameraType cameraTypeBL;
+        DatabaseBusinessLogic::CameraType cameraTypeBL = DatabaseBusinessLogic::CameraType();
         QString typeText = DatabaseEntity::CameraType::ConvertTypeToQString(cameraType.GetType());
         map[typeText] = cameraType;
     }

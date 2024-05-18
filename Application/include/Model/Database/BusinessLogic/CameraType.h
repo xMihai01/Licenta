@@ -12,6 +12,9 @@ namespace DatabaseBusinessLogic {
 
 	public:
 
+		CameraType();
+		CameraType(const QString& usedDatabase);
+
 		// Table should have 3 entries and each entry should have different Type!
 		bool areTableEntriesValid(const std::vector<DatabaseEntity::CameraType>& entries);
 		

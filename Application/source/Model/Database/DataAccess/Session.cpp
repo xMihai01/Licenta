@@ -1,8 +1,13 @@
 #include <Model/Database/DataAccess/Session.h>
 
+DatabaseDataAccess::Session::Session(const QString& usedDatabase)
+    : m_usedDatabase(usedDatabase)
+{
+}
+
 void DatabaseDataAccess::Session::Add(const DatabaseEntity::Session& session)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("INSERT INTO session (entrance_time, exit_time, license_plate, secret_id) VALUES (:entrance_time, :exit_time, :license_plate, :secret_id)");
     query.bindValue(":entrance_time", session.GetEntranceTime());
     query.bindValue(":exit_time", session.GetExitTime());
@@ -15,7 +20,7 @@ void DatabaseDataAccess::Session::Add(const DatabaseEntity::Session& session)
 
 void DatabaseDataAccess::Session::Remove(const DatabaseEntity::Session& session)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("DELETE FROM session WHERE session.id = :id");
     query.bindValue(":id", session.GetID());
 
@@ -29,7 +34,7 @@ void DatabaseDataAccess::Session::Remove(const DatabaseEntity::Session& session)
 
 void DatabaseDataAccess::Session::Update(const DatabaseEntity::Session& session)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("UPDATE session SET exit_time = :exit_time , license_plate = :license_plate WHERE id = :id; ");
     query.bindValue(":id", session.GetID());
     query.bindValue(":exit_time", session.GetExitTime());
@@ -43,7 +48,7 @@ void DatabaseDataAccess::Session::Update(const DatabaseEntity::Session& session)
 std::vector<DatabaseEntity::Session> DatabaseDataAccess::Session::FindAll()
 {
     std::vector<DatabaseEntity::Session> entries;
-    QSqlQuery query("SELECT * FROM session");
+    QSqlQuery query("SELECT * FROM session", QSqlDatabase::database(m_usedDatabase));
 
     if (!query.isActive())
         throw std::runtime_error(query.lastError().text().toStdString());
@@ -62,7 +67,7 @@ std::vector<DatabaseEntity::Session> DatabaseDataAccess::Session::FindAll()
 
 DatabaseEntity::Session DatabaseDataAccess::Session::FindByID(const uint32_t id)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("SELECT * FROM session WHERE session.id = :id");
     query.bindValue(":id", id);
     query.exec();
@@ -86,7 +91,7 @@ DatabaseEntity::Session DatabaseDataAccess::Session::FindByID(const uint32_t id)
 std::vector<DatabaseEntity::Session> DatabaseDataAccess::Session::FindByLicensePlate(const std::string& licensePlate)
 {
     std::vector<DatabaseEntity::Session> entries;
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("SELECT * FROM session WHERE license_plate = :license_plate");
     query.bindValue(":license_plate", QString::fromStdString(licensePlate));
     query.exec();
@@ -108,7 +113,7 @@ std::vector<DatabaseEntity::Session> DatabaseDataAccess::Session::FindByLicenseP
 
 DatabaseEntity::Session DatabaseDataAccess::Session::FindBySecretID(const std::string& secretID)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("SELECT * FROM session WHERE secret_id = :secretID");
     query.bindValue(":secretID", QString::fromStdString(secretID));
     query.exec();
@@ -131,7 +136,7 @@ DatabaseEntity::Session DatabaseDataAccess::Session::FindBySecretID(const std::s
 
 std::vector<DatabaseEntity::Session> DatabaseDataAccess::Session::FindAllOngoingSessions() {
     std::vector<DatabaseEntity::Session> entries;
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("SELECT * FROM session WHERE exit_time = :exit_time");
     query.bindValue(":exit_time", QDateTime::fromSecsSinceEpoch(0));
     query.exec();

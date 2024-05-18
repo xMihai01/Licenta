@@ -16,7 +16,7 @@ namespace DatabaseDataAccess {
 
 	public:
 
-		CameraKey();
+		CameraKey(const QString& usedDatabase);
 
 		DatabaseEntity::CameraKey FindByID(const uint32_t id);
 		DatabaseEntity::CameraKey FindByKey(const QtKeyEnum key);
@@ -26,6 +26,9 @@ namespace DatabaseDataAccess {
 		void Remove(const DatabaseEntity::CameraKey& cameraKey);
 		void Update(const DatabaseEntity::CameraKey& cameraKey);
 
+	private:
+
+		QString m_usedDatabase;
 	};
 
 }

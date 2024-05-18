@@ -7,6 +7,9 @@ namespace DatabaseBusinessLogic {
 	class ParkingSpace {
 	public:
 
+		ParkingSpace();
+		ParkingSpace(const QString& usedDatabase);
+		
 		void Add(const DatabaseEntity::ParkingSpace& parkingSpace);
 		void Remove(const DatabaseEntity::ParkingSpace& parkingSpace);
 		void RemoveAllFromCamera(const DatabaseEntity::Camera& camera);

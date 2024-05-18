@@ -10,6 +10,9 @@ namespace DatabaseBusinessLogic {
 		
 	public:
 
+		CameraKey();
+		CameraKey(const QString& usedDatabase);
+
 		DatabaseEntity::CameraKey FindByID(const uint32_t id);
 		DatabaseEntity::CameraKey FindByKey(const QtKeyEnum key);
 		std::vector<DatabaseEntity::CameraKey> FindAll();

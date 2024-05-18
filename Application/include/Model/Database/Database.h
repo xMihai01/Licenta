@@ -17,10 +17,10 @@
 #include <iostream>
 
 class Database {
-
 public:
 
 	void Connect(const QString& databaseName);
+	void ConnectDuplicate(const QString& databaseName, const QString& newDatabaseName);
 
 	QSqlDatabase GetDatabase() const;
 

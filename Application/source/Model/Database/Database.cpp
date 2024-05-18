@@ -8,7 +8,7 @@ void Database::Connect(const QString& databaseName)
 
 		auto databaseDetails = JsonFileUtils::ReadDatabaseInfoFromFile(databaseName);
 
-		m_database = QSqlDatabase::addDatabase(databaseDetails[1]);
+		m_database = QSqlDatabase::addDatabase(databaseDetails[1], "main");
 		m_database.setHostName(databaseDetails[2]);
 		m_database.setDatabaseName(databaseDetails[3]);
 		m_database.setUserName(databaseDetails[4]);
@@ -18,6 +18,35 @@ void Database::Connect(const QString& databaseName)
 			std::cout << "Connection to database established.";
 			isConncted = true;
 			Validations();
+		}
+		else {
+			throw std::runtime_error(m_database.lastError().text().toStdString());
+		}
+	}
+	catch (const std::exception& exception) {
+		throw exception;
+	}
+}
+
+void Database::ConnectDuplicate(const QString& databaseName, const QString& newDatabaseName)
+{
+	try {
+		auto databaseDetails = JsonFileUtils::ReadDatabaseInfoFromFile(databaseName);
+
+		m_database = QSqlDatabase::addDatabase(databaseDetails[1], newDatabaseName);
+		m_database.setHostName(databaseDetails[2]);
+		m_database.setDatabaseName(databaseDetails[3]);
+		m_database.setUserName(databaseDetails[4]);
+		m_database.setPassword(databaseDetails[5]);
+
+		if (m_database.open(databaseDetails[4], databaseDetails[5])) { // username, password
+			std::cout << "Duplicate connection to database established: " << newDatabaseName.toStdString();
+			m_parkingSpace = DatabaseBusinessLogic::ParkingSpace(newDatabaseName);
+			m_parkingSession = DatabaseBusinessLogic::ParkingSession(newDatabaseName);
+			m_session = DatabaseBusinessLogic::Session(newDatabaseName);
+			m_camera = DatabaseBusinessLogic::Camera(newDatabaseName);
+			m_cameraKey = DatabaseBusinessLogic::CameraKey(newDatabaseName);
+			m_cameraType = DatabaseBusinessLogic::CameraType(newDatabaseName);
 		}
 		else {
 			throw std::runtime_error(m_database.lastError().text().toStdString());

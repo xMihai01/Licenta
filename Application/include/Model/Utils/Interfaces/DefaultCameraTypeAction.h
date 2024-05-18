@@ -6,7 +6,7 @@
 class DefaultCameraTypeAction : public ICameraTypeCustomAction {
 public:
 
-	DefaultCameraTypeAction();
+	DefaultCameraTypeAction(const Database& database);
 
 	void DoEntrance(const DatabaseEntity::Camera& camera, DatabaseEntity::Session& session);
 	void DoExit(const DatabaseEntity::Camera& camera, DatabaseEntity::Session& session);

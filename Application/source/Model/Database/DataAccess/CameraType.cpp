@@ -1,12 +1,13 @@
 #include "Model/Database/DataAccess/CameraType.h"
 
-DatabaseDataAccess::CameraType::CameraType()
+DatabaseDataAccess::CameraType::CameraType(const QString& usedDatabase)
+    : m_usedDatabase(usedDatabase)
 {
 }
 
 void DatabaseDataAccess::CameraType::Remove(const DatabaseEntity::CameraType& cameraType) 
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("DELETE FROM camera_type WHERE camera_type.id = :id");
     query.bindValue(":id", cameraType.GetID());
 
@@ -24,7 +25,7 @@ void DatabaseDataAccess::CameraType::RemoveAll()
 
 void DatabaseDataAccess::CameraType::Add(const DatabaseEntity::CameraType& cameraType, const bool ignoreId)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     ignoreId ? query.prepare("INSERT INTO camera_type (type) VALUES (:type)") : query.prepare("INSERT INTO camera_type (id, type) VALUES (:id, :type)");
     if (!ignoreId)
         query.bindValue(":id", cameraType.GetID());
@@ -38,7 +39,7 @@ void DatabaseDataAccess::CameraType::Add(const DatabaseEntity::CameraType& camer
 std::vector<DatabaseEntity::CameraType> DatabaseDataAccess::CameraType::FindAll()
 {
     std::vector<DatabaseEntity::CameraType> entries;
-    QSqlQuery query("SELECT * FROM camera_type");
+    QSqlQuery query("SELECT * FROM camera_type", QSqlDatabase::database(m_usedDatabase));
 
     if (!query.isActive())
         throw std::runtime_error(query.lastError().text().toStdString());
@@ -54,7 +55,7 @@ std::vector<DatabaseEntity::CameraType> DatabaseDataAccess::CameraType::FindAll(
 
 DatabaseEntity::CameraType DatabaseDataAccess::CameraType::FindByID(const uint32_t id)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("SELECT * FROM camera_type WHERE camera_type.id = :id");
     query.bindValue(":id", id);
     query.exec();

@@ -1,8 +1,13 @@
 #include "Model/Database/DataAccess/ParkingSession.h"
 
+DatabaseDataAccess::ParkingSession::ParkingSession(const QString& usedDatabase)
+    : m_usedDatabase(usedDatabase)
+{
+}
+
 void DatabaseDataAccess::ParkingSession::Add(const DatabaseEntity::ParkingSession& parkingSession)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("INSERT INTO parking_session (session_id, parking_camera_id, parking_space_id, start_time, end_time) VALUES (:session_id, :parking_camera_id, :parking_space_id, :start_time, :end_time)");
     query.bindValue(":session_id", parkingSession.GetSessionID());
     query.bindValue(":parking_camera_id", parkingSession.GetParkingCameraID());
@@ -16,7 +21,7 @@ void DatabaseDataAccess::ParkingSession::Add(const DatabaseEntity::ParkingSessio
 
 void DatabaseDataAccess::ParkingSession::Update(const DatabaseEntity::ParkingSession& parkingSession)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("UPDATE parking_session SET end_time = :end_time WHERE id = :id; ");
     query.bindValue(":id", parkingSession.GetID());
     query.bindValue(":end_time", parkingSession.GetEndTime());
@@ -29,7 +34,7 @@ void DatabaseDataAccess::ParkingSession::Update(const DatabaseEntity::ParkingSes
 std::vector<DatabaseEntity::ParkingSession> DatabaseDataAccess::ParkingSession::FindAll()
 {
     std::vector<DatabaseEntity::ParkingSession> entries;
-    QSqlQuery query("SELECT * FROM parking_session");
+    QSqlQuery query("SELECT * FROM parking_session", QSqlDatabase::database(m_usedDatabase));
 
     if (!query.isActive())
         throw std::runtime_error(query.lastError().text().toStdString());
@@ -49,7 +54,7 @@ std::vector<DatabaseEntity::ParkingSession> DatabaseDataAccess::ParkingSession::
 
 DatabaseEntity::ParkingSession DatabaseDataAccess::ParkingSession::FindByID(const uint32_t id)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("SELECT * FROM parking_session WHERE parking_session.id = :id");
     query.bindValue(":id", id);
     query.exec();
@@ -75,7 +80,7 @@ DatabaseEntity::ParkingSession DatabaseDataAccess::ParkingSession::FindByID(cons
 std::vector<DatabaseEntity::ParkingSession> DatabaseDataAccess::ParkingSession::FindBySessionID(const uint32_t sessionID)
 {
     std::vector<DatabaseEntity::ParkingSession> entries;
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("SELECT * FROM parking_session WHERE session_id = :session_id");
     query.bindValue(":session_id", sessionID);
     query.exec();

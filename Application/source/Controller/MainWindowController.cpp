@@ -14,10 +14,10 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForEntranceCameraFrame));
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForExitCameraFrame));
         
-        SetupCameras();
-
         // loading detection types for each camera type
         JsonFileUtils::CheckChosenDetectionTypeFile();
+
+        SetupCameras();
        
     }
     catch (const std::exception& exception) {
@@ -85,13 +85,24 @@ void MainWindowController::SetupCameras()
                 m_cameraSlot.second.second = videoCamera;
             }
             m_cameraIDToVideoCameraMap.insert(std::make_pair(camera.GetID(), videoCamera));
+            m_videoCameraToCameraMap.insert(std::make_pair(videoCamera, camera));
         }
         for (auto& camera : m_entranceVideoCameras)
             std::thread([&]() { camera->ReadFrames(); }).detach();
         for (auto& camera : m_exitVideoCameras)
             std::thread([&]() { camera->ReadFrames(); }).detach();
-        for (auto& camera : m_parkingVideoCameras)
+        for (auto& camera : m_parkingVideoCameras) {
             std::thread([&]() { camera->ReadFrames(); }).detach();
+            std::thread([&]() {
+                try {
+                ActionManagement dedicatedActionManagement(true);
+                while (camera->IsCameraOpened()) {
+                    dedicatedActionManagement.StartAction(camera->GetCurrentFrame(), m_videoCameraToCameraMap[camera]);
+                    std::this_thread::sleep_for(std::chrono::seconds(5));
+                } } catch (...) {}
+            }).detach();
+        }
+
     }
     catch (const std::exception& exception) {
         Close();
@@ -168,6 +179,7 @@ void MainWindowController::Close()
     m_exitVideoCameras.clear();
     m_parkingVideoCameras.clear();
     m_cameraIDToVideoCameraMap.clear();
+    m_videoCameraToCameraMap.clear();
 }
 
 void MainWindowController::GetDefaultCameras()

@@ -16,6 +16,7 @@ namespace DatabaseDataAccess {
 	public:
 
 		CameraType();
+		CameraType(const QString& usedDatabase);
 
 		std::vector<DatabaseEntity::CameraType> FindAll();
 		DatabaseEntity::CameraType FindByID(const uint32_t id);
@@ -26,6 +27,9 @@ namespace DatabaseDataAccess {
 
 		void Add(const DatabaseEntity::CameraType& cameraType, const bool ignoreId = true);
 
+	private:
+
+		QString m_usedDatabase;
 	};
 
 }

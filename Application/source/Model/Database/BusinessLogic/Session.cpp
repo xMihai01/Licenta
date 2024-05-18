@@ -1,5 +1,15 @@
 #include "Model/Database/BusinessLogic/Session.h"
 
+DatabaseBusinessLogic::Session::Session()
+	: m_dataAccess(DatabaseDataAccess::Session("main"))
+{
+}
+
+DatabaseBusinessLogic::Session::Session(const QString& usedDatabase)
+	: m_dataAccess(DatabaseDataAccess::Session(usedDatabase))
+{
+}
+
 void DatabaseBusinessLogic::Session::ForceExitForSessionID(const uint32_t sessionID)
 {
 	DatabaseEntity::ParkingSession parkingSession = m_parkingSessionBL.FindOngoingParkingSessionBySessionID(sessionID);
@@ -70,7 +80,7 @@ std::string DatabaseBusinessLogic::Session::GenerateSecretID(const DatabaseEntit
 	QString timeInSecs = QString::number(session.GetEntranceTime().toSecsSinceEpoch());
 	QString timeInMSecs = QString::number(session.GetEntranceTime().toMSecsSinceEpoch());
 	std::string secretID = timeInSecs.toStdString();
-	for (size_t index = timeInMSecs.length(); index >= timeInMSecs.length() - 3; index--)
+	for (size_t index = timeInMSecs.length() - 1; index >= timeInMSecs.length() - 3; index--)
 		secretID += std::to_string(timeInMSecs[index].toLatin1());
 	return secretID + session.GetLicensePlate();
 }

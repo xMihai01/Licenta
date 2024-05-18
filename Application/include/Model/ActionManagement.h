@@ -8,7 +8,11 @@ class ActionManagement {
 
 public:
 
-	ActionManagement();
+	static inline LicensePlateDetection::Workflow licensePlateDetectionWorkFlow;
+
+public:
+
+	ActionManagement(const bool requiresDifferentDatabase = false);
 
 	void StartAction(const cv::Mat& frame, const DatabaseEntity::Camera& camera);
 
@@ -22,8 +26,6 @@ private:
 	void NotifyListeners(const DatabaseEntity::Camera& camera, const std::string& detectedLicensePlate, const DatabaseEntity::ParkingSpace& parkingSpace = DatabaseEntity::ParkingSpace());
 
 private:
-
-	LicensePlateDetection::Workflow m_licenseWorkflow;
 
 	std::vector<std::shared_ptr<ICameraTypeCustomAction>> m_listeners;
 
