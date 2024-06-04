@@ -46,14 +46,13 @@ void ActionManagement::StartAction(const cv::Mat& frame, const DatabaseEntity::C
 void ActionManagement::CheckAllParkingSpaces(const DatabaseEntity::Camera& camera, const cv::Mat& inputFrame, const LicensePlateDetection::DetectionType selectedDetectionType)
 {
     std::string text = "";
-    std::string ipText = "";
     cv::Mat inputFrameCropped;
     cv::Mat outputImage;
     for (const auto& space : m_database.ToParkingSpace().FindAllByCamera(camera)) {
 
         Utils::CropImageFromRectangle(inputFrame, inputFrameCropped, cv::Point2d(space.GetX1(), space.GetY1()), cv::Point2d(space.GetX2(), space.GetY2()));
         ActionManagement::licensePlateDetectionWorkFlow.Detect(inputFrameCropped, outputImage, text, selectedDetectionType);
-        std::cout << space.GetName() << ": IP: " << ipText << " | DNN: " << text << "\n";
+        std::cout << space.GetName() << ": " << text << "\n";
 
         NotifyListeners(camera, text, space);
     }

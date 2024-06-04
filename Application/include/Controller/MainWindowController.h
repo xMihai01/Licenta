@@ -8,7 +8,6 @@
 
 #include <QApplication>
 #include <QLabel>
-#include <QThread>
 
 class MainWindowController {
 

@@ -94,12 +94,15 @@ void MainWindowController::SetupCameras()
         for (auto& camera : m_parkingVideoCameras) {
             std::thread([&]() { camera->ReadFrames(); }).detach();
             std::thread([&]() {
-                try {
+               
                 ActionManagement dedicatedActionManagement(true);
                 while (camera->IsCameraOpened()) {
+                    try {
                     dedicatedActionManagement.StartAction(camera->GetCurrentFrame(), m_videoCameraToCameraMap[camera]);
-                    std::this_thread::sleep_for(std::chrono::seconds(5));
-                } } catch (...) {}
+                    }
+                    catch (...) { std::cout << "\n\nskipped current frame due to unexpected error.\n\n"; }
+                    std::this_thread::sleep_for(std::chrono::seconds(2));
+                } 
             }).detach();
         }
 
@@ -180,6 +183,7 @@ void MainWindowController::Close()
     m_parkingVideoCameras.clear();
     m_cameraIDToVideoCameraMap.clear();
     m_videoCameraToCameraMap.clear();
+    std::this_thread::sleep_for(std::chrono::seconds(4));
 }
 
 void MainWindowController::GetDefaultCameras()

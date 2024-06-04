@@ -7,7 +7,11 @@ DefaultCameraTypeAction::DefaultCameraTypeAction(const Database& database)
 
 void DefaultCameraTypeAction::DoEntrance(const DatabaseEntity::Camera& camera, DatabaseEntity::Session& session)
 {
-	if (m_database.ToSession().FindValidSessionByLicensePlate(session.GetLicensePlate()).GetID() != 0) {
+	// if license plate's length is smaller than 5 chars, make it empty as it is not valid.
+	if (session.GetLicensePlate().size() < 5)
+		session.SetLicensePlate("");
+
+	if (m_database.ToSession().FindValidSessionByLicensePlate(session.GetLicensePlate()).GetID() != 0 && session.GetLicensePlate().size() >= 5) {
 		qDebug() << "\nCouldn't create new session as there is already an ongoing session with this license plate. If this is a mistake, force exit session with ID: " 
 			<< m_database.ToSession().FindValidSessionByLicensePlate(session.GetLicensePlate()).GetID();
 		return;
@@ -21,7 +25,7 @@ void DefaultCameraTypeAction::DoEntrance(const DatabaseEntity::Camera& camera, D
 
 void DefaultCameraTypeAction::DoExit(const DatabaseEntity::Camera& camera, DatabaseEntity::Session& session)
 {
-	if (session.GetID() == 0) {
+	if (session.GetID() == 0 || session.GetLicensePlate() == "") {
 		qDebug() << "\nCouldn't detect current session beucase the license plate was not detected. Please use SecretID to exit.";
 		return;
 	}

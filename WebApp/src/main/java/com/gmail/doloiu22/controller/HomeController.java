@@ -50,6 +50,7 @@ public class HomeController {
         Optional<SessionEntity> session = sessionService.findById((long)sessionID);
         if (session.isEmpty() || !session.get().getLicensePlate().equals(authentication.getName()))
             return "other_errors/missing_permission";
+	Collections.reverse(sessions);
 
         model.addAttribute("sessions", sessions);
         model.addAttribute("sessionID", sessionID);
