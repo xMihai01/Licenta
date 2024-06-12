@@ -1,11 +1,12 @@
 #pragma once
 
-#include <Model/Database/BusinessLogic/CameraType.h>
+#include <Model/Database/Entities/CameraType.h>
 
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QDebug>
 
+#include <stdexcept>
+#include <unordered_set>
 #include <iostream>
 
 namespace DatabaseDataAccess {
@@ -15,26 +16,20 @@ namespace DatabaseDataAccess {
 	public:
 
 		CameraType();
-
-		void CheckTableValidation();
+		CameraType(const QString& usedDatabase);
 
 		std::vector<DatabaseEntity::CameraType> FindAll();
 		DatabaseEntity::CameraType FindByID(const uint32_t id);
 		DatabaseEntity::CameraType FindByType(const DatabaseEntity::CameraType::Type type);
 
-		DatabaseBusinessLogic::CameraType ToBusinessLogic() const;
-
-	private:
-
 		void Remove(const DatabaseEntity::CameraType& cameraType);
 		void RemoveAll();
 
 		void Add(const DatabaseEntity::CameraType& cameraType, const bool ignoreId = true);
-		
+
 	private:
 
-		DatabaseBusinessLogic::CameraType m_businessLogic;
-
+		QString m_usedDatabase;
 	};
 
 }

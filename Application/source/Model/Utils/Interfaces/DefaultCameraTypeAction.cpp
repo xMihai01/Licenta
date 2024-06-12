@@ -1,12 +1,17 @@
 #include "Model/Utils/Interfaces/DefaultCameraTypeAction.h"
 
-DefaultCameraTypeAction::DefaultCameraTypeAction()
+DefaultCameraTypeAction::DefaultCameraTypeAction(const Database& database)
+	: m_database(database)
 {
 }
 
 void DefaultCameraTypeAction::DoEntrance(const DatabaseEntity::Camera& camera, DatabaseEntity::Session& session)
 {
-	if (m_database.ToSession().FindValidSessionByLicensePlate(session.GetLicensePlate()).GetID() != 0) {
+	// if license plate's length is smaller than 5 chars, make it empty as it is not valid.
+	if (session.GetLicensePlate().size() < 5)
+		session.SetLicensePlate("");
+
+	if (m_database.ToSession().FindValidSessionByLicensePlate(session.GetLicensePlate()).GetID() != 0 && session.GetLicensePlate().size() >= 5) {
 		qDebug() << "\nCouldn't create new session as there is already an ongoing session with this license plate. If this is a mistake, force exit session with ID: " 
 			<< m_database.ToSession().FindValidSessionByLicensePlate(session.GetLicensePlate()).GetID();
 		return;
@@ -14,13 +19,13 @@ void DefaultCameraTypeAction::DoEntrance(const DatabaseEntity::Camera& camera, D
 
 	session.SetEntranceTime(QDateTime::currentDateTime());
 	m_database.ToSession().Add(session);
-	qDebug() << "\nCreated new session: " << session.GetID() << "\nLicense plate: " << QString::fromStdString(session.GetLicensePlate())
+	qDebug() << "\nCreated new session" << "\nLicense plate: " << QString::fromStdString(session.GetLicensePlate())
 		<< "\nSecret ID: " << QString::fromStdString(session.GetSecretID());
 }
 
 void DefaultCameraTypeAction::DoExit(const DatabaseEntity::Camera& camera, DatabaseEntity::Session& session)
 {
-	if (session.GetID() == 0) {
+	if (session.GetID() == 0 || session.GetLicensePlate() == "") {
 		qDebug() << "\nCouldn't detect current session beucase the license plate was not detected. Please use SecretID to exit.";
 		return;
 	}
@@ -41,7 +46,10 @@ void DefaultCameraTypeAction::DoParking(const DatabaseEntity::Camera& camera, Da
 	DatabaseEntity::ParkingSession parkingSession = m_database.ToParkingSession().FindOngoingParkingSessionBySessionID(session.GetID());
 
 	// Driver is already parked here/license plate was not found in any ongoing sessions.
-	if (session.GetID() == 0 || parkingSession.GetParkingSpaceID() == parkingSpace.GetID()) {
+	if (session.GetID() == 0 || session.GetLicensePlate() == "") {
+		return;
+	}
+	if (parkingSession.GetParkingSpaceID() == parkingSpace.GetID()) {
 		return;
 	}
 

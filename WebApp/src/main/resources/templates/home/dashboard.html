@@ -17,8 +17,9 @@
             <th class="py-2 px-4">Exit Date</th>
             <th class="py-2 px-4">Time Spent (min)</th>
             <th class="py-2 px-4">Parking History</th>
-            <th class="py-2 px-4">Payment</th>
-            <th class="py-2 px-4">Report</th>
+            <th class="py-2 px-4">Status</th>
+            <th class="py-2 px-4">SecretID</th>
+            <th class="py-2 px-4"></th>
         </tr>
         </thead>
         <tbody>
@@ -34,12 +35,15 @@
                     <button class="bg-indigo-500 text-white py-1 px-3 rounded hover:bg-indigo-600 focus:outline-none" type="submit">View</button>
                 </td>
             </form>
-            <form th:action="@{/home/viewPayment}" th:method="post">
+            <td class="py-2 px-4" style="text-align: center;">
+                <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
+                <button th:class="${paymentService.isSessionPaid(sessionItem.id) ? 'bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600 focus:outline-none'
+ : 'bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 focus:outline-none'}" type="submit" th:text="${paymentService.isSessionPaid(sessionItem.id) ? 'EXITED' : 'NOT EXITED'}">Status</button>
+            </td>
+            <form th:action="@{/home/viewSecretID}" th:method="post">
                 <td class="py-2 px-4" style="text-align: center;">
                     <input type="hidden" name="sessionID" th:value="${sessionItem.id}" />
-                    <button th:class="${paymentService.isSessionPaid(sessionItem.id) ? 'bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600 focus:outline-none'
- : 'bg-indigo-500 text-white py-1 px-3 rounded hover:bg-indigo-600 focus:outline-none'}" type="submit"
-                    th:text="${paymentService.isSessionPaid(sessionItem.id) ? 'PAID' : 'Pay'}">Pay</button>
+                    <button class="bg-indigo-500 text-white py-1 px-3 rounded hover:bg-indigo-600 focus:outline-none" type="submit">View</button>
                 </td>
             </form>
             <form th:action="@{/home/createReport}" th:method="post">

@@ -1,28 +1,13 @@
 #include "Model/Database/DataAccess/CameraType.h"
 
-DatabaseDataAccess::CameraType::CameraType()
+DatabaseDataAccess::CameraType::CameraType(const QString& usedDatabase)
+    : m_usedDatabase(usedDatabase)
 {
-}
-
-void DatabaseDataAccess::CameraType::CheckTableValidation()
-{
-    try {
-        if (!m_businessLogic.areTableEntriesValid(FindAll())) {
-            std::cout << "Detected invalid table entries! If this is the first time running the application, ignore this!";
-            RemoveAll();
-            for (const auto& entry : m_businessLogic.GetAllValidEntries())
-                Add(entry, false);
-        }
-        std::cout << "CameraType table was successfully validated!";
-    }
-    catch (const std::exception& exception) {
-        throw exception;
-    }
 }
 
 void DatabaseDataAccess::CameraType::Remove(const DatabaseEntity::CameraType& cameraType) 
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("DELETE FROM camera_type WHERE camera_type.id = :id");
     query.bindValue(":id", cameraType.GetID());
 
@@ -40,11 +25,11 @@ void DatabaseDataAccess::CameraType::RemoveAll()
 
 void DatabaseDataAccess::CameraType::Add(const DatabaseEntity::CameraType& cameraType, const bool ignoreId)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     ignoreId ? query.prepare("INSERT INTO camera_type (type) VALUES (:type)") : query.prepare("INSERT INTO camera_type (id, type) VALUES (:id, :type)");
     if (!ignoreId)
         query.bindValue(":id", cameraType.GetID());
-    query.bindValue(":type", m_businessLogic.ConvertTypeToQString(cameraType.GetType()));
+    query.bindValue(":type", DatabaseEntity::CameraType::ConvertTypeToQString(cameraType.GetType()));
 
     if (query.exec())
         qDebug() << "Entry added successfully";
@@ -54,14 +39,14 @@ void DatabaseDataAccess::CameraType::Add(const DatabaseEntity::CameraType& camer
 std::vector<DatabaseEntity::CameraType> DatabaseDataAccess::CameraType::FindAll()
 {
     std::vector<DatabaseEntity::CameraType> entries;
-    QSqlQuery query("SELECT * FROM camera_type");
+    QSqlQuery query("SELECT * FROM camera_type", QSqlDatabase::database(m_usedDatabase));
 
     if (!query.isActive())
         throw std::runtime_error(query.lastError().text().toStdString());
 
     while (query.next()) {
         uint32_t id = query.value("id").toInt();
-        DatabaseEntity::CameraType::Type type = m_businessLogic.ConvertQStringToType(query.value("type").toString());
+        DatabaseEntity::CameraType::Type type = DatabaseEntity::CameraType::ConvertQStringToType(query.value("type").toString());
 
         entries.push_back(DatabaseEntity::CameraType(id, type));
     }
@@ -70,7 +55,7 @@ std::vector<DatabaseEntity::CameraType> DatabaseDataAccess::CameraType::FindAll(
 
 DatabaseEntity::CameraType DatabaseDataAccess::CameraType::FindByID(const uint32_t id)
 {
-    QSqlQuery query;
+    QSqlQuery query(QSqlDatabase::database(m_usedDatabase));
     query.prepare("SELECT * FROM camera_type WHERE camera_type.id = :id");
     query.bindValue(":id", id);
     query.exec();
@@ -81,7 +66,7 @@ DatabaseEntity::CameraType DatabaseDataAccess::CameraType::FindByID(const uint32
 
     while (query.next()) {
         uint32_t id = query.value("id").toInt();
-        DatabaseEntity::CameraType::Type type = m_businessLogic.ConvertQStringToType(query.value("type").toString());
+        DatabaseEntity::CameraType::Type type = DatabaseEntity::CameraType::ConvertQStringToType(query.value("type").toString());
         
         cameraTypeEntity = DatabaseEntity::CameraType(id, type);
     }
@@ -91,9 +76,4 @@ DatabaseEntity::CameraType DatabaseDataAccess::CameraType::FindByID(const uint32
 DatabaseEntity::CameraType DatabaseDataAccess::CameraType::FindByType(const DatabaseEntity::CameraType::Type type)
 {
     return FindByID(static_cast<int>(type));
-}
-
-DatabaseBusinessLogic::CameraType DatabaseDataAccess::CameraType::ToBusinessLogic() const 
-{
-    return m_businessLogic;
 }

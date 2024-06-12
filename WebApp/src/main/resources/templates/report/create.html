@@ -33,7 +33,7 @@
         <form class="flex flex-col" th:method="post" th:action="@{/report/createReport}">
             <input th:type="hidden" th:id="sessionID" th:name="sessionID" th:value="${sessionID}" />
             <div class="mb-6 pt-3 rounded bg-gray-200">
-                <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="yourLicensePlate">Your License Plate (if detected)</label>
+                <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="yourLicensePlate">Reporter License Plate (Victim)</label>
                 <input type="text" id="yourLicensePlate" name="yourLicensePlate" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-red-600 transition duration-500 px-3 pb-3"
                        th:placeholder="${session.licensePlate}">
             </div>

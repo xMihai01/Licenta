@@ -1,5 +1,14 @@
 #include <Model/Database/BusinessLogic/ParkingSpace.h>
 
+DatabaseBusinessLogic::ParkingSpace::ParkingSpace()
+    : m_dataAccess(DatabaseDataAccess::ParkingSpace("main"))
+{
+}
+
+DatabaseBusinessLogic::ParkingSpace::ParkingSpace(const QString& usedDatabase)
+    : m_dataAccess(DatabaseDataAccess::ParkingSpace(usedDatabase))
+{
+}
 
 void DatabaseBusinessLogic::ParkingSpace::Add(const DatabaseEntity::ParkingSpace& parkingSpace)
 {

@@ -1,5 +1,14 @@
 #include "Model/Database/BusinessLogic/ParkingSession.h"
 
+DatabaseBusinessLogic::ParkingSession::ParkingSession()
+	: m_dataAccess(DatabaseDataAccess::ParkingSession("main"))
+{
+}
+
+DatabaseBusinessLogic::ParkingSession::ParkingSession(const QString& usedDatabase)
+	: m_dataAccess(DatabaseDataAccess::ParkingSession(usedDatabase))
+{
+}
 
 DatabaseEntity::ParkingSession DatabaseBusinessLogic::ParkingSession::FindOngoingParkingSessionBySessionID(const uint32_t sessionID)
 {

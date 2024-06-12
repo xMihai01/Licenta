@@ -38,6 +38,7 @@ private slots:
     void GetFrame(const uint32_t cameraID);
 
     void OnViewSpecificCameraButtonClick();
+    void OnChangeDetectionTypeButtonClick();
     void OnRefreshButtonClicked();
 
     void OnCameraManagementAddButtonClick();
@@ -45,6 +46,7 @@ private slots:
     void OnCameraManagementUpdateButtonClick();
     void OnCameraManagementParkingButtonClick();
     void OnForceExitForEntryButtonClicked();
+    void OnForceActionByPhotoButtonClicked();
 
 private:
     Ui::MainWindow *ui;

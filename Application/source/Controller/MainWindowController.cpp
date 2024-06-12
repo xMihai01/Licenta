@@ -14,6 +14,9 @@ MainWindowController::MainWindowController(QLabel* labelForEntranceCameraFrame, 
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForEntranceCameraFrame));
         m_videoListeners.push_back(std::make_shared<InterfaceVideoListener>(labelForExitCameraFrame));
         
+        // loading detection types for each camera type
+        JsonFileUtils::CheckChosenDetectionTypeFile();
+
         SetupCameras();
        
     }
@@ -82,13 +85,27 @@ void MainWindowController::SetupCameras()
                 m_cameraSlot.second.second = videoCamera;
             }
             m_cameraIDToVideoCameraMap.insert(std::make_pair(camera.GetID(), videoCamera));
+            m_videoCameraToCameraMap.insert(std::make_pair(videoCamera, camera));
         }
         for (auto& camera : m_entranceVideoCameras)
             std::thread([&]() { camera->ReadFrames(); }).detach();
         for (auto& camera : m_exitVideoCameras)
             std::thread([&]() { camera->ReadFrames(); }).detach();
-        for (auto& camera : m_parkingVideoCameras)
+        for (auto& camera : m_parkingVideoCameras) {
             std::thread([&]() { camera->ReadFrames(); }).detach();
+            std::thread([&]() {
+               
+                ActionManagement dedicatedActionManagement(true);
+                while (camera->IsCameraOpened()) {
+                    try {
+                    dedicatedActionManagement.StartAction(camera->GetCurrentFrame(), m_videoCameraToCameraMap[camera]);
+                    }
+                    catch (...) { std::cout << "\n\nskipped current frame due to unexpected error.\n\n"; }
+                    std::this_thread::sleep_for(std::chrono::seconds(2));
+                } 
+            }).detach();
+        }
+
     }
     catch (const std::exception& exception) {
         Close();
@@ -111,9 +128,25 @@ void MainWindowController::ChangeCameraOnSlot(const DatabaseEntity::Camera& came
     }
 }
 
+void MainWindowController::ChangeDetectionTypeForCameraType(const DatabaseEntity::CameraType& cameraType, const QString& selectedDetectionType)
+{
+    try {
+        JsonFileUtils::UpdateDetectionTypeInFile(cameraType.GetType(), selectedDetectionType);
+    } catch (...) {
+        throw std::runtime_error("An error occured while saving the new detection type to the json file! Try deleting detections.json or try again!");
+    }
+}
+
 void MainWindowController::ForceExitAction(const DatabaseEntity::Camera& camera, const DatabaseEntity::Session& session)
 {
     m_database.ToSession().ForceExitForSessionID(session.GetID());
+}
+
+void MainWindowController::ForcePhotoAction(const DatabaseEntity::Camera& camera, const QString& photoPath)
+{
+    cv::Mat inputFrame = cv::imread(cv::String(photoPath.toStdString()));
+
+    m_actionManagement.StartAction(inputFrame, camera);
 }
 
 void MainWindowController::Refresh()
@@ -149,6 +182,8 @@ void MainWindowController::Close()
     m_exitVideoCameras.clear();
     m_parkingVideoCameras.clear();
     m_cameraIDToVideoCameraMap.clear();
+    m_videoCameraToCameraMap.clear();
+    std::this_thread::sleep_for(std::chrono::seconds(4));
 }
 
 void MainWindowController::GetDefaultCameras()

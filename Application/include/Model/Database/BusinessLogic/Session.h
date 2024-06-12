@@ -12,7 +12,8 @@ namespace DatabaseBusinessLogic {
 
 	public:
 
-		// TODO: Add other functions for calculating number of hours stayed in the parking lot, valid parking in valid spaces, etc
+		Session();
+		Session(const QString& usedDatabase);
 		
 		void ForceExitForSessionID(const uint32_t sessionID);
 		std::vector<DatabaseEntity::Session> FindAllOngoingSessions();

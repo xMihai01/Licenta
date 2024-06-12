@@ -11,16 +11,21 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Parking Management System: Camera Management</string>
   </property>
   <widget class="QListWidget" name="cameraWidgetList">
    <property name="geometry">
     <rect>
-     <x>235</x>
+     <x>250</x>
      <y>60</y>
-     <width>141</width>
-     <height>192</height>
+     <width>111</width>
+     <height>151</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
    </property>
    <property name="frameShape">
     <enum>QFrame::WinPanel</enum>
@@ -32,22 +37,27 @@
   <widget class="QLabel" name="cameraListLabel">
    <property name="geometry">
     <rect>
-     <x>270</x>
+     <x>260</x>
      <y>30</y>
-     <width>63</width>
+     <width>91</width>
      <height>20</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
    <property name="text">
-    <string>Cameras</string>
+    <string>Cameras List</string>
    </property>
   </widget>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>20</x>
      <y>60</y>
-     <width>211</width>
+     <width>201</width>
      <height>155</height>
     </rect>
    </property>
@@ -57,8 +67,13 @@
     </item>
     <item row="2" column="0">
      <widget class="QLabel" name="cameraNameLabel">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Name</string>
+       <string>Name:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -67,8 +82,13 @@
     </item>
     <item row="1" column="0">
      <widget class="QLabel" name="cameraLocationLabel">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Path/Index</string>
+       <string>Path/Index:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -77,6 +97,11 @@
     </item>
     <item row="3" column="1">
      <widget class="QComboBox" name="cameraTypeComboBox">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
       <item>
        <property name="text">
         <string>ENTRANCE</string>
@@ -99,8 +124,13 @@
     </item>
     <item row="0" column="0">
      <widget class="QLabel" name="cameraIDLabel">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>ID</string>
+       <string>ID:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -109,8 +139,13 @@
     </item>
     <item row="3" column="0">
      <widget class="QLabel" name="cameraTypeLabel">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Type</string>
+       <string>Type:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -126,8 +161,13 @@
     </item>
     <item row="4" column="0">
      <widget class="QLabel" name="cameraKeyLabel">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Key</string>
+       <string>Key:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -135,7 +175,13 @@
      </widget>
     </item>
     <item row="4" column="1">
-     <widget class="QComboBox" name="cameraKeyComboBox"/>
+     <widget class="QComboBox" name="cameraKeyComboBox">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -151,6 +197,14 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QPushButton" name="runTestButton">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {	border: 2px solid gray; border-radius: 10px; padding: 0 8px; background: lightgray;	} QPushButton:hover { color: white }</string>
+      </property>
       <property name="text">
        <string>Run Test</string>
       </property>
@@ -158,6 +212,14 @@
     </item>
     <item>
      <widget class="QPushButton" name="actionButton">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {	border: 2px solid gray; border-radius: 10px; padding: 0 8px; background: lightgray;	} QPushButton:hover { color: white }</string>
+      </property>
       <property name="text">
        <string>Action</string>
       </property>
@@ -168,8 +230,8 @@
   <widget class="QWidget" name="horizontalLayoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>234</x>
-     <y>260</y>
+     <x>240</x>
+     <y>220</y>
      <width>141</width>
      <height>31</height>
     </rect>
@@ -177,6 +239,14 @@
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <widget class="QPushButton" name="slot1Button">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {	border: 2px solid gray; border-radius: 10px; padding: 0 8px; background: lightgray;	} QPushButton:hover { color: white }</string>
+      </property>
       <property name="text">
        <string>Slot1</string>
       </property>
@@ -184,12 +254,38 @@
     </item>
     <item>
      <widget class="QPushButton" name="slot2Button">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {	border: 2px solid gray; border-radius: 10px; padding: 0 8px; background: lightgray;	} QPushButton:hover { color: white }</string>
+      </property>
       <property name="text">
        <string>Slot2</string>
       </property>
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="cameraListLabel_2">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>30</y>
+     <width>111</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Camera Details</string>
+   </property>
   </widget>
  </widget>
  <resources/>

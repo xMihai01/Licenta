@@ -11,6 +11,9 @@ namespace DatabaseBusinessLogic {
 
 	public:
 
+		ParkingSession();
+		ParkingSession(const QString& usedDatabase);
+
 		DatabaseEntity::ParkingSession FindOngoingParkingSessionBySessionID(const uint32_t sessionID);
 
 		void Add(DatabaseEntity::ParkingSession& parkingSession);

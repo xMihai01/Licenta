@@ -16,6 +16,7 @@ import com.gmail.doloiu22.util.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class HomeController {
     @GetMapping
     public String open(Model model, Authentication authentication){
         List<SessionEntity> sessions = sessionService.findAllByLicensePlate(authentication.getName());
+        Collections.reverse(sessions);
 
         model.addAttribute("isAdmin", authentication.getAuthorities().contains(new SimpleGrantedAuthority(Role.ADMIN.name())));
         model.addAttribute("paymentService", paymentService);
@@ -48,6 +50,7 @@ public class HomeController {
         Optional<SessionEntity> session = sessionService.findById((long)sessionID);
         if (session.isEmpty() || !session.get().getLicensePlate().equals(authentication.getName()))
             return "other_errors/missing_permission";
+	Collections.reverse(sessions);
 
         model.addAttribute("sessions", sessions);
         model.addAttribute("sessionID", sessionID);
@@ -76,6 +79,21 @@ public class HomeController {
         return "home/payment";
     }
 
+    @GetMapping("/viewSecretID/{sessionID}")
+    public String openViewSecretID(@PathVariable int sessionID, Model model, Authentication authentication) {
+
+        List<ParkingSessionEntity> sessions = parkingSessionService.findAllBySessionID((long) sessionID);
+        Optional<SessionEntity> session = sessionService.findById((long)sessionID);
+        if (session.isEmpty() || !session.get().getLicensePlate().equals(authentication.getName()))
+            return "other_errors/missing_permission";
+
+        model.addAttribute("sessionID", sessionID);
+        model.addAttribute("secretID", session.get().getSecretID());
+        model.addAttribute("isAdmin", authentication.getAuthorities().contains(new SimpleGrantedAuthority(Role.ADMIN.name())));
+
+        return "home/secretIDview";
+    }
+
     @PostMapping("/viewSpaceHistory")
     public String viewParkingHistoryForSessionIDClick(@RequestParam("sessionID") Long sessionID) {
 
@@ -85,6 +103,11 @@ public class HomeController {
     public String viewPaymentForSessionIDClick(@RequestParam("sessionID") Long sessionID) {
 
         return "redirect:/home/payment/" + sessionID.toString();
+    }
+    @PostMapping("/viewSecretID")
+    public String viewSecretIDClick(@RequestParam("sessionID") Long sessionID) {
+
+        return "redirect:/home/viewSecretID/" + sessionID.toString();
     }
     @PostMapping("/createReport")
     public String createReportForSession(@RequestParam("sessionID") Long sessionID) {

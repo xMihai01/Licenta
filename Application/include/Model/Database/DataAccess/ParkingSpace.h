@@ -2,8 +2,6 @@
 
 #include <Model/Database/Entities/ParkingSpace.h>
 
-#include <Model/Database/DataAccess/Camera.h>
-
 #include <QSqlQuery>
 #include <QSqlError>
 
@@ -16,7 +14,7 @@ namespace DatabaseDataAccess {
 
 	public:
 
-		ParkingSpace();
+		ParkingSpace(const QString& usedDatabase);
 
 		void Add(const DatabaseEntity::ParkingSpace& parkingSpace);
 		void Remove(const DatabaseEntity::ParkingSpace& parkingSpace);
@@ -27,6 +25,9 @@ namespace DatabaseDataAccess {
 		std::vector<DatabaseEntity::ParkingSpace> FindAllByCamera(const DatabaseEntity::Camera& camera);
 		DatabaseEntity::ParkingSpace FindByID(const uint32_t id);
 
+	private:
+
+		QString m_usedDatabase;
 	};
 
 }

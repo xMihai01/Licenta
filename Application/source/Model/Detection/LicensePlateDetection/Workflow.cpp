@@ -80,13 +80,9 @@ void LicensePlateDetection::Workflow::DetectMultiple(const LicensePlateDetection
 		}
 		if (text == plateWords[i - 1])
 			correctPlates++;
-		//std::vector<std::vector<cv::Point>> contours;
-		//cv::findContours(outputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
-		//cv::cvtColor(outputImage, outputImage, cv::COLOR_GRAY2BGR);
-		//cv::drawContours(outputImage, contours, -1, cv::Scalar(0, 255, 0), 1);
 
-		cv::imwrite("../../test/" + std::to_string(i) + "_" + imageName, outputImage);
-		//system("pause");
+		//cv::imwrite("../../test/" + std::to_string(i) + "_" + imageName, outputImage);
+
 		std::cout << "\nTEXT: " << text << " expected: " << plateWords[i-1] << " | Char accuracy: " << (float)correctChars/(float)totalChars*100.0f << "\n";
 	}
 	std::cout << "Accuraccy: " << (float)correctPlates / (float)numberOfPlates * 100.0f << "%";

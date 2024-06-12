@@ -1,13 +1,36 @@
 #include "Model/Database/BusinessLogic/Camera.h"
 
-bool DatabaseBusinessLogic::Camera::IsLocationAnIndex(const DatabaseEntity::Camera& camera)
+DatabaseBusinessLogic::Camera::Camera()
+    : m_dataAccess(DatabaseDataAccess::Camera("main"))
 {
-	//return isalnum(camera.GetLocation()[0]);
-	try {
-		int test = std::stoi(camera.GetLocation());
-		return true;
-	}
-	catch (...) {
-		return false;
-	}
+}
+
+DatabaseBusinessLogic::Camera::Camera(const QString& usedDatabase)
+    : m_dataAccess(DatabaseDataAccess::Camera(usedDatabase))
+{
+}
+
+void DatabaseBusinessLogic::Camera::Add(const DatabaseEntity::Camera& camera)
+{
+    m_dataAccess.Add(camera);
+}
+
+void DatabaseBusinessLogic::Camera::Remove(const DatabaseEntity::Camera& camera)
+{
+    m_dataAccess.Remove(camera);
+}
+
+void DatabaseBusinessLogic::Camera::Update(const DatabaseEntity::Camera& camera)
+{
+    m_dataAccess.Update(camera);
+}
+
+std::vector<DatabaseEntity::Camera> DatabaseBusinessLogic::Camera::FindAll()
+{
+    return m_dataAccess.FindAll();
+}
+
+DatabaseEntity::Camera DatabaseBusinessLogic::Camera::FindByID(const uint32_t id)
+{
+	return m_dataAccess.FindByID(id);
 }

@@ -20,16 +20,19 @@ MainWindow::MainWindow(QWidget* parent)
 
     // Button for changing video source for parking lot cameras
     connect(ui->viewSpecificCameraAction, SIGNAL(triggered()), this, SLOT(OnViewSpecificCameraButtonClick()));
+    connect(ui->actionChange_Detection_Type, SIGNAL(triggered()), this, SLOT(OnChangeDetectionTypeButtonClick()));
     connect(ui->systemTurnButton, SIGNAL(clicked()), this, SLOT(OnRefreshButtonClicked()));
 
-    // Camera management buttons (add, remove, update etc(
+    // Camera management buttons (add, remove, update etc)
     connect(ui->addCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementAddButtonClick()));
     connect(ui->removeCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementRemoveButtonClick()));
     connect(ui->updateCameraAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementUpdateButtonClick()));
     connect(ui->manageParkingAction, SIGNAL(triggered()), this, SLOT(OnCameraManagementParkingButtonClick()));
+   
 
     // Manage entries buttons
     connect(ui->forceExitForEntryAction, SIGNAL(triggered()), this, SLOT(OnForceExitForEntryButtonClicked()));
+    connect(ui->forcePhotoEntryAction, SIGNAL(triggered()), this, SLOT(OnForceActionByPhotoButtonClicked()));
 
 }
 
@@ -59,6 +62,20 @@ void MainWindow::OnViewSpecificCameraButtonClick()
         else {
             windowController->ChangeCameraOnSlot(chosenCamera, false);
         }
+    }
+}
+
+void MainWindow::OnChangeDetectionTypeButtonClick()
+{
+    if (repairMode) {
+        QMessageBox::critical(this, "Error", "Can't use this while in repair mode!\n\nReview Camera Management and refresh!");
+        return;
+    }
+    CustomComboBoxDialog dialog(CustomComboBoxDialog::CustomComboBoxDialogType::DETECTION_TYPE, this);
+    if (dialog.exec() == QDialog::Accepted) {
+        DatabaseEntity::CameraType chosenCameraType = dialog.GetChosenCameraType();
+        windowController->ChangeDetectionTypeForCameraType(chosenCameraType, dialog.GetFirstComboBoxText());
+        QMessageBox::information(this, "Success", "Detection type changed successfully!");
     }
 }
 
@@ -135,6 +152,29 @@ void MainWindow::OnForceExitForEntryButtonClicked()
     }
 }
 
+void MainWindow::OnForceActionByPhotoButtonClicked()
+{
+    if (repairMode) {
+        QMessageBox::critical(this, "Error", "Can't use this while in repair mode!\n\nReview Camera Management and refresh!");
+        return;
+    }
+    CustomComboBoxDialog dialog(CustomComboBoxDialog::CustomComboBoxDialogType::PHOTO_ACTION, this);
+    if (dialog.exec() == QDialog::Accepted) {
+        DatabaseEntity::Camera chosenCamera = dialog.GetChosenCamera();
+        QString pathToPhoto = dialog.GetLineEditText();
+        if (pathToPhoto == "") {
+            QMessageBox::warning(this, "Warning", "No path for photo given. Skipping...");
+            return;
+        }
+        try {
+            windowController->ForcePhotoAction(chosenCamera, pathToPhoto);
+        }
+        catch (const std::exception& exception) {
+            QMessageBox::critical(this, "Error", exception.what());
+        }
+    }
+}
+
 void MainWindow::ReloadKeys()
 {
     for (auto& connection : m_keyConnections)
@@ -144,8 +184,8 @@ void MainWindow::ReloadKeys()
     m_keyConnections.clear();
     m_keyShortcuts.clear();
 
-    DatabaseDataAccess::CameraKey cameraKeyDataAccess;
-    std::vector<DatabaseEntity::CameraKey> allKeys = cameraKeyDataAccess.FindAll();
+    DatabaseBusinessLogic::CameraKey cameraKeyBusinessLogic = DatabaseBusinessLogic::CameraKey();
+    std::vector<DatabaseEntity::CameraKey> allKeys = cameraKeyBusinessLogic.FindAll();
 
     for (auto& key : allKeys) {
         const uint32_t cameraIDForKey = key.GetID();

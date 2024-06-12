@@ -73,12 +73,12 @@ bool Utils::DoesImageNeedCLAHE(const cv::Mat grayImage)
 void Utils::GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputImage, std::vector<cv::Point>& maxContour
 	, const bool crop, const std::vector<std::vector<cv::Point>>& customContours)
 {
-	//if ((inputImage.empty() || outputImage.empty()) && crop == true)
+
 	if (inputImage.empty() && crop == true)
 		throw std::runtime_error("Can't crop given images. They are empty!");
 
 	std::vector<std::vector<cv::Point>> contours;
-	//customContours.size() == 0 ? cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE) : contours = customContours;
+
 	if (customContours.size() == 0)
 		cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 	else
@@ -91,8 +91,6 @@ void Utils::GetImageByHighestContour(const cv::Mat& inputImage, cv::Mat& outputI
 
 	int maxIndex = static_cast<int>(std::distance(areas.begin(), std::max_element(areas.begin(), areas.end())));
 	std::vector<cv::Point> max_cnt = contours[maxIndex];
-
-	//cv::drawContours(originalImage, std::vector<std::vector<cv::Point>>{max_cnt}, -1, cv::Scalar(0, 255, 0), 1);
 
 	cv::Rect contourRectangle = cv::boundingRect(max_cnt);
 	double x = contourRectangle.x;
@@ -155,7 +153,7 @@ void Utils::SkeletonizeImage(const cv::Mat& inputImage, cv::Mat& outputImage)
 {
 	cv::Mat originalImage;
 	cv::bitwise_not(inputImage, originalImage);
-	//cv::resize(originalImage, originalImage, cv::Size(100, 100));
+
 	cv::Size size = originalImage.size();
 	cv::Mat skel = cv::Mat::zeros(originalImage.size(), CV_8U);
 

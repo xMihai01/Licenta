@@ -30,3 +30,25 @@ uint32_t DatabaseEntity::CameraType::GetID() const
 {
 	return m_id;
 }
+
+DatabaseEntity::CameraType::Type DatabaseEntity::CameraType::ConvertQStringToType(const QString& typeName)
+{
+    if (DatabaseEntity::CameraType::qStringToTypesHashmap.find(typeName) == DatabaseEntity::CameraType::qStringToTypesHashmap.end())
+        return DatabaseEntity::CameraType::Type::INVALID;
+    return DatabaseEntity::CameraType::qStringToTypesHashmap.value(typeName);
+}
+
+QString DatabaseEntity::CameraType::ConvertTypeToQString(const DatabaseEntity::CameraType::Type type)
+{
+    switch (type)
+    {
+    case DatabaseEntity::CameraType::Type::ENTRANCE:
+        return "ENTRANCE";
+    case DatabaseEntity::CameraType::Type::EXIT:
+        return "EXIT";
+    case DatabaseEntity::CameraType::Type::PARKING:
+        return "PARKING";
+    default:
+        return INVALID_CAMERA_TYPE;
+    }
+}

@@ -21,7 +21,9 @@ public:
 	void OpenParkingManagementWindow();
 
 	void ChangeCameraOnSlot(const DatabaseEntity::Camera& camera, bool isSlotOne);
+	void ChangeDetectionTypeForCameraType(const DatabaseEntity::CameraType& cameraType, const QString& selectedDetectionType);
 	void ForceExitAction(const DatabaseEntity::Camera& camera, const DatabaseEntity::Session& session);
+	void ForcePhotoAction(const DatabaseEntity::Camera& camera, const QString& photoPath);
 	
 	void SetupCameras();
 
@@ -44,6 +46,7 @@ private:
 	std::pair<std::pair<DatabaseEntity::Camera, VideoCamera*>, std::pair<DatabaseEntity::Camera, VideoCamera*>> m_cameraSlot;
 
 	std::unordered_map<uint32_t, VideoCamera*> m_cameraIDToVideoCameraMap;
+	std::unordered_map<VideoCamera*, DatabaseEntity::Camera> m_videoCameraToCameraMap;
 
 	std::vector<std::shared_ptr<InterfaceVideoListener>> m_videoListeners;
 

@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include <Model/Database/Entities/CameraKey.h>
+#include <Model/Database/DataAccess/CameraKey.h>
 
 namespace DatabaseBusinessLogic {
 
@@ -10,9 +10,23 @@ namespace DatabaseBusinessLogic {
 		
 	public:
 
-		QtKeyEnum ConvertIntToKeyEnum(const int key);
-		int ConvertKeyEnumToInt(const QtKeyEnum key);
+		CameraKey();
+		CameraKey(const QString& usedDatabase);
 
+		DatabaseEntity::CameraKey FindByID(const uint32_t id);
+		DatabaseEntity::CameraKey FindByKey(const QtKeyEnum key);
+		std::vector<DatabaseEntity::CameraKey> FindAll();
+
+		void Add(const DatabaseEntity::CameraKey& cameraKey);
+		void Remove(const DatabaseEntity::CameraKey& cameraKey);
+		void Update(const DatabaseEntity::CameraKey& cameraKey);
+
+		bool IsKeyUsed(const QtKeyEnum key);
+
+
+	private:
+
+		DatabaseDataAccess::CameraKey m_dataAccess;
 	};
 
 }

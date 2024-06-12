@@ -33,7 +33,10 @@ public class SessionService {
         return sessionRepository.findAllByLicensePlate(licensePlate);
     }
 
-    public boolean isSecretIDValid(SessionEntity sessionEntity) {
-        return sessionEntity.getExitTime().isEqual(NOTIME) && sessionEntity.getLicensePlate().length() > MINIMUM_LICENSE_PLATE_LENGTH;
+    public boolean isSecretIDValid(SessionEntity sessionEntity, boolean requiresMinimumLength) {
+        return sessionEntity.getExitTime().isEqual(NOTIME) && (sessionEntity.getLicensePlate().length() > MINIMUM_LICENSE_PLATE_LENGTH || !requiresMinimumLength);
+    }
+    public void save (SessionEntity sessionEntity) {
+        sessionRepository.save(sessionEntity);
     }
 }

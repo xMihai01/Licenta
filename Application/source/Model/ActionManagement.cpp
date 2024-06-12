@@ -1,59 +1,59 @@
 #include "Model/ActionManagement.h"
 
-ActionManagement::ActionManagement()
+ActionManagement::ActionManagement(const bool requiresDifferentDatabase)
 {
-	AddListener(std::make_shared<DefaultCameraTypeAction>());
+    if (requiresDifferentDatabase) {
+        std::stringstream ss;
+        ss << std::this_thread::get_id();
+        std::string threadID = ss.str();
+        m_database.ConnectDuplicate("main", QString::fromStdString(threadID));
+    }
+
+	AddListener(std::make_shared<DefaultCameraTypeAction>(m_database));
 	// Add other custom listeners here 
 }
 
 void ActionManagement::StartAction(const cv::Mat& frame, const DatabaseEntity::Camera& camera)
 {
-    //static int index = 0;
-    //cv::imwrite("C:/Users/mihai/Desktop/Products/img/test" + std::to_string(index) + ".jpg", frame);
-    //index++;
     cv::Mat inputFrame = frame.clone();
     std::string plateText;
     std::string plateTextIP;
     cv::Mat outputPlateImage;
-    switch (camera.GetCameraType().GetType())
+
+    DatabaseEntity::CameraType::Type cameraType = camera.GetCameraType().GetType();
+    LicensePlateDetection::DetectionType selectedDetectionType = JsonFileUtils::ReadDetectionTypeForCameraType(cameraType);
+
+    switch (cameraType)
     {
     case DatabaseEntity::CameraType::Type::ENTRANCE:
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::DNN);
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateTextIP, LicensePlateDetection::DetectionType::IMAGE_PROCESSING);
-        std::cout << "\nEntered: " << plateText << " | IP: " << plateTextIP;
+        ActionManagement::licensePlateDetectionWorkFlow.Detect(inputFrame, outputPlateImage, plateText, selectedDetectionType);
+        std::cout << "\nEntered: " << plateText;
         break;
     case DatabaseEntity::CameraType::Type::EXIT:
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateText, LicensePlateDetection::DetectionType::DNN);
-        m_licenseWorkflow.Detect(inputFrame, outputPlateImage, plateTextIP, LicensePlateDetection::DetectionType::IMAGE_PROCESSING);
-        std::cout << "\nExited: " << plateText << " | IP: " << plateTextIP;
+        ActionManagement::licensePlateDetectionWorkFlow.Detect(inputFrame, outputPlateImage, plateText, selectedDetectionType);
+        std::cout << "\nExited: " << plateText;
         break;
     case DatabaseEntity::CameraType::Type::PARKING:
         std::cout << "\nParked: " << plateText;
-        CheckAllParkingSpaces(camera, inputFrame);
+        CheckAllParkingSpaces(camera, inputFrame, selectedDetectionType);
         break;
     default:
         break;
     }
     NotifyListeners(camera, plateText);
-    //cv::imwrite("C:/Users/mihai/Desktop/Products/img/input_" + std::to_string(index) + ".jpg", inputFrame);
-    //cv::imwrite("C:/Users/mihai/Desktop/Products/img/" + std::to_string(index) + ".jpg", outputPlateImage);
-    //index++;
 }
 
-void ActionManagement::CheckAllParkingSpaces(const DatabaseEntity::Camera& camera, const cv::Mat& inputFrame)
+void ActionManagement::CheckAllParkingSpaces(const DatabaseEntity::Camera& camera, const cv::Mat& inputFrame, const LicensePlateDetection::DetectionType selectedDetectionType)
 {
-    //static int index = 0;
     std::string text = "";
-    std::string ipText = "";
     cv::Mat inputFrameCropped;
     cv::Mat outputImage;
     for (const auto& space : m_database.ToParkingSpace().FindAllByCamera(camera)) {
+
         Utils::CropImageFromRectangle(inputFrame, inputFrameCropped, cv::Point2d(space.GetX1(), space.GetY1()), cv::Point2d(space.GetX2(), space.GetY2()));
-        //cv::imwrite("C:/Users/mihai/Desktop/Products/parking_spaces/" + std::to_string(index) + ".jpg", inputFrameCropped);
-        //index++;
-        m_licenseWorkflow.Detect(inputFrameCropped, outputImage, text, LicensePlateDetection::DetectionType::DNN);
-        m_licenseWorkflow.Detect(inputFrameCropped, outputImage, ipText, LicensePlateDetection::DetectionType::IMAGE_PROCESSING);
-        std::cout << space.GetName() << ": IP: " << ipText << " | DNN: " << text << "\n";
+        ActionManagement::licensePlateDetectionWorkFlow.Detect(inputFrameCropped, outputImage, text, selectedDetectionType);
+        std::cout << space.GetName() << ": " << text << "\n";
+
         NotifyListeners(camera, text, space);
     }
 }

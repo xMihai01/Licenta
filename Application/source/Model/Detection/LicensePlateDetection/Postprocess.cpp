@@ -24,7 +24,7 @@ void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingImageProcessi
 	std::vector<std::vector<cv::Point>> validContours;
 
 	cv::findContours(postProcessedImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
-	//cv::drawContours(outImage, contours, -1, cv::Scalar(0, 255, 0), 2);
+
 	int contourNumber = 0;
 	for (const auto& contour : contours) {
 		if (CheckPlate(originalImage, outImage, contour, contourNumber)) {
@@ -33,7 +33,6 @@ void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingImageProcessi
 		contourNumber++;
 	}
 
-	// TODO: Throw an exception
 	if (!validContours.size()) {
 		detectedPlate = outImage;
 		return;
@@ -70,12 +69,11 @@ void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingImageProcessi
 {
 	srand(time(NULL));
 	cv::threshold(preProcessedImage, detectedPlate, 0, 255, cv::THRESH_BINARY + cv::THRESH_OTSU);
-	//cv::bitwise_not(detectedPlate, detectedPlate);
+
 	cv::Mat labels, stats, centroids;
-	//detectedPlate = preProcessedImage.clone();
+
 	int numComponents = cv::connectedComponentsWithStats(detectedPlate, labels, stats, centroids);
 	cv::cvtColor(detectedPlate, detectedPlate, cv::COLOR_GRAY2BGR);
-	// Iterate through components and draw rectangles
 	int maxAreaIndex = -1;
 	int maxArea = -1;
 
@@ -84,14 +82,6 @@ void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingImageProcessi
 	for (int i = 0; i < numComponents; i++) {
 		colors[i] = cv::Vec3b(rand() % 255, rand() % 255, rand() % 255);
 	}
-
-	/*for (int i = 0; i < detectedPlate.cols; i++) {
-		for (int j = 0; j < detectedPlate.rows; j++) {
-			if (labels.at<int>(cv::Point(i, j)) != 0) {
-				detectedPlate.at<cv::Vec3b>(cv::Point(i, j)) = colors[(int)labels.at<int>(cv::Point(i, j))];
-			}
-		}
-	}*/
 	int maxX = 0;
 	int maxY = 0;
 	int maxWidth = 0;
@@ -119,28 +109,21 @@ void LicensePlateDetection::Postprocess::NumberPlateExtractionUsingImageProcessi
 				std::vector<cv::Point> max_cnt;
 				cv::Mat possibleChar = possiblePlate(cv::Rect(cv::boundingRect(contours[contours.size()/2])));
 
-				//Utils::GetImageByHighestContour(possiblePlate, possibleChar, max_cnt, true);
-				//(possibleChar.rows > possiblePlate.rows*0.2 && possibleChar.cols < possiblePlate.cols/2) && 
 				Utils::GetImageByHighestContour(possiblePlate, possiblePlate, max_cnt);
 				cv::Rect contourRectangle = cv::boundingRect(max_cnt);
-				//cv::cvtColor(possiblePlate, possiblePlate, cv::COLOR_GRAY2BGR);
+
 				double epsilon = 0.02 * cv::arcLength(max_cnt, true);
 				std::vector<cv::Point> approx;
 				cv::approxPolyDP(max_cnt, approx, epsilon, true);
-		/*		for (int i = 0; i < approx.size(); i++) {
-					cv::circle(possiblePlate, approx[i], 5, cv::Scalar(0, 0, 255), -1);
-				}*/
-				//std::cout << "AREA: " << area << "\n";
+
 				if (RecognizeCharacterUsingTemplateMatching(possibleChar, 0.6) != '_') {
 					detectedPlate = originalImage(cv::Rect(x, y, width, height));
 					return;
-					//cv::rectangle(detectedPlate, cv::Rect(x, y, width, height), cv::Scalar(0, 255, 0), 2);
 				}
 			}
 		
 		}
 	}
-	//std::cout << maxX << " " << maxY << " " << maxWidth << " " << maxHeight << "\n";
 	detectedPlate = originalImage;
 }
 
@@ -148,17 +131,17 @@ bool LicensePlateDetection::Postprocess::CheckPlate(const cv::Mat& originalImage
 {
 	cv::RotatedRect rect = cv::minAreaRect(contour);
 	if (ValidateRatio(rect)) {
-		cv::Rect contourRectangle = cv::boundingRect(contour);
+	/*	cv::Rect contourRectangle = cv::boundingRect(contour);
 		double x = contourRectangle.x;
 		double y = contourRectangle.y;
 		double width = contourRectangle.width;
 		double height = contourRectangle.height;
-		cv::Mat afterValidationImage = originalImage(cv::Rect(x, y, width, height));
-		if (CleanPlate(afterValidationImage)) {
+		cv::Mat afterValidationImage = originalImage(cv::Rect(x, y, width, height));*/
+		//if (CleanPlate(afterValidationImage)) {
 			//cv::imwrite(std::to_string(contourNumber) + ".jpg", afterValidationImage);
 			//cv::drawContours(outputImage, std::vector<std::vector<cv::Point>>{contour}, -1, cv::Scalar(0, 255, 0), 2);
 			return true;
-		}
+		//}
 	}
 	return false;
 }
@@ -305,8 +288,7 @@ char LicensePlateDetection::Postprocess::RecognizeCharacterUsingTemplateMatching
 
 void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv::Mat& outputImage, std::string& detectedText)
 {
-	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(3, 3));
-	//cv::morphologyEx(inputImage, inputImage, cv::MORPH_OPEN, kernel); IMPROVED ACCURACY without this
+
 	std::vector<std::vector<cv::Point>> contours;
 	cv::findContours(inputImage, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 	std::vector<std::pair<cv::Mat, cv::Rect>> lettersBox;
@@ -320,7 +302,7 @@ void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv
 		if ((height > inputImage.rows * 0.2 && width < inputImage.cols / 2)
 			&& RatioCheck(cv::contourArea(contours[index]), 1, 1, Utils::MINIMUM_CONTOUR_AREA, Utils::MAXIMUM_CONTOUR_AREA)) {
 			cv::Mat charImage = inputImage(cv::Rect(x, y, width, height));
-			//ClearCharImage(inputImage(cv::Rect(x, y, width, height)), charImage);
+
 			lettersBox.push_back(std::make_pair(charImage, contourRectangle));
 		}
 	}
@@ -331,10 +313,9 @@ void LicensePlateDetection::Postprocess::LetterDetection(cv::Mat& inputImage, cv
 	for (size_t index = 0; index < lettersBox.size(); index++) {
 		if (index > 0 && Utils::IsRectangleInsideAnotherRectangle(lettersBox[index].second, lettersBox[index - 1].second))
 			continue;
-		//cv::morphologyEx(lettersBox[index].first, lettersBox[index].first, cv::MORPH_OPEN, kernel);
+
 		lettersBox[index].first.copyTo(whiteImage(cv::Rect(lettersBox[index].second)));
-		//Utils::SkeletonizeImage(lettersBox[index].first, lettersBox[index].first);
-		//cv::threshold(lettersBox[index].first, lettersBox[index].first, 128, 256, cv::THRESH_BINARY);
+
 		char ch = RecognizeCharacterUsingTemplateMatching(lettersBox[index].first, 0.4);
 		if (ch != '-')
 			text += ch;
@@ -381,9 +362,6 @@ bool LicensePlateDetection::Postprocess::RatioCheck(const double area, const dou
 		ratio = 1 / ratio;
 	}
 
-	/*if (ratio < ratioMin) {
-		return false;
-	}*/
 	if ((area < min || area > max))
 		return false;
 	return true;
@@ -402,10 +380,6 @@ bool LicensePlateDetection::Postprocess::ValidateRatio(const cv::RotatedRect& re
 		angle = -rectangleAngle;
 	else
 		angle = 90 + rectangleAngle;
-
-	/*if (angle > 15) {
-		return false;
-	}*/
 
 	if (height == 0 || width == 0)
 		return false;

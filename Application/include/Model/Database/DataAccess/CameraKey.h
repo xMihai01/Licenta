@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-#include <Model/Database/BusinessLogic/CameraKey.h>
+#include <Model/Database/Entities/CameraKey.h>
 
 namespace DatabaseDataAccess {
 
@@ -16,13 +16,11 @@ namespace DatabaseDataAccess {
 
 	public:
 
-		CameraKey();
+		CameraKey(const QString& usedDatabase);
 
 		DatabaseEntity::CameraKey FindByID(const uint32_t id);
 		DatabaseEntity::CameraKey FindByKey(const QtKeyEnum key);
 		std::vector<DatabaseEntity::CameraKey> FindAll();
-
-		bool IsKeyUsed(const QtKeyEnum key);
 
 		void Add(const DatabaseEntity::CameraKey& cameraKey);
 		void Remove(const DatabaseEntity::CameraKey& cameraKey);
@@ -30,8 +28,7 @@ namespace DatabaseDataAccess {
 
 	private:
 
-		DatabaseBusinessLogic::CameraKey m_businessLogic;
-
+		QString m_usedDatabase;
 	};
 
 }
