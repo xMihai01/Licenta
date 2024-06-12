@@ -52,7 +52,7 @@ public class UserService implements UserDetailsService {
             return false;
         if (sessionEntity.isEmpty())
             return false;
-        if (!sessionService.isSecretIDValid(sessionEntity.get()))
+        if (!sessionService.isSecretIDValid(sessionEntity.get(), true))
             return false;
         /* Encrypt password */
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));

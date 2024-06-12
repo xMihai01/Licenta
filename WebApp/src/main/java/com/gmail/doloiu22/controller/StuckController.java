@@ -37,7 +37,7 @@ public class StuckController {
         }
 
         SessionEntity validSession = session.get();
-        if (!sessionService.isSecretIDValid(validSession)) {
+        if (!sessionService.isSecretIDValid(validSession, false)) {
             return "other_errors/invalid_secretid";
         }
 
