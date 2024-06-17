@@ -29,9 +29,9 @@ void JsonFileUtils::CheckChosenDetectionTypeFile()
 {
 	JsonFile file(detectionTypesFileName, detectionTypesKey, std::vector<QString>{"value"});
 
-	auto detectionsInfoEntrance = file.ReadFromFile(detectionTypesKey[0]);
-	auto detectionsInfoExit = file.ReadFromFile(detectionTypesKey[1]);
-	auto detectionsInfoParking = file.ReadFromFile(detectionTypesKey[2]);
+	auto detectionsInfoEntrance = file.ReadFromFile(detectionTypes[0]);
+	auto detectionsInfoExit = file.ReadFromFile(detectionTypes[1]);
+	auto detectionsInfoParking = file.ReadFromFile(detectionTypes[2]);
 	if (detectionsInfoEntrance.size() + detectionsInfoExit.size() + detectionsInfoParking.size() == 0) {
 		file.WriteToFile(std::vector<QString>{QString::number(static_cast<int>(LicensePlateDetection::DetectionType::IMAGE_PROCESSING))}, detectionTypes[0]); // entrance
 		file.WriteToFile(std::vector<QString>{QString::number(static_cast<int>(LicensePlateDetection::DetectionType::IMAGE_PROCESSING))}, detectionTypes[1]); // exit

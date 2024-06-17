@@ -29,7 +29,7 @@ public class StuckController {
     }
 
     @PostMapping()
-    public String confirm(@RequestParam("secretID") String secretID, @RequestParam("cameraID") long cameraID){
+    public String confirm(@RequestParam("secretID") String secretID, @RequestParam("cameraID") String cameraID){
 
         Optional<SessionEntity> session = sessionService.findBySecretID(secretID);
         if (!session.isPresent()) {
@@ -38,6 +38,16 @@ public class StuckController {
 
         SessionEntity validSession = session.get();
         if (!sessionService.isSecretIDValid(validSession, false)) {
+            return "other_errors/invalid_secretid";
+        }
+
+        try {
+            long cameraIDasLong = Long.parseLong(cameraID);
+
+            if (cameraID.length() == 0) {
+                throw new NumberFormatException();
+            }
+        }catch (NumberFormatException e) {
             return "other_errors/invalid_secretid";
         }
 
