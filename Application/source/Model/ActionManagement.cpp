@@ -34,7 +34,7 @@ void ActionManagement::StartAction(const cv::Mat& frame, const DatabaseEntity::C
         std::cout << "\nExited: " << plateText;
         break;
     case DatabaseEntity::CameraType::Type::PARKING:
-        std::cout << "\nParked: " << plateText;
+        //std::cout << "\nParked: " << plateText;
         CheckAllParkingSpaces(camera, inputFrame, selectedDetectionType);
         break;
     default:
@@ -52,7 +52,7 @@ void ActionManagement::CheckAllParkingSpaces(const DatabaseEntity::Camera& camer
 
         Utils::CropImageFromRectangle(inputFrame, inputFrameCropped, cv::Point2d(space.GetX1(), space.GetY1()), cv::Point2d(space.GetX2(), space.GetY2()));
         ActionManagement::licensePlateDetectionWorkFlow.Detect(inputFrameCropped, outputImage, text, selectedDetectionType);
-        std::cout << space.GetName() << ": " << text << "\n";
+        //std::cout << space.GetName() << ": " << text << "\n";
 
         NotifyListeners(camera, text, space);
     }
